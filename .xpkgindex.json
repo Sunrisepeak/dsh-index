@@ -46,7 +46,7 @@
   },
   "theme": {
     "accent": "#2d5f9e",
-    "style": "dark",
+    "style": "auto",
     "tones": {
       "module": "#2d5f9e",
       "header": "#1a3870",
