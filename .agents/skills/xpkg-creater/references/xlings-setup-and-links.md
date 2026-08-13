@@ -40,7 +40,7 @@ lua5.4 -v
 
 ```bash
 # 注册索引仓库（命名空间固定为 dsh）
-xim --add-indexrepo dsh:https://github.com/Sunrisepeak/dsh-index.git
+xlings config --index-repo dsh:https://github.com/Sunrisepeak/dsh-index.git
 
 # 安装插件
 xlings install dsh:<plugin>

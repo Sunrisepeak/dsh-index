@@ -21,7 +21,7 @@ from __future__ import annotations
 import os
 from typing import Any, Dict, List, Optional
 
-from xpkgindex.models import Block, Facet, FacetValue, Identity, RowSpec
+from xpkgindex.models import Block, Facet, FacetValue, Identity, RowSpec, Version
 from xpkgindex.plugins import Plugin
 
 
@@ -81,6 +81,25 @@ class DshPlugin(Plugin):
         }
         pkg.extensions["dsh"] = ext
 
+        # The core reads versions off `xpm`, which does not exist yet at this
+        # point: descriptors here are data-only and template.lua supplies xpm
+        # at index-build time. Without this the site would report "0 versions"
+        # for every package, which reads as broken rather than as by-design.
+        if not pkg.versions:
+            pkg.versions = [
+                Version(version=v,
+                        urls=({"GLOBAL": "", "CN": ""} if mirror.get(v) else {}),
+                        sha256=str((mirror.get(v) or {}).get("sha256") or ""))
+                for v in sorted(ext["versions"])
+            ]
+        if not pkg.latest:
+            pkg.latest = ext["latest"]
+
+        # Upstream declaring no license is a fact the reader needs, and an
+        # empty `licenses` list renders as silence.
+        if not pkg.licenses and license_id and license_id != "NONE":
+            pkg.licenses = [license_id]
+
         pkg.facets["delivery"] = delivery
         if license_id:
             pkg.facets["license"] = license_id
@@ -113,14 +132,21 @@ class DshPlugin(Plugin):
 
     def row(self, pkg) -> RowSpec:
         """The card leads with delivery, because that is the property a reader
-        cannot recover from the package name or description."""
+        cannot recover from the package name or description.
+
+        The strip shows the UPSTREAM REPO, not a `dsh plugin add <name>`
+        command. Showing the latter would be actively wrong: `bundle_name` is
+        the package.json name, and in this ecosystem those are not resolvable
+        identifiers -- `@dsh-external/dsh-ads` is not on npm, so anyone copying
+        that line would get a 404. The install command the card already carries
+        (`xlings install dsh:<name>`) is the one that works.
+        """
         ext = pkg.extensions.get("dsh", {})
         return RowSpec(
             variant="card",
             tone=DELIVERY_TONES.get(ext.get("delivery"), "neutral"),
             lead=ext.get("delivery") or "direct",
-            code=(f"dsh plugin add {ext.get('bundle_name')}"
-                  if ext.get("bundle_name") else ""),
+            code=(f"github.com/{ext['origin']}" if ext.get("origin") else ""),
             badges=list(pkg.extensions.get("_badges", [])),
         )
 

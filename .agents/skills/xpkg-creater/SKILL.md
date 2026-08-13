@@ -15,7 +15,7 @@ description: 在 dsh-index 中创建/维护 dsh 插件的 xpkg 描述符。本�
 命名空间固定为 **`dsh`**：
 
 ```bash
-xim --add-indexrepo dsh:https://github.com/Sunrisepeak/dsh-index.git
+xlings config --index-repo dsh:https://github.com/Sunrisepeak/dsh-index.git
 xlings install dsh:<plugin>            # 或 xim -i dsh:<plugin>
 ```
 
@@ -62,6 +62,7 @@ package = {
         },
         latest = "0.0.1",
         needs_build = false,                          -- 有 scripts.prepare 就是 true
+        license = "MIT",                              -- 镜像资格的唯一判据
         -- patch = "./bundle/cordis.patch.yml",       -- 仅当不是默认路径时才写
     },
 }
@@ -77,6 +78,7 @@ package = {
 | `versions[v].ref` | github 源**必须**是 40 位小写 hex commit sha |
 | `latest` | 必须是 `versions` 里真实存在的键 |
 | `needs_build` | 上游根 `package.json` 有 `scripts.prepare` 即为 `true` |
+| `license` | 由 `discover.py` 写入，不手填。`NONE` / `NOASSERTION` 一律 fail closed，不得镜像 |
 
 **为什么不能用裸包名安装**：生态里有 36 个社区仓库把自己命名成 `@deepseek-ai/xxx`，
 而这些名字在 npm 上并不存在。今天裸名安装会 404；等官方真发了同名包，
@@ -189,10 +191,11 @@ import("xim.libxpkg.log")
 
 | 约束 | 原因 |
 |---|---|
-| `xvm_enable = false` | dsh 插件**不提供任何可执行文件**，没有 shim 可注册 |
+| `xvm_enable = true`，注册为 `type = "group"` | 插件没有可执行文件，但 xvm 管的是**版本视图**不是可执行文件（glibc 注册 `libc.so`、musl 用 `group`）。它的价值是**按 subos 隔离 active**——实测本机 54 个名字在不同 subos 同时持有不同版本。`group` 是因为该名字不对应 artifact，留成默认 program 类型会生成永远失败的 shim（openxlings/xlings#452） |
 | `uninstall()` 只调 `dsh plugin remove` | `$DSH_HOME` 是用户数据，本索引从未创建过它 |
 | `needs_build = true` 的包必须显式授权 | `prepare` 脚本 = 在用户机器上执行该包代码，且不在 agent 沙箱内。没有 `DSH_ALLOW_BUILDS=1` 就失败退出，**不静默授权** |
-| profile 由 `DSH_PROFILE` 决定，缺省 `web` | profile 是本生态唯一的并存/切换轴 |
+| profile 缺省跟随当前 subos（`DSH_PROFILE` > `XLINGS_SUBOS` > `web`） | 让"进不同 subos = 不同插件集"和 xvm 的 subos 语义对齐 |
+| 镜像与否由**许可证**决定 | 镜像 = 再分发。无 LICENSE 的包不得进镜像（`dsh.mirror` 必须缺席） |
 
 ---
 

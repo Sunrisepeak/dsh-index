@@ -9,7 +9,7 @@
 
 ```bash
 xlings install dsh pnpm -y
-xim --add-indexrepo dsh:https://github.com/Sunrisepeak/dsh-index.git
+xlings config --index-repo dsh:https://github.com/Sunrisepeak/dsh-index.git
 xlings install dsh:dsh-cc-tui -y
 ```
 

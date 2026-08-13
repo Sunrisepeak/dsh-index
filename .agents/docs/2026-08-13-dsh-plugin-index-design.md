@@ -2,7 +2,7 @@
 
 > 编写日期：2026-08-13（2026-08-14 按 C/A 混合架构决策修订）
 > 目标仓库：`https://github.com/Sunrisepeak/dsh-index`
-> 命名空间：**`dsh`**（`xim --add-indexrepo dsh:<url>` / `xlings install dsh:<plugin>`）
+> 命名空间：**`dsh`**（`xlings config --index-repo dsh:<url>` / `xlings install dsh:<plugin>`）
 > 参照实现：`openxlings/xim-pkgindex`（索引 + 网站）、`d2learn/xim-pkgindex-d2x`（index build 模板机制）
 
 ---
@@ -986,7 +986,7 @@ C 和 A 共用同一份 `template.lua`，分支只有 `dsh.mirror` 一个判断�
    两条路径的 add / dump-config / remove 全链都实测
 3. 建 `xlings-res/dsh-plugins` 镜像仓库 + `mirror.py` 最小实现
 4. `.xpkgindex.json` + `dsh.py`（含镜像/直连徽标）+ Pages 部署
-5. README：`xim --add-indexrepo dsh:https://github.com/Sunrisepeak/dsh-index.git`
+5. README：`xlings config --index-repo dsh:https://github.com/Sunrisepeak/dsh-index.git`
 6. **实测未决 1~3**（见 §13），把结论写回本文档
 
 **第二期（自动化 + 扩量）**
