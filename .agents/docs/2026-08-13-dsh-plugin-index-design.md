@@ -1,6 +1,6 @@
 # dsh-index 设计方案：DeepSeek Harness 插件生态的 xlings 包索引
 
-> 编写日期：2026-08-13
+> 编写日期：2026-08-13（2026-08-14 按 C/A 混合架构决策修订）
 > 目标仓库：`https://github.com/Sunrisepeak/dsh-index`
 > 命名空间：**`dsh`**（`xim --add-indexrepo dsh:<url>` / `xlings install dsh:<plugin>`）
 > 参照实现：`openxlings/xim-pkgindex`（索引 + 网站）、`d2learn/xim-pkgindex-d2x`（index build 模板机制）
@@ -17,6 +17,20 @@ dsh 插件生态在 2026-08-09 之后**只剩一条官方分发通道**——pro
 范式统一到这个程度，意味着**每个插件的 xpkg 不需要写任何 hook**：
 `pkgs/**/*.lua` 只写数据，全部生命周期由一份 `template.lua` 提供，
 用 d2x 那套 `pkgindex-build.lua` 在索引构建期追加。
+
+**架构是 C/A 混合，分界线是许可证：**
+
+| | 走 C：镜像（127/169） | 走 A：直连（42/169） |
+|---|---|---|
+| 判据 | 许可证允许再分发 | 无 license（29）/ 不明（13） |
+| xpm 版本项 | `{url = {GLOBAL, CN}, sha256}` | `{}` |
+| CN 加速 | ✅ | ❌ 结构上不可能（§3.3） |
+| 上游删库后 | ✅ 仍可装 | ❌ |
+| `xlings use <plugin> <ver>` | ✅ | ❌ |
+| `prepare` 需用户授权 | ❌ 不需要 | ⚠️ 需要 |
+
+两条路线**共用同一份 `template.lua`**，分支点只有 `dsh.mirror` 存不存在——
+所以不是"先做 A 再做 C"，而是第一期就把两条都跑通。
 
 ---
 
@@ -223,8 +237,62 @@ change what runs"。）
 `package.json#version` 只是作者自己写的字符串，**不是**可解析的分发坐标——
 169 个 bundle 全都有 version 字段，但其中只有约 1/8 真的能按这个版本从 npm 装到。
 
-→ **设计取向：把 sha/spec 当作真实版本，`package.json#version` 当作展示用标签；
-把 profile 当作 xlings 语义下的"版本切换 / 并存"轴。**
+→ **设计取向：把 sha/spec 当作真实版本，`package.json#version` 当作展示用标签。**
+
+至于 xlings 侧用什么做"版本切换"轴，取决于架构选型，见 §3.3 决策 2：
+走 A 只能靠 profile 并存，走 C 则 `xvm use <plugin> <ver>` 成立。
+
+### 2.7 许可证普查（决定谁能进镜像）
+
+对 169 个 bundle 逐仓查 GitHub 的 `license.spdx_id`：
+
+| License | 数量 | 可再分发（镜像） |
+|---|---:|---|
+| MIT | 82 | ✅ |
+| BSD-3-Clause | 42 | ✅ |
+| Apache-2.0 | 2 | ✅ |
+| GPL-3.0 | 1 | ✅（copyleft，tarball 即源码，随附 LICENSE 即可） |
+| **NONE（无 LICENSE 文件）** | **29** | ❌ **默认保留所有权利，未授予分发权** |
+| NOASSERTION（无法识别） | 13 | ⚠️ 需人工判读，判读前按 ❌ 处理 |
+
+**127 / 169 可镜像。** 这个比例直接决定了镜像不可能是全量的——见 §3.3.1。
+
+### 2.8 生态已经从 dsh-external 迁走了（发现源必须双源）
+
+`dsh-external` 曾是插件集散地，`awesome-dsh-plugins` 的目录几乎全指向它。
+实测今天：
+
+| | |
+|---|---:|
+| `topic:dsh-plugin` 搜到的 281 个仓库中，属于 `dsh-external` 的 | **0** |
+| 包名仍带 `@dsh-external/`、仓库已迁到个人名下 | 35 |
+| 包名带 `@deepseek-ai/`、仓库不在 dsh-external | 36 |
+| 现在的不同 owner 数 | **67**（omdsh-dev 51、HuanLinOTO 11、bill9109 5…） |
+
+```
+0xsline/dsh-spotlight        pkg=@dsh-external/dsh-spotlight
+Anionex/dsh-vision-toolkit   pkg=@dsh-external/dsh-vision-toolkit
+bill9109/dsh-webbridge       pkg=@dsh-external/dsh-webbridge
+```
+
+仓库搬走了、包名里的旧 scope 没跟着改——迁移最典型的残留。
+`dsh-external/toybox`、`dsh-external/dsh-superpowers` 现已 404。
+
+**但两个发现源各有盲区，而且互补：**
+
+| 源 | 覆盖 | 盲区 |
+|---|---|---|
+| `topic:dsh-plugin` 搜索 | 281 个，67 个 owner | **搜不到 `dsh-external/*`** |
+| `awesome-dsh-plugins` | 286 条 | 几乎全指向 dsh-external，大量已 404 |
+
+`dsh-external/dsh-tool-csv` 确实还在、topic 也带着 `dsh-plugin`，
+但它**不出现在搜索结果里**——该 org 的 `public_repos` 读出来是 0，
+GitHub 搜索索引不收它的仓库，尽管按 URL 直接读得到。
+
+→ **`discover.py` 必须同时扫两个源、取并集、每条记来源**（§7.1）。
+→ **仓库会换 owner**：GitHub 会重定向一段时间，pnpm 顺着重定向照装不误，
+于是索引记的坐标和实际装的东西**静默脱钩**。必须按 **repo id** 而非 `full_name`
+检测 move。
 
 ---
 
@@ -272,18 +340,71 @@ users run `dsh plugin add ./hello-plugin-0.1.0.tgz`"）。
 
 - ✅ payload 真实、可 sha256、可镜像、可离线、绕开 `allowBuilds` 授权
 - ❌ 38 个带 `prepare` 的 TS 插件，tarball 必须**先构建**才有 `lib/`——
-  等于索引侧要跑一条构建流水线，还要为 169 个包各建一个发布位
-- ❌ 第一期做不完
+  等于索引侧要跑一条构建流水线
+- ❌ **只对许可证允许再分发的包成立**（§2.7）
 
-### 3.3 决策
+### 3.3 决策：C/A 混合，license 是判据
 
-> **D1：第一期采用架构 A。C 作为第二期针对"已在 npm 发布"和"高频使用"插件的优化，
-> 走 xlings-res 镜像位。B 永久否决。**
+> **D1：能镜像的走 C，不能镜像的走 A 并在网站上标注。B 永久否决。**
+>
+> | | 走 C（可镜像） | 走 A（兜底） |
+> |---|---|---|
+> | 判据 | 许可证允许再分发 | 无许可证 / 许可证不明 |
+> | 今日规模 | **127 / 169** | 29 无 license + 13 待核 |
+> | CN 加速 | ✅ GLOBAL/CN 双镜像 | ❌ 直连上游 |
+> | 上游删库后 | ✅ 仍可安装 | ❌ 装不回来 |
+> | `xlings use <plugin> <ver>` | ✅ payload 即切换对象 | ❌ 只能换 profile |
+> | `prepare` 构建授权 | ✅ 不需要（CI 里已构建完） | ⚠️ 需 `DSH_ALLOW_BUILDS=1` |
 
-理由：A 是唯一能在不复制上游任何逻辑的前提下，当天就跑通的形态；
-它把"包管理"留给 pnpm，把"发现 + 声明 + 版本记账 + 网站"留给 xlings——
-各自做自己擅长的事。C 的收益（离线、镜像、免授权）真实但需要构建基础设施，
-应该在索引本身站住之后再叠加，而且**只对少数高频包值得**。
+这个决策一开始写错过，纠正的过程值得留下来：初版把 C 排到第三期，理由是
+"当天就能跑通"。三条独立的事实推翻了它——
+
+**1. CN 加速在 A 下结构上不可能。** xim 的镜像表是挂在 **xpm 版本项**上的
+（`url = { GLOBAL = ..., CN = ... }` + `sha256`）。架构 A 的版本项是 `{}`，
+字节由 pnpm 在钩子里自己从 `codeload.github.com` 拉，**xim 全程看不见这个请求**，
+没有任何东西可以贴 CN。全仓实测印证：走 npm 钩子的包（`openclaw`、`dsh`）
+CN 条目 **0 条**，有 CN 镜像的（`claude`、`codex`）无一例外都有真实 url 资源。
+
+硬凑也不成立：npm 源的只占 12%，且这些包本就不在 npm 上；git 源的可以用
+`GIT_CONFIG_COUNT` 注入 `insteadOf` 重定向（不污染用户 git config），
+但**重定向目标得先存在**——那就是 C 的镜像工作本身，只是换成 git 形态。
+
+**2. xvm 需要一个可指的路径。** 初版写"xvm 在这里没有位置，因为插件不提供可执行文件"
+——这是错的。xvm 的模型是 **name → 版本集 → active**，与是否可执行无关：
+`glibc.lua` 用 `xvm.add(lib, { type = "lib" })` 注册 `libc.so` / `crt1.o`，
+`musl.lua` 用 `xvm.add("musl", { type = "group" })` 注册一个不对应任何 artifact 的根节点
+（全仓 `type = "lib"` 22 处、`type = "group"` 25 处）。
+
+但 xvm 的切换**动作**是"重新指向一条路径"。A 的 payload 是空的，没有路径可指；
+C 的 payload 就是切换对象。所以准确的说法是：
+**xvm 不是对插件没用，是在 A 下没有着力点。**
+
+**3. 上游会搬家、会删库**（§2.6）。在这种生态里"装过的东西还能再装一次"
+不是优化，是索引存在的意义。
+
+### 3.3.1 镜像资格：许可证门（D1a）
+
+> **D1a：只有许可证明确允许再分发的包才进镜像。无 `LICENSE` 文件的包一律走 A，
+> 不得镜像。判定写进 `discover.py`，不靠人工记忆。**
+
+镜像 = 再分发。没有许可证文件意味着**默认保留所有权利**，索引没有分发权。
+今天的实测分布（169 个 bundle，§2.7）：MIT 82 / BSD-3-Clause 42 / Apache-2.0 2 /
+GPL-3.0 1 → 可镜像；**NONE 29 → 不可镜像**；NOASSERTION 13 → 需人工判读，
+判读前按不可镜像处理（fail closed）。
+
+GPL-3.0 那一个可以镜像：tarball 本身即源码，随附许可证即满足 copyleft。
+
+副作用是好的：**无许可证的包本来就进不了镜像**，这给"收录门槛"提供了一条
+非主观的判据，正好缓解"网站上四成是空壳"的担忧。
+
+### 3.3.2 这让索引变成再分发方
+
+C 把 `dsh-index` 从"索引"变成"再分发方"：127 个包的字节要放进 `xlings-res`。
+这是**定位变化**，不只是工程量——附带许可证合规、内容责任、以及上游作者
+要求下架时的响应义务。已获项目所有者确认接受。
+
+镜像位组织：**一个 `xlings-res/dsh-plugins` 仓库，按 `<plugin>-<version>` tag 分版本**，
+而不是 169 个独立仓库——后者会把 org 灌爆，且每加一个插件要建一个仓库。
 
 ### 3.4 pnpm 依赖的处理
 
@@ -405,8 +526,23 @@ package = {
         },
         latest = "0.0.1",
 
-        -- 该包 git 安装时是否会跑 prepare（= 需要 allowBuilds 授权）
+        -- 该包 git 安装时是否会跑 prepare。走 C 时构建发生在索引 CI，
+        -- 用户侧不需要授权；走 A 时用户必须 DSH_ALLOW_BUILDS=1。
         needs_build = false,
+
+        -- 许可证。镜像资格的唯一判据（D1a），由 discover.py 写入，
+        -- 不手填。空 / "NONE" / "NOASSERTION" 一律 fail closed 走 A。
+        license = "MIT",
+
+        -- ── 走 C 的包才有这一段：真实 xpm 资源，由镜像流水线回填 ──
+        -- 有 mirror 段 = 架构 C（GLOBAL/CN + sha256 + xvm 版本切换）
+        -- 无 mirror 段 = 架构 A（直连上游，无 CN，网站标注）
+        mirror = {
+            ["0.0.1"] = {
+                tarball = "dsh-tool-csv-0.0.1.tgz",
+                sha256  = "<pnpm pack 产物的 sha256>",
+            },
+        },
 
         -- bundle patch 路径，98% 是默认值，只有例外才写
         -- patch = "./bundle/cordis.patch.yml",
@@ -438,6 +574,23 @@ package = {
 两者分开，是因为社区 bundle 的 `version` 字段既不唯一也不单调，
 不能直接当分发坐标用（§2.6）。
 
+### 5.2 两种架构在描述符里怎么区分
+
+**`dsh.mirror` 段存在与否，就是 C 与 A 的分界线**，不另设开关字段——
+一个包的架构由"镜像里有没有它的字节"这个**事实**决定，而不是由一个可能与事实
+不符的声明决定（R2：约定由写入方落实，读取方不猜）。
+
+| | 走 C | 走 A |
+|---|---|---|
+| 描述符 | 有 `dsh.mirror` | 无 |
+| `xpm` 版本项 | `{ url = {GLOBAL,CN}, sha256 }` 真资源 | `{}` 空 |
+| `install()` | xlings 下载校验 tarball 进 payload | 空转 |
+| `config()` | `dsh plugin add <payload>/<pkg>.tgz` | `dsh plugin add github:<origin>#<sha>` |
+| `xvm.add` | `type = "group"`，支持 `xlings use` | 不注册 |
+
+`sync.py` 负责保证一致性：**有 `mirror` 段却在镜像仓库里找不到对应 tag 的，
+CI 必须 fail closed**，而不是悄悄降级成 A——那会让用户以为自己装的是可复现的字节。
+
 ---
 
 ## 6. index build 机制
@@ -447,20 +600,42 @@ package = {
 被 `pkgindex-build.lua` 追加到每个 `pkgs/**/*.lua` 尾部。它负责补齐
 `package.type` / `package.xpm` 和四个 hook：
 
+**一份模板要同时覆盖 C 和 A**，分支点只有一个：`package.dsh.mirror` 存不存在。
+
 ```lua
 -- dsh-index 公共模板（由 pkgindex-build.lua 追加）
 
-package.type = "config"        -- 插件不产出可执行文件，是配置层
-package.xvm_enable = false     -- 没有程序可注册，xvm 在这里没有位置
+package.type = "config"        -- 插件是配置层，不产出可执行文件
 package.archs = {"x86_64"}     -- 受限于 xim:pnpm，见 D2
 
+local MIRROR   = package.dsh.mirror              -- 有 = 架构 C，无 = 架构 A
+local RES_BASE = "dsh-plugins/releases/download" -- xlings-res 下的统一镜像位
+
+-- xvm 只在 C 下有意义：A 的 payload 是空的，没有路径可指（§3.3 决策 2）
+package.xvm_enable = MIRROR ~= nil
+
 do
-    local vers, xpm = package.dsh.versions, {}
-    local plat = { linux = true, macosx = true, windows = true }
-    for p in pairs(plat) do
+    local xpm = {}
+    for _, p in ipairs({"linux", "macosx", "windows"}) do
         local t = { deps = {"xim:dsh", "xim:pnpm"},
                     ["latest"] = { ref = package.dsh.latest } }
-        for v in pairs(vers) do t[v] = {} end   -- 空资源：不下载，由 pnpm 取
+        for v, _ in pairs(package.dsh.versions) do
+            local m = MIRROR and MIRROR[v]
+            if m then
+                -- 架构 C：真实资源，GLOBAL/CN 双镜像 + 权威 sha256
+                t[v] = {
+                    url = {
+                        GLOBAL = ("https://github.com/xlings-res/%s/%s-%s/%s")
+                                 :format(RES_BASE, package.name, v, m.tarball),
+                        CN     = ("https://gitcode.com/xlings-res/%s/%s-%s/%s")
+                                 :format(RES_BASE, package.name, v, m.tarball),
+                    },
+                    sha256 = m.sha256,
+                }
+            else
+                t[v] = {}   -- 架构 A：空资源，由 pnpm 直连上游取
+            end
+        end
         xpm[p] = t
     end
     package.xpm = xpm
@@ -468,6 +643,7 @@ end
 
 import("xim.libxpkg.pkginfo")
 import("xim.libxpkg.system")
+import("xim.libxpkg.xvm")
 import("xim.libxpkg.log")
 
 local function profile()  return os.getenv("DSH_PROFILE") or "web" end
@@ -477,13 +653,16 @@ local function profile_manifest()
     return path.join(dsh_home(), "profiles", profile(), "package.json")
 end
 
--- 递给 pnpm 的分发坐标（§5.1 第三列）
+-- 递给 pnpm 的安装实参。C 指向 payload 里的 tarball（本地文件，
+-- 上游删库也不影响，且不触发 pnpm 的 allowBuilds 门）；A 直连上游。
 local function spec(version)
-    local e = package.dsh.versions[version]
+    if MIRROR and MIRROR[version] then
+        return path.join(pkginfo.install_dir(), MIRROR[version].tarball)
+    end
     if package.dsh.source == "npm" then
         return package.dsh.origin .. "@" .. version
     end
-    return "github:" .. package.dsh.origin .. "#" .. e.ref
+    return "github:" .. package.dsh.origin .. "#" .. package.dsh.versions[version].ref
 end
 
 -- D4：真相在 profile 的 package.json 里，不在 xim 的标记里
@@ -491,31 +670,63 @@ function installed()
     local f = io.open(profile_manifest(), "r")
     if not f then return false end
     local body = f:read("*a"); f:close()
-    return body:find(spec(pkginfo.version()), 1, true) ~= nil
+    return body:find(package.dsh.bundle_name, 1, true) ~= nil
 end
 
 function install()
-    return true      -- 无 payload；真正的取包在 config() 里由 pnpm 完成
+    if not MIRROR then
+        return true          -- 架构 A：无 payload，取包在 config() 里由 pnpm 完成
+    end
+    -- 架构 C：xlings 已把 tarball 下载并按 sha256 校验好，搬进 install_dir
+    local tgz = MIRROR[pkginfo.version()].tarball
+    os.tryrm(pkginfo.install_dir())
+    os.mkdir(pkginfo.install_dir())
+    os.mv(pkginfo.install_file(), path.join(pkginfo.install_dir(), tgz))
+    return os.isfile(path.join(pkginfo.install_dir(), tgz))   -- R4：断言产物
 end
 
 function config()
-    -- D5：构建脚本 = 代码执行，必须显式授权
-    if package.dsh.needs_build and os.getenv("DSH_ALLOW_BUILDS") ~= "1" then
-        log.error(("%s 在 git 安装时会执行自带的 prepare 构建脚本。\n"
+    -- D5：只有走 A 且带 prepare 的包，才会在用户机器上执行上游代码。
+    -- 走 C 的包构建已经在索引 CI 里完成，用户装的是 tarball，无需授权。
+    if (not MIRROR) and package.dsh.needs_build
+       and os.getenv("DSH_ALLOW_BUILDS") ~= "1" then
+        log.error(("%s 未进镜像（license: %s），只能从 git 直装，"
+               .. "而它带 prepare 构建脚本。\n"
                .. "这是在你的机器上执行该包代码的授权，且不在 agent 的沙箱内。\n"
-               .. "确认信任后用 DSH_ALLOW_BUILDS=1 重新安装。"):format(package.name))
+               .. "确认信任后用 DSH_ALLOW_BUILDS=1 重新安装。")
+               :format(package.name, package.dsh.license or "unknown"))
         return false
     end
 
-    system.exec(("dsh plugin --profile %s add %s"):format(profile(), spec(pkginfo.version())))
-    return installed()      -- R4：断言产物
+    system.exec(("dsh plugin --profile %s add %s")
+                :format(profile(), spec(pkginfo.version())))
+    if not installed() then
+        return false        -- R4：断言 profile 清单真的收下了
+    end
+
+    -- 只有 C 注册 xvm。type = "group"：这个名字不对应任何可执行文件，
+    -- 留成默认 program 类型会生成一个永远失败的 shim（openxlings/xlings#452）。
+    if MIRROR then
+        xvm.add(package.name, { type = "group" })
+    end
+    return true
 end
 
 function uninstall()
-    system.exec(("dsh plugin --profile %s remove %s"):format(profile(), package.dsh.bundle_name))
+    if MIRROR then
+        xvm.remove(package.name)
+    end
+    system.exec(("dsh plugin --profile %s remove %s")
+                :format(profile(), package.dsh.bundle_name))
     return true
 end
 ```
+
+> ⚠️ **`xvm use <plugin> <ver>` 之后 profile 不会自动跟着动。**
+> xvm 的切换是"重指路径"，而 pnpm 已经把 tarball 内容**拷贝**进了
+> `profiles/<p>/node_modules`——它不是符号链接，不会感知 xvm 的切换。
+> 所以切换动作大概率还要跟一次 `dsh plugin add <新版本 tarball>`。
+> 这条**必须实测**再定形，不能照着 glibc 的 lib 切换想当然（§13 未决 3）。
 
 > 上面是设计稿的形状，不是最终代码。落地时必须逐条过 §6.2 的沙箱约束
 > （`os.getenv` / `io.open` 在构建沙箱里可用，但 hook 运行时的可用面要单独确认；
@@ -588,6 +799,29 @@ end
 **PR 必须是人可 review 的**：一次 PR 只带一类变更（新增 / 版本跟进 / 状态变更），
 描述里带 catalog 的 diff 摘要。
 
+### 7.4 `mirror.py` — 镜像流水线（架构 C 的那一半）
+
+只对**许可证允许再分发**的包运行（D1a）。对每个 `(plugin, version)`：
+
+1. `git clone --depth 1` 到 pin 的 40 位 sha，**核对 sha 与描述符一致**；
+2. 核对仓库根有 `LICENSE` 且 SPDX 与描述符 `dsh.license` 一致——
+   **上游改许可证要能被发现**，不是一次判定终身有效；
+3. `pnpm install --frozen-lockfile` + 跑该包自己的 `prepare`（38 个包需要）——
+   **这一步就是把"在用户机器上执行上游代码"搬进索引 CI 的地方**；
+4. `pnpm pack` → `<name>-<version>.tgz`；
+5. 校验 tarball 里确实有 `package.json#dsh.bundle` 指向的 patch 文件，
+   以及 `main` 指向的产物真的存在（TS 包没构建就 pack 是最常见的坏产物）；
+6. 发布到 `xlings-res/dsh-plugins`，tag `<plugin>-<version>`，
+   **GitHub RES 与 GitCode RES 同 tag 同文件**，各带 `.sha256` sidecar；
+7. 从两侧各下载一次 + 与本地产物逐字节比对，一致才回填描述符的
+   `dsh.mirror[v] = { tarball, sha256 }`。
+
+失败的任何一步都**不回填** `mirror` 段——那个包就留在架构 A，网站上照实标注。
+这是 fail closed：宁可显示"无 CN 加速"，也不要一个指向不存在资源的版本项。
+
+> 沿用 xim-pkgindex 的 `xlings-res` 纪律（见其 `docs/contributing.md` §3）：
+> 双镜像同 tag、sidecar 齐全、三方下载比对，缺一不发。
+
 ---
 
 ## 8. 包索引网站
@@ -614,11 +848,16 @@ end
 
 | 面 | 来源 | 为什么要 |
 |---|---|---|
+| **镜像 / 直连徽标** | `dsh.mirror` 是否存在 | **用户有权知道自己装的是不是可复现的字节**，以及有没有 CN 加速 |
+| 许可证 | `dsh.license` | 徽标为什么是"直连"的解释就在这里（无 license = 不能镜像） |
 | bundle / library | `dsh.bundle` 是否存在 | library 装了不激活任何层，用户要能一眼看出 |
 | 上游仓库 + pin 的 sha | `dsh.versions[v].ref` | 可审计：装的到底是哪次提交 |
-| `needs_build` 徽标 | `dsh.needs_build` | 这是代码执行授权，必须显眼（D5） |
+| `needs_build` 徽标 | `dsh.needs_build` && 无 `mirror` | 只有"直连 + 带 prepare"才需要用户授权代码执行（D5） |
 | 目标 profile | `DSH_PROFILE` 缺省值 | 安装命令要能直接抄走 |
 | 兼容状态 | awesome-dsh-plugins 引用 | 生态里唯一在跑的兼容情报 |
+
+镜像徽标不是装饰。今天 169 个包里有 42 个（29 无 license + 13 待核）**永远装不回来**
+——上游一删就没了。把这件事藏起来，用户会以为索引给了他不存在的保证。
 
 站点触发条件和 `xim-pkgindex` 一致：`pkgs/**`、`.xpkgindex*`、`docs/**` 变更即重建。
 **注意 `fetch-depth: 0`**——xpkgindex 检测到 shallow clone 会静默跳过增长曲线、
@@ -648,7 +887,10 @@ L3/L4 **不可能全量跑**（169 个包 × 每次 pnpm 安装）。取样规�
 |---|---|---|
 | 包名劫持 | 36 个仓库占用 `@deepseek-ai/` scope（§2.5） | 索引只认 `owner/repo#sha`，绝不用裸包名安装 |
 | 上游改写历史 | force push 让 sha 指向别的代码 | pin 40 位 sha；sync 检测到已收录 sha 消失时**报警而不是静默跟进** |
-| 安装期任意代码执行 | 38 个包的 `prepare` | D5：`DSH_ALLOW_BUILDS=1` 显式授权，网站挂徽标 |
+| 安装期任意代码执行 | 38 个包的 `prepare` | 走 C 的：构建在索引 CI 完成，用户侧零授权。走 A 的：D5 `DSH_ALLOW_BUILDS=1` 显式授权 + 网站徽标 |
+| **42 个包永远装不回来** | 29 无 license + 13 待核，不能镜像 | 网站明示"直连上游"，并向作者提 issue 请补 license（§12 第三期） |
+| 上游改许可证 | 一次判定终身有效是错的 | `mirror.py` 每次跑都重新核对 SPDX（§7.4 步骤 2） |
+| 镜像与描述符不一致 | `mirror` 段有、镜像仓库没有 | CI fail closed，不静默降级成 A（§5.2） |
 | 索引静默丢 xpm | 构建脚本踩到 xmake-only 原语 | §6.2 的沙箱回归门进 CI |
 | xim 与 profile 状态漂移 | 用户手动 `dsh plugin remove` | D4：`installed()` 读 profile 清单 |
 | 上游协议再变 | 本季度已经变过两次 | 范式收敛在一份 `template.lua`，改一处即可 |
@@ -669,21 +911,31 @@ L3/L4 **不可能全量跑**（169 个包 × 每次 pnpm 安装）。取样规�
 
 ## 12. 分期实施
 
-**第一期（可用）**
-1. `pkgindex-build.lua` + `template.lua` + 沙箱 harness + build-sanity CI
-2. 手工收录 10~20 个高 star bundle，跑通 add / dump-config / remove 全链
-3. `.xpkgindex.json` + `dsh.py` + Pages 部署
-4. README：`xim --add-indexrepo dsh:https://github.com/Sunrisepeak/dsh-index.git`
+C 和 A 共用同一份 `template.lua`，分支只有 `dsh.mirror` 一个判断，
+所以**两条路线不需要分期做完再做另一条**——第一期就把两条都跑通，
+只是收录的包少。
 
-**第二期（自动）**
-5. `discover.py` + `catalog.json`（R1 总账）
-6. `sync.py` + 定时 PR workflow
-7. L3/L4 抽样安装测试进 CI
+**第一期（两条路线各跑通一个包）**
+1. `pkgindex-build.lua` + `template.lua` + 沙箱 harness + build-sanity CI
+2. 手工收录 2 个包：一个 MIT（走 C，含镜像发布）、一个无 license（走 A），
+   两条路径的 add / dump-config / remove 全链都实测
+3. 建 `xlings-res/dsh-plugins` 镜像仓库 + `mirror.py` 最小实现
+4. `.xpkgindex.json` + `dsh.py`（含镜像/直连徽标）+ Pages 部署
+5. README：`xim --add-indexrepo dsh:https://github.com/Sunrisepeak/dsh-index.git`
+6. **实测未决 1~3**（见 §13），把结论写回本文档
+
+**第二期（自动化 + 扩量）**
+7. `discover.py` + `catalog.json`（R1 总账，双源并集，repo id 检测 move）
+8. `mirror.py` 全量跑一遍 127 个可镜像包
+9. `sync.py` + 定时 PR workflow
+10. L3/L4 抽样安装测试进 CI
 
 **第三期（加固）**
-8. 架构 C：对高频 / 已发 npm 的包做 tarball 镜像（离线 + 免 build 授权）
-9. 向 `openxlings/xlings` 提 PR，把 `dsh` 加进 `xim-indexrepos.lua` 成为一等索引
-10. aarch64：推动 `xim:pnpm` 补 arm64 资产
+11. NOASSERTION 那 13 个逐个人工判读，能镜像的转 C
+12. 向 `openxlings/xlings` 提 PR，把 `dsh` 加进 `xim-indexrepos.lua` 成为一等索引
+13. aarch64：推动 `xim:pnpm` 补 arm64 资产
+14. 向无 license 的 29 个包的作者提 issue，请其补许可证——
+    **这是把 A 转成 C 唯一的正路**，比任何技术手段都有效
 
 ---
 
@@ -694,8 +946,20 @@ L3/L4 **不可能全量跑**（169 个包 × 每次 pnpm 安装）。取样规�
 2. **`system.exec` 在 hook 里调 `dsh`**：`dsh` 是同一次安装里刚由 `xim:dsh` 装的，
    config() 期它是否已在 PATH 上、还是要从 payload 解析（R6：内部消费者绑 payload
    而不是 view），需要实测确认。
-3. **`os.getenv` 在 hook runtime 的可用性**：`DSH_PROFILE` / `DSH_HOME` / `DSH_ALLOW_BUILDS`
+   > 参考 `xim:dsh` 自己的解法（xim-pkgindex#618）：它用
+   > `pkginfo.dep_install_dir("xim:node")` 拿到 node payload 再 exec，
+   > 本索引很可能要照抄这个形状去拿 `xim:dsh` 的 payload。
+3. **`xvm use <plugin> <ver>` 之后 profile 到底跟不跟**：pnpm 把 tarball 内容
+   **拷贝**进 `node_modules`（不是符号链接），所以 xvm 重指路径很可能不被感知，
+   切换动作还要跟一次 `dsh plugin add`。**必须实测**，不能照 glibc 的 lib 切换类推。
+   如果实测证明 xvm 在这里做不出真正的切换，那 `xvm.add` 就只剩"版本记账"价值，
+   要么保留并说明，要么去掉——不能留一个看起来能切、实际不切的东西。
+4. **`os.getenv` 在 hook runtime 的可用性**：`DSH_PROFILE` / `DSH_HOME` / `DSH_ALLOW_BUILDS`
    三个读取点都依赖它，落地前必须实测（xpkg-creater skill 已记录多个"hook runtime
    里没绑定的东西会静默毁掉安装"的先例）。
-4. **169 个包全量收录还是精选**：全量意味着网站上 40% 是没人用的空壳。
-   建议 catalog 全量（R1），`pkgs/` 收录设 star / 兼容性门槛，门槛写进 `sync.py` 且可调。
+5. **收录门槛**：catalog 全量记账（R1），`pkgs/` 收录设门槛。
+   许可证门（D1a）已经天然筛掉一批；是否再叠 star / 兼容性门槛待定。
+   注意长尾很集中——`omdsh-dev` 一家占 51 个仓库，无门槛全收等于让一个作者
+   占据网站四分之一。
+6. **上游要求下架怎么办**：C 让本索引成为再分发方，需要一条明确的 takedown 流程
+   （删 tag → 描述符退回 A → 网站徽标翻转），并写进 README。
