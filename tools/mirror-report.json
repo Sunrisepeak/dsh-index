@@ -1,10 +1,10 @@
 [
   {
     "pkg": "7d7d",
-    "status": "dry-run",
+    "status": "published",
     "license": "MIT",
     "patched": true,
-    "cn": false
+    "cn": true
   },
   {
     "pkg": "deepseek-manners",
@@ -18,17 +18,17 @@
   },
   {
     "pkg": "dsh-101",
-    "status": "dry-run",
+    "status": "published",
     "license": "BSD-3-Clause",
     "patched": true,
-    "cn": false
+    "cn": true
   },
   {
     "pkg": "dsh-acp-for-bitfun",
-    "status": "dry-run",
+    "status": "published",
     "license": "MIT",
     "patched": true,
-    "cn": false
+    "cn": true
   },
   {
     "pkg": "dsh-ads",
@@ -37,8 +37,10 @@
   },
   {
     "pkg": "dsh-advisor",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-agent-budget",
@@ -52,48 +54,63 @@
   },
   {
     "pkg": "dsh-all-search",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "REFUSED: dsh-all-search: main 'dist/index.js' missing from the tarball (a TypeScript package packed without building)"
   },
   {
     "pkg": "dsh-annotation",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-at-file",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-atuin",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "REFUSED: dsh-atuin: main 'dist/index.js' missing from the tarball (a TypeScript package packed without building)"
   },
   {
     "pkg": "dsh-auto-chess",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-automation",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-batch-regression",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-better-browser",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-bisect-debug",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-blue-whale-maid",
@@ -102,13 +119,16 @@
   },
   {
     "pkg": "dsh-book2skill",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-browser-control",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-cc-tui",
@@ -117,68 +137,88 @@
   },
   {
     "pkg": "dsh-chat-import",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-cloudflare-browser-run",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-code-check",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-computer-use",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'pack', '--pack-destination', '/tmp/mirror-dsh-computer-use-5okkln1c']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-context-doctor",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-conversation-share",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-custom-css",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "REFUSED: dsh-custom-css: main 'lib/index.js' missing from the tarball (a TypeScript package packed without building)"
   },
   {
     "pkg": "dsh-custom-tool",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-daily-fortune",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-daily-progress",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "REFUSED: dsh-daily-progress: main 'lib/index.js' missing from the tarball (a TypeScript package packed without building)"
   },
   {
     "pkg": "dsh-data-agent",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-deep-research",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-deeplink",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-deepresearch",
@@ -187,8 +227,9 @@
   },
   {
     "pkg": "dsh-deepseek-balance",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'pack', '--pack-destination', '/tmp/mirror-dsh-deepseek-balance-gw5qr7g1']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-diff-viewer",
@@ -197,23 +238,30 @@
   },
   {
     "pkg": "dsh-douyin",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-drag-and-drop",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-emoji",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-ernie-image",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-evolve",
@@ -222,8 +270,10 @@
   },
   {
     "pkg": "dsh-explain",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-focus-chat",
@@ -232,18 +282,24 @@
   },
   {
     "pkg": "dsh-fun-typewriter",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-fun-weather",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-genui",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-git-identity",
@@ -252,13 +308,15 @@
   },
   {
     "pkg": "dsh-gomoku",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-hub",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-humanize",
@@ -267,23 +325,30 @@
   },
   {
     "pkg": "dsh-inspect",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-interconnect",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "REFUSED: dsh-interconnect: main 'lib/index.js' missing from the tarball (a TypeScript package packed without building)"
   },
   {
     "pkg": "dsh-kb-sieve",
-    "status": "skipped-limit",
-    "license": "Apache-2.0"
+    "status": "published",
+    "license": "Apache-2.0",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-llm-fallbacks",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-local-filetree",
@@ -292,18 +357,23 @@
   },
   {
     "pkg": "dsh-longbridge",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-loop",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-mac-desktop",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-message-edit",
@@ -312,33 +382,41 @@
   },
   {
     "pkg": "dsh-minigames",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-mnemon",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "REFUSED: dsh-mnemon: upstream license is now 'MIT', descriptor says 'BSD-3-Clause' -- a mirror decision is not valid forever"
   },
   {
     "pkg": "dsh-mobile-control",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-mobile",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "REFUSED: dsh-mobile: main 'lib/index.js' missing from the tarball (a TypeScript package packed without building)"
   },
   {
     "pkg": "dsh-navbar",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-nocturne-memory",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-notebooks",
@@ -347,38 +425,49 @@
   },
   {
     "pkg": "dsh-notification",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-open-in-vscode",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-openai-codex-auth",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-openapi",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-openmaic",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-openpencil",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "REFUSED: dsh-openpencil: main 'lib/index.js' missing from the tarball (a TypeScript package packed without building)"
   },
   {
     "pkg": "dsh-paddle-ocr",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-payload-capture",
@@ -387,13 +476,17 @@
   },
   {
     "pkg": "dsh-pet-corner",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-plannotator",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-plugin-aigc-canvas",
@@ -417,18 +510,23 @@
   },
   {
     "pkg": "dsh-plugin-check",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-plugin-claude-bridge",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-plugin-codex-bridge",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-plugin-d399",
@@ -447,13 +545,17 @@
   },
   {
     "pkg": "dsh-plugin-opencode-bridge",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-plugin-pi-bridge",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-plugin-sleep",
@@ -477,33 +579,43 @@
   },
   {
     "pkg": "dsh-port-guard",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-prompt-studio",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-record-replay",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'pack', '--pack-destination', '/tmp/mirror-dsh-record-replay-xfemnyzp']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-resume-plugin",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-revive",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'pack', '--pack-destination', '/tmp/mirror-dsh-revive-tdk6j3dy']' returned non-zero exit status 2."
   },
   {
     "pkg": "dsh-scholar",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-scout",
@@ -512,23 +624,28 @@
   },
   {
     "pkg": "dsh-screenshot-diff",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-security-audit",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-sentinel",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "subprocess.CalledProcessError: Command '['/home/speak/.xlings/data/xpkgs/xim-x-python/3.13.12/bin/python3', '/home/speak/workspace/github/xim-pkgindex/tools/gtc', 'release', 'publish', 'xlings-res/dsh"
   },
   {
     "pkg": "dsh-session-health",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-session-notification",
@@ -537,43 +654,57 @@
   },
   {
     "pkg": "dsh-share",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-side-panel",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-sidechain",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "REFUSED: dsh-sidechain: main 'lib/index.js' missing from the tarball (a TypeScript package packed without building)"
   },
   {
     "pkg": "dsh-split-panes",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-spotlight",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-stickers",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-sticky-disclosure",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-stock-market",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-super-injector",
@@ -582,143 +713,181 @@
   },
   {
     "pkg": "dsh-task-status",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-tianshu-tui",
-    "status": "skipped-limit",
-    "license": "Apache-2.0"
+    "status": "published",
+    "license": "Apache-2.0",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-tool-approval",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-tool-calculator",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-tool-csv",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-tool-diff",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-tool-encoding",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-tool-json",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-tool-markdown",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-tool-monitor",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-tool-policy",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-tool-regex",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-tool-schema",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-tool-search",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-tool-stat",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-tool-time",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-toolbelt",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-toolkit",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-tps",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-trace",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-track",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-translator",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-tui",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-turn-navigator",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-turn-rewind",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-undo",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-vision-proxy",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-vision-toolkit",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-visualize",
@@ -727,8 +896,9 @@
   },
   {
     "pkg": "dsh-voice-funasr",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'pack', '--pack-destination', '/tmp/mirror-dsh-voice-funasr-2h03a3mt']' returned non-zero exit status 1."
   },
   {
     "pkg": "dsh-web-archive",
@@ -737,23 +907,29 @@
   },
   {
     "pkg": "dsh-web-ui-notify",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "subprocess.CalledProcessError: Command '['git', 'checkout', '--quiet', 'bd8eeb5c1a69df190fa10de253948e36e9679c44']' returned non-zero exit status 128."
   },
   {
     "pkg": "dsh-webbridge",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "dsh-workflow",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'pack', '--pack-destination', '/tmp/mirror-dsh-workflow-b04erdh_']' returned non-zero exit status 2."
   },
   {
     "pkg": "ex-setting",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "fabric",
@@ -762,18 +938,23 @@
   },
   {
     "pkg": "jumpserver-dsh",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "matlab-modelsim-vivado-plugin",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "REFUSED: matlab-modelsim-vivado-plugin: main 'lib/index.js' missing from the tarball (a TypeScript package packed without building)"
   },
   {
     "pkg": "modlens",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "nowledge-mem-deepseek-harness",
@@ -782,23 +963,30 @@
   },
   {
     "pkg": "oh-dsh-desktop",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "REFUSED: oh-dsh-desktop: bundle patch 'dist/cordis.patch.yml' is not in the tarball -- the layer would be unresolvable"
   },
   {
     "pkg": "omdsh-runtime",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "openflowframes",
-    "status": "skipped-limit",
-    "license": "GPL-3.0"
+    "status": "published",
+    "license": "GPL-3.0",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "plugin-template",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "qwen-mm-plugins",
@@ -822,8 +1010,10 @@
   },
   {
     "pkg": "session-teleport",
-    "status": "skipped-limit",
-    "license": "BSD-3-Clause"
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
   },
   {
     "pkg": "telegram",
@@ -842,7 +1032,8 @@
   },
   {
     "pkg": "whale-girl",
-    "status": "skipped-limit",
-    "license": "MIT"
+    "status": "refused",
+    "license": "MIT",
+    "why": "REFUSED: whale-girl: main 'dsh-plugin/index.mjs' missing from the tarball (a TypeScript package packed without building)"
   }
 ]

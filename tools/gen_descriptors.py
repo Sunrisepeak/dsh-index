@@ -22,7 +22,8 @@ import pathlib
 import re
 import sys
 
-sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+ROOT_TOOLS = pathlib.Path(__file__).resolve().parent
+sys.path.insert(0, str(ROOT_TOOLS))
 from classify import classify  # noqa: E402
 
 MIRRORABLE = {"MIT", "BSD-3-Clause", "Apache-2.0", "GPL-3.0"}
@@ -78,6 +79,14 @@ def main() -> int:
             parts = line.rstrip("\n").split("\t")
             topics[parts[0]] = parts[1].split(",") if len(parts) > 1 and parts[1] else []
 
+    # tools/excluded.json is what makes a removal survive a regenerate. Without
+    # it, deleting a descriptor is undone by the next run of this script -- the
+    # exclusion has to be data, with the reason attached, not an act.
+    excluded = {}
+    ex_path = ROOT_TOOLS / "excluded.json"
+    if ex_path.is_file():
+        excluded = json.loads(ex_path.read_text(encoding="utf-8"))
+
     out = pathlib.Path("pkgs")
     written, skipped, names = 0, [], {}
 
@@ -96,6 +105,10 @@ def main() -> int:
             continue
 
         name = index_name(repo, r["pkg"])
+        if name in excluded:
+            why = "; ".join(x["kind"] for x in excluded[name]["reasons"])
+            skipped.append((repo, f"excluded ({why})"))
+            continue
         if BAD_NAME.search(name):
             skipped.append((repo, f"unusable index name {name!r}"))
             continue

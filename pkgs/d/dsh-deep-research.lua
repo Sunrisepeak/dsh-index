@@ -22,6 +22,8 @@ package = {
 
         needs_build = false,
 
+        -- Published by tools/mirror.py to GitHub and GitCode, verified
+        -- three ways: local build, GLOBAL and CN all hash the same.
         mirror = {
             ["0.1.0"] = {
                 tarball = "dsh-deep-research-0.1.0.tgz",

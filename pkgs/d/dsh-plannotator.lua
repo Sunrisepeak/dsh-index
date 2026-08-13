@@ -22,7 +22,14 @@ package = {
 
         needs_build = false,
 
-        -- Mirror-eligible. The `mirror` block is filled in by the
-        -- mirror pipeline once a tarball is published to xlings-res.
+        -- Published by tools/mirror.py to GitHub and GitCode, verified
+        -- three ways: local build, GLOBAL and CN all hash the same.
+        mirror = {
+            ["0.1.3"] = {
+                tarball = "dsh-plannotator-0.1.3.tgz",
+                sha256  = "828ac6f03ae5b5afc2b7d597c5164e11fb6fdfcf3c926a90f62bdf287e00d75c",
+                cn      = true,
+            },
+        },
     },
 }

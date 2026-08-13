@@ -22,6 +22,8 @@ package = {
 
         needs_build = false,
 
+        -- Published by tools/mirror.py to GitHub and GitCode, verified
+        -- three ways: local build, GLOBAL and CN all hash the same.
         mirror = {
             ["0.1.1"] = {
                 tarball = "dsh-custom-tool-0.1.1.tgz",

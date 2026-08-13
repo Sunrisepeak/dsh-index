@@ -22,7 +22,8 @@ package = {
 
         needs_build = false,
 
-        -- Published by tools/mirror.py to both mirrors and verified three ways.
+        -- Published by tools/mirror.py to GitHub and GitCode, verified
+        -- three ways: local build, GLOBAL and CN all hash the same.
         mirror = {
             ["0.1.6"] = {
                 tarball = "dsh-cc-tui-0.1.6.tgz",

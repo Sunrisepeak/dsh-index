@@ -22,7 +22,14 @@ package = {
 
         needs_build = true,
 
-        -- Mirror-eligible. The `mirror` block is filled in by the
-        -- mirror pipeline once a tarball is published to xlings-res.
+        -- Published by tools/mirror.py to GitHub and GitCode, verified
+        -- three ways: local build, GLOBAL and CN all hash the same.
+        mirror = {
+            ["0.1.0"] = {
+                tarball = "dsh-plugin-opencode-bridge-0.1.0.tgz",
+                sha256  = "5549e915398d29197667258b3504bd635050592dd97ead933bcd3c70bf8318d6",
+                cn      = true,
+            },
+        },
     },
 }

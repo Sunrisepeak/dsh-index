@@ -22,7 +22,14 @@ package = {
 
         needs_build = false,
 
-        -- Mirror-eligible. The `mirror` block is filled in by the
-        -- mirror pipeline once a tarball is published to xlings-res.
+        -- Published by tools/mirror.py to GitHub and GitCode, verified
+        -- three ways: local build, GLOBAL and CN all hash the same.
+        mirror = {
+            ["0.4.0"] = {
+                tarball = "dsh-prompt-studio-0.4.0.tgz",
+                sha256  = "9f43b899950a28976718cba0d01b00bc29d657165eae82acc4ccf8818ec895f8",
+                cn      = true,
+            },
+        },
     },
 }

@@ -255,17 +255,26 @@ class TestProfileResolution:
     exactly where an unverified name turns into dead code."""
 
     @pytest.mark.static
-    def test_reads_a_variable_xlings_actually_exports(self):
-        """An earlier version read `XLINGS_SUBOS`, which xlings does not set.
+    def test_subos_comes_from_the_api_not_the_environment(self):
+        """An earlier version read `XLINGS_SUBOS`, which xlings does not set --
+        the branch was dead code while the docs claimed it worked.
 
-        The branch never fired, so every install silently landed in "web"
-        while the docs claimed it followed the subos. The variables xlings
-        exports are XLINGS_SUBOS_LIB, XLINGS_BIN, XLINGS_HOME, XLINGS_SHIM_DEPTH.
+        The fix is not a better variable name: libxpkg answers this directly
+        with system.subos_sysrootdir(), so no XLINGS_* variable should be read
+        at all. An answer from the toolchain beats one inferred from whatever
+        happens to be exported into the shell.
         """
         t = (ROOT / "template.lua").read_text(encoding="utf-8")
-        assert 'os.getenv("XLINGS_SUBOS")' not in t, \
-            "XLINGS_SUBOS does not exist; derive the name from XLINGS_SUBOS_LIB"
-        assert 'os.getenv("XLINGS_SUBOS_LIB")' in t
+        assert "XLINGS_" not in t.replace("XLINGS_SUBOS`", "").replace(
+            "XLINGS_SUBOS_LIB", ""), "no XLINGS_* env var should be read"
+        assert "system.subos_sysrootdir" in t
+
+    @pytest.mark.static
+    def test_new_libxpkg_modules_are_feature_detected(self):
+        """`if system.x then` is true on every client whether or not the
+        function exists -- the spec calls this out explicitly."""
+        t = (ROOT / "template.lua").read_text(encoding="utf-8")
+        assert 'type(system.subos_sysrootdir) ~= "function"' in t
 
     @pytest.mark.static
     def test_current_symlink_is_not_used_as_a_profile_name(self):

@@ -22,7 +22,14 @@ package = {
 
         needs_build = true,
 
-        -- Mirror-eligible. The `mirror` block is filled in by the
-        -- mirror pipeline once a tarball is published to xlings-res.
+        -- Published by tools/mirror.py to GitHub and GitCode, verified
+        -- three ways: local build, GLOBAL and CN all hash the same.
+        mirror = {
+            ["0.1.0"] = {
+                tarball = "dsh-plugin-claude-bridge-0.1.0.tgz",
+                sha256  = "492d782c4a4b24cbf067fba8271e8e9e724e04e9d837ffc5daabbc619d55a0e0",
+                cn      = true,
+            },
+        },
     },
 }

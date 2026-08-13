@@ -7,27 +7,95 @@ An [xlings](https://github.com/openxlings/xlings) package index for the
 
 ## Install
 
+**Install via xlings** (recommended)
+
 ```bash
 xlings install dsh -y
 xlings config --index-repo dsh:https://github.com/Sunrisepeak/dsh-index.git
 xlings install dsh:dsh-cc-tui -y
 ```
 
-`dsh-cc-tui` is a *surface* plugin (a TUI), so it gets a profile of its own
-and prints how to start it:
+<details>
+<summary>Don't have xlings yet? Click for the install command</summary>
+
+**Linux / macOS**
+```bash
+curl -fsSL https://d2learn.org/xlings-install.sh | bash
+```
+
+**Windows — PowerShell**
+```powershell
+irm https://d2learn.org/xlings-install.ps1.txt | iex
+```
+
+> More about xlings → [xlings.d2learn.org](https://xlings.d2learn.org)
+
+</details>
+
+<details>
+<summary>All the commands you need — install, switch, remove</summary>
+
+```bash
+# add this index (namespace: dsh)
+xlings config --index-repo dsh:https://github.com/Sunrisepeak/dsh-index.git
+
+# search and inspect
+xlings search dsh:tui
+xlings list dsh:dsh-cc-tui
+
+# install
+xlings install dsh:dsh-cc-tui -y            # latest
+xlings install dsh:dsh-cc-tui@0.1.6 -y      # a specific version
+
+# choose the profile it lands in
+DSH_PROFILE=work xlings install dsh:dsh-at-file -y
+
+# a plugin that ships a build script AND is not mirrored needs this,
+# because installing it runs upstream code on your machine
+DSH_ALLOW_BUILDS=1 xlings install dsh:<plugin> -y
+
+# switch versions per subos
+xlings use dsh-cc-tui 0.1.6
+
+# remove — takes the plugin out of the profile too
+xlings remove dsh:dsh-cc-tui -y
+```
+
+</details>
+
+<details>
+<summary>Where did my plugin go? (and how to launch it)</summary>
+
+Installing prints the answer, but the rule is:
+
+| Plugin kind | Profile | Launch |
+| --- | --- | --- |
+| surface (`tui`, `desktop`) | named after the plugin | `dsh --profile <plugin>` |
+| additive (tools, skills, …) | your current subos | `dsh --profile <subos>` |
+| anything, with `DSH_PROFILE` set | that value | `dsh --profile <value>` |
+
+A surface defines a runnable app and overrides base rows, so two of them in one
+profile fight over the same rows — hence its own. Additive plugins share, so one
+composition can hold several.
+
+```bash
+# what is actually installed, and in what order the layers apply
+cat ~/.dsh/profiles/<profile>/package.json
+dsh --profile <profile> --dump-config | grep '^# == '
+```
+
+</details>
+
+`dsh-cc-tui` is a *surface* plugin (a TUI), so it lands in a profile of its own
+and the installer prints how to start it:
 
 ```bash
 dsh --profile dsh-cc-tui
 ```
 
-Additive plugins — tools, skills — share the profile named after your current
-subos instead, so one composition can hold several. `DSH_PROFILE` overrides
-either.
-
-
-pnpm comes in as a dependency of `dsh` — `dsh plugin` is a pnpm forwarder and
-upstream states that profile installation needs pnpm on `PATH`, so it belongs
-in the package that needs it rather than in every install command.
+pnpm arrives as a dependency of `dsh` — `dsh plugin` is a pnpm forwarder and
+upstream requires pnpm on `PATH`, so it belongs in the package that needs it
+rather than in every install command.
 
 Browse everything at **<https://sunrisepeak.github.io/dsh-index>**.
 

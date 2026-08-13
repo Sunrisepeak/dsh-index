@@ -22,7 +22,14 @@ package = {
 
         needs_build = false,
 
-        -- Mirror-eligible. The `mirror` block is filled in by the
-        -- mirror pipeline once a tarball is published to xlings-res.
+        -- Published by tools/mirror.py to GitHub and GitCode, verified
+        -- three ways: local build, GLOBAL and CN all hash the same.
+        mirror = {
+            ["0.3.6"] = {
+                tarball = "dsh-better-browser-0.3.6.tgz",
+                sha256  = "035080c25a50b698227882cbb66e7ecd5b8c1fd0473f34c41b2e0a399e2ad0d2",
+                cn      = true,
+            },
+        },
     },
 }

@@ -22,7 +22,14 @@ package = {
 
         needs_build = false,
 
-        -- Mirror-eligible. The `mirror` block is filled in by the
-        -- mirror pipeline once a tarball is published to xlings-res.
+        -- Published by tools/mirror.py to GitHub and GitCode, verified
+        -- three ways: local build, GLOBAL and CN all hash the same.
+        mirror = {
+            ["0.1.0"] = {
+                tarball = "openflowframes-0.1.0.tgz",
+                sha256  = "19b14859142d998f85e07751b74711de3765e30efe18abb1baee1616ff3921e0",
+                cn      = true,
+            },
+        },
     },
 }

@@ -88,22 +88,28 @@ import("xim.libxpkg.system")
 import("xim.libxpkg.xvm")
 import("xim.libxpkg.log")
 
--- The profile follows the current subos, so entering a different subos gives a
--- different plugin set -- the same axis `xvm use` switches on. Explicit
--- DSH_PROFILE wins; "web" is the last resort because that is what upstream's
--- own `dsh web` boots.
+-- Which profile a plugin lands in, in one predictable rule.
 --
--- The subos name is read out of XLINGS_SUBOS_LIB, which is
--- `<home>/subos/<name>/lib`. There is no XLINGS_SUBOS variable -- an earlier
--- version of this file read one, which meant the whole subos branch was dead
--- code and every install silently landed in "web". Measured: the variables
--- xlings actually exports are XLINGS_SUBOS_LIB, XLINGS_BIN, XLINGS_HOME and
--- XLINGS_SHIM_DEPTH.
--- A *surface* plugin defines a runnable app: it overrides base rows rather
--- than adding to them, and upstream's own docs give it a profile of its own
--- (dsh-cc-tui's README says `dsh --profile cc-tui`). Composing two surfaces
--- into one profile means two things fighting over the same rows, so surfaces
--- default to their own profile and additive plugins share the subos one.
+-- 1. DSH_PROFILE, if set. One variable, user-facing, documented.
+-- 2. A *surface* plugin gets a profile named after itself. A surface defines a
+--    runnable app -- it overrides base rows rather than adding to them -- and
+--    upstream's own docs give it its own profile (dsh-cc-tui's README says
+--    `dsh --profile cc-tui`). Two surfaces in one profile fight over the same
+--    rows.
+-- 3. Otherwise the current subos, so a plugin set travels with the environment
+--    it was installed into -- the same axis `xlings use` switches on.
+-- 4. "web" if that cannot be determined, which is what `dsh web` boots.
+--
+-- Step 3 reads a libxpkg API, NOT an environment variable. The first attempt
+-- read `XLINGS_SUBOS`, which xlings does not set, so the branch was dead code
+-- while the docs claimed it worked. `system.subos_sysrootdir()` returns
+-- `<home>/subos/<name>`, so the name is its last component -- an answer from
+-- the toolchain rather than one inferred from whatever happens to be exported
+-- into the shell.
+--
+-- Whatever it resolves to is printed at the end of config() with the launch
+-- command, because an unpredictable profile is only a problem if the user has
+-- to guess it.
 local function is_surface()
     for _, c in ipairs(package.categories or {}) do
         if c == "tui" or c == "desktop" then return true end
@@ -111,22 +117,24 @@ local function is_surface()
     return false
 end
 
+local function subos_name()
+    -- Feature-detected: it arrives as a module, and `if system.x then` is true
+    -- on every client whether or not the function exists.
+    if type(system.subos_sysrootdir) ~= "function" then return nil end
+    local ok, dir = pcall(system.subos_sysrootdir)
+    if not ok or type(dir) ~= "string" or dir == "" then return nil end
+    local name = path.filename(dir)
+    -- `current` is a symlink to the active subos; a profile named after it
+    -- would follow the symlink instead of staying with its environment.
+    if name == "" or name == "current" then return nil end
+    return name
+end
+
 local function profile()
     local p = os.getenv("DSH_PROFILE")
     if p and p ~= "" then return p end
-
     if is_surface() then return package.name end
-
-    local lib = os.getenv("XLINGS_SUBOS_LIB")
-    if lib and lib ~= "" then
-        -- <...>/subos/<name>/lib  ->  <name>
-        local name = lib:match("([^/\\]+)[/\\]lib[/\\]?$")
-        -- `current` is a symlink to whichever subos is active; naming a
-        -- profile after it would make the profile follow the symlink instead
-        -- of staying put.
-        if name and name ~= "" and name ~= "current" then return name end
-    end
-    return "web"
+    return subos_name() or "web"
 end
 
 local function dsh_home()
@@ -190,7 +198,7 @@ function config()
                .. "machine at install time, outside any agent sandbox.\n"
                .. "If you trust it, reinstall with DSH_ALLOW_BUILDS=1.")
                :format(package.name,
-                       (package.licenses and package.licenses[1]) or "none declared"))
+                       (package.licenses and package.licenses[1]) or "unknown"))
         return false
     end
 
