@@ -1,0 +1,164 @@
+{
+  "site": {
+    "title": {
+      "en": "dsh plugin index",
+      "zh": "dsh 插件索引",
+      "zh-Hant": "dsh 外掛索引"
+    },
+    "description": {
+      "en": "xlings package index for the DeepSeek Harness plugin ecosystem",
+      "zh": "DeepSeek Harness 插件生态的 xlings 包索引",
+      "zh-Hant": "DeepSeek Harness 外掛生態的 xlings 套件索引"
+    },
+    "logo": "dsh index"
+  },
+  "links": {
+    "github": "https://github.com/Sunrisepeak/dsh-index",
+    "docs": "https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/user/index.md",
+    "forum": "https://forum.d2learn.org",
+    "custom": [
+      {
+        "label": "DeepSeek Harness",
+        "url": "https://github.com/deepseek-ai/deepseek-harness"
+      },
+      {
+        "label": "dsh-plugin topic",
+        "url": "https://github.com/topics/dsh-plugin"
+      },
+      {
+        "label": "xim-pkgindex",
+        "url": "https://github.com/openxlings/xim-pkgindex"
+      }
+    ]
+  },
+  "about": {
+    "project_name": "dsh-index",
+    "project_url": "https://github.com/Sunrisepeak/dsh-index",
+    "description": {
+      "en": "Every plugin here is a DeepSeek Harness profile bundle, installed through xlings and composed by dsh itself",
+      "zh": "这里的每个插件都是 DeepSeek Harness 的 profile bundle，由 xlings 安装、由 dsh 自己组合",
+      "zh-Hant": "這裡的每個外掛都是 DeepSeek Harness 的 profile bundle，由 xlings 安裝、由 dsh 自己組合"
+    },
+    "maintainers": [
+      "Sunrisepeak"
+    ],
+    "license": "Apache-2.0"
+  },
+  "theme": {
+    "accent": "#4d6bfe",
+    "style": "auto",
+    "tones": {
+      "module": "#4d6bfe",
+      "header": "#1e232c",
+      "tool": "#3a65c2",
+      "neutral": "#8691a1"
+    },
+    "dark": {
+      "accent": "#679efe",
+      "tones": {
+        "module": "#679efe",
+        "header": "#e6e8ea",
+        "tool": "#73a3d2",
+        "neutral": "#81858c"
+      }
+    }
+  },
+  "pkgs_dir": "pkgs",
+  "list": {
+    "variant": "card"
+  },
+  "base_url": "https://sunrisepeak.github.io/dsh-index",
+  "languages": [
+    "en",
+    "zh",
+    "zh-Hant"
+  ],
+  "install_command_template": "xlings install dsh:{ref}",
+  "install": {
+    "label": {
+      "en": "Set up",
+      "zh": "准备环境",
+      "zh-Hant": "準備環境"
+    },
+    "os": [
+      {
+        "id": "unix",
+        "os": "Linux / macOS",
+        "command": "curl -fsSL https://d2learn.org/xlings-install.sh | bash"
+      },
+      {
+        "id": "windows",
+        "os": "Windows · PowerShell",
+        "command": "irm https://d2learn.org/xlings-install.ps1.txt | iex"
+      }
+    ]
+  },
+  "plugins": [
+    ".xpkgindex/plugins/dsh.py"
+  ],
+  "docs": {
+    "entries": [
+      {
+        "slug": "quick-start",
+        "title": {
+          "en": "Quick start",
+          "zh": "快速开始",
+          "zh-Hant": "快速開始"
+        },
+        "path": "README.md",
+        "translations": {
+          "zh": "README.zh.md"
+        }
+      },
+      {
+        "slug": "contributing",
+        "title": {
+          "en": "Adding a plugin",
+          "zh": "新增一个插件",
+          "zh-Hant": "新增一個外掛"
+        },
+        "path": "docs/contributing.md"
+      }
+    ],
+    "landing": "quick-start",
+    "cta": {
+      "eyebrow": {
+        "en": "New here?",
+        "zh": "第一次来?",
+        "zh-Hant": "第一次來?"
+      },
+      "title": {
+        "en": "Quick start",
+        "zh": "快速开始",
+        "zh-Hant": "快速開始"
+      },
+      "description": {
+        "en": "Install dsh, add this index, then install your first plugin.",
+        "zh": "装好 dsh，添加这个索引，然后装第一个插件。",
+        "zh-Hant": "裝好 dsh，加入這個索引，然後裝第一個外掛。"
+      },
+      "lines": [
+        "xlings install dsh pnpm -y",
+        "xim --add-indexrepo dsh:https://github.com/Sunrisepeak/dsh-index.git",
+        "xlings install dsh:dsh-cc-tui -y"
+      ],
+      "action": {
+        "en": "Read the guide",
+        "zh": "查看指南",
+        "zh-Hant": "查看指南"
+      }
+    }
+  },
+  "ecosystem": {
+    "owners": [
+      "Sunrisepeak",
+      "openxlings",
+      "deepseek-ai"
+    ],
+    "repos": [
+      "deepseek-ai/deepseek-harness",
+      "openxlings/xlings",
+      "Sunrisepeak/dsh-index"
+    ]
+  }
+}
