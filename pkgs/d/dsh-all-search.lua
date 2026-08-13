@@ -1,0 +1,28 @@
+package = {
+    spec = "1",
+
+    name = "dsh-all-search",
+    description = "dsh search: AnySearch web search provider for DeepSeek Harness (ctx.web)",
+    repo = "https://github.com/RealAlexandreAI/dsh-all-search",
+    homepage = "https://github.com/RealAlexandreAI/dsh-all-search",
+    licenses = {"MIT"},
+    authors = {"RealAlexandreAI"},
+
+    status = "dev",
+    categories = {"dsh-plugin", "tools", "provider"},
+    keywords = {"dsh", "all", "search"},
+
+    dsh = {
+        bundle_name = "dsh-all-search",
+
+        versions = {
+            ["0.1.1"] = { commit = "2caa5a336e45d5d9033b7607ce6ae92a94064e6a" },
+        },
+        latest = "0.1.1",
+
+        needs_build = false,
+
+        -- Mirror-eligible. The `mirror` block is filled in by the
+        -- mirror pipeline once a tarball is published to xlings-res.
+    },
+}

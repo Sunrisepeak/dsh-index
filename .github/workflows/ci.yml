@@ -1,0 +1,71 @@
+# Descriptor contract + the index-build regression gate.
+#
+# The sandbox job is the important one. xlings >= 0.4.52 runs
+# pkgindex-build.lua in libxpkg's MINIMAL plain-Lua sandbox, not xmake. An
+# xmake-only construct (cprintf / try / raise / os.getwinsize) is nil there,
+# install() dies, the caller swallows the error, and the built index silently
+# loses every xpm section -- `xlings install dsh:<pkg>` then breaks for every
+# user on the artifact path. It cannot be caught by any other check here.
+name: ci
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  sandbox:
+    name: index-build sandbox
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lua 5.4
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq lua5.4
+      - name: Run pkgindex-build.lua under the libxpkg plain-Lua sandbox
+        run: lua5.4 tests/libxpkg_sandbox_harness.lua .
+      - name: Descriptors must be restorable after the build
+        # The harness appends template.lua in place. If a descriptor were
+        # committed with the template already appended, the index would carry
+        # two copies of every hook -- so assert the tree is dirty in exactly
+        # the way an append explains, then restore.
+        run: |
+          git diff --quiet -- pkgs/ && {
+            echo "::error::template was not appended to any descriptor"; exit 1; }
+          git checkout -- pkgs/
+          git diff --exit-code -- pkgs/
+
+  descriptors:
+    name: descriptor contract
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install pytest
+      - name: Static schema and policy
+        run: pytest -m static --tb=short -q
+      - name: Isolation compliance
+        run: pytest -m isolation --tb=short -q
+
+  site:
+    name: site builds
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install git+https://github.com/openxlings/xpkgindex.git
+      - name: Generate
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 -m xpkgindex generate . --output site
+      - name: Every descriptor produced a page
+        run: |
+          want=$(find pkgs -name '*.lua' | wc -l)
+          got=$(find site/packages -mindepth 1 -maxdepth 1 -type d | wc -l)
+          echo "descriptors=$want pages=$got"
+          [ "$want" -eq "$got" ]
