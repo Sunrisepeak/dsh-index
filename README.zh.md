@@ -8,13 +8,24 @@
 ## 安装
 
 ```bash
-xlings install dsh pnpm -y
+xlings install dsh -y
 xlings config --index-repo dsh:https://github.com/Sunrisepeak/dsh-index.git
 xlings install dsh:dsh-cc-tui -y
 ```
 
-`pnpm` 是必须的：`dsh plugin` 本身就是一个 pnpm 转发器，上游也明确写了
-profile 安装需要 PATH 上有 pnpm。
+`dsh-cc-tui` 是 *surface* 类插件（一个 TUI），会拿到独立 profile，装完会打印启动方式：
+
+```bash
+dsh --profile dsh-cc-tui
+```
+
+叠加型插件（tool / skill）则共用以当前 subos 命名的 profile，一个组合里可以装多个。
+`DSH_PROFILE` 可以覆盖两者。
+
+
+pnpm 由 `dsh` 的依赖带入 —— `dsh plugin` 本身就是 pnpm 转发器，上游也明确写了
+profile 安装需要 PATH 上有 pnpm，所以它该待在需要它的那个包的依赖里，
+而不是出现在每条安装命令上。
 
 完整列表：**<https://sunrisepeak.github.io/dsh-index>**
 

@@ -88,15 +88,44 @@ import("xim.libxpkg.system")
 import("xim.libxpkg.xvm")
 import("xim.libxpkg.log")
 
--- The profile follows the current subos by default, so entering a different
--- subos gives a different plugin set -- the same axis `xvm use` switches on.
--- Explicit DSH_PROFILE always wins; "web" is the last resort because that is
--- the profile upstream's own `dsh web` boots.
+-- The profile follows the current subos, so entering a different subos gives a
+-- different plugin set -- the same axis `xvm use` switches on. Explicit
+-- DSH_PROFILE wins; "web" is the last resort because that is what upstream's
+-- own `dsh web` boots.
+--
+-- The subos name is read out of XLINGS_SUBOS_LIB, which is
+-- `<home>/subos/<name>/lib`. There is no XLINGS_SUBOS variable -- an earlier
+-- version of this file read one, which meant the whole subos branch was dead
+-- code and every install silently landed in "web". Measured: the variables
+-- xlings actually exports are XLINGS_SUBOS_LIB, XLINGS_BIN, XLINGS_HOME and
+-- XLINGS_SHIM_DEPTH.
+-- A *surface* plugin defines a runnable app: it overrides base rows rather
+-- than adding to them, and upstream's own docs give it a profile of its own
+-- (dsh-cc-tui's README says `dsh --profile cc-tui`). Composing two surfaces
+-- into one profile means two things fighting over the same rows, so surfaces
+-- default to their own profile and additive plugins share the subos one.
+local function is_surface()
+    for _, c in ipairs(package.categories or {}) do
+        if c == "tui" or c == "desktop" then return true end
+    end
+    return false
+end
+
 local function profile()
     local p = os.getenv("DSH_PROFILE")
     if p and p ~= "" then return p end
-    p = os.getenv("XLINGS_SUBOS")
-    if p and p ~= "" then return p end
+
+    if is_surface() then return package.name end
+
+    local lib = os.getenv("XLINGS_SUBOS_LIB")
+    if lib and lib ~= "" then
+        -- <...>/subos/<name>/lib  ->  <name>
+        local name = lib:match("([^/\\]+)[/\\]lib[/\\]?$")
+        -- `current` is a symlink to whichever subos is active; naming a
+        -- profile after it would make the profile follow the symlink instead
+        -- of staying put.
+        if name and name ~= "" and name ~= "current" then return name end
+    end
     return "web"
 end
 
@@ -165,12 +194,23 @@ function config()
         return false
     end
 
+    -- pnpm writes straight to the terminal and its first line lands flush
+    -- against whatever xlings printed last, so the two look like one message.
+    -- One blank line is the whole fix.
+    print("")
     system.exec(("dsh plugin --profile %s add %s")
                 :format(profile(), spec(pkginfo.version())))
 
     if not installed() then
         return false
     end
+
+    -- Say where it went and how to boot it. Without this the user has to
+    -- guess the profile name, and the obvious guess -- the plugin's own name --
+    -- is always wrong: `dsh --profile <plugin>` fails with "profile does not
+    -- exist".
+    log.info(("%s is installed in profile '%s'.\n  Launch it:  dsh --profile %s")
+             :format(package.name, profile(), profile()))
 
     -- `type = "group"`: this name backs no executable. Left as the default
     -- program kind it would generate a shim that always fails
@@ -182,6 +222,7 @@ end
 
 function uninstall()
     xvm.remove(package.name)
+    print("")
     system.exec(("dsh plugin --profile %s remove %s")
                 :format(profile(), package.dsh.bundle_name))
     -- $DSH_HOME holds the user's own profiles and config layer. This recipe

@@ -8,13 +8,26 @@ An [xlings](https://github.com/openxlings/xlings) package index for the
 ## Install
 
 ```bash
-xlings install dsh pnpm -y
+xlings install dsh -y
 xlings config --index-repo dsh:https://github.com/Sunrisepeak/dsh-index.git
 xlings install dsh:dsh-cc-tui -y
 ```
 
-`pnpm` is required: `dsh plugin` is a pnpm forwarder, and upstream states that
-profile installation needs pnpm on `PATH`.
+`dsh-cc-tui` is a *surface* plugin (a TUI), so it gets a profile of its own
+and prints how to start it:
+
+```bash
+dsh --profile dsh-cc-tui
+```
+
+Additive plugins — tools, skills — share the profile named after your current
+subos instead, so one composition can hold several. `DSH_PROFILE` overrides
+either.
+
+
+pnpm comes in as a dependency of `dsh` — `dsh plugin` is a pnpm forwarder and
+upstream states that profile installation needs pnpm on `PATH`, so it belongs
+in the package that needs it rather than in every install command.
 
 Browse everything at **<https://sunrisepeak.github.io/dsh-index>**.
 
