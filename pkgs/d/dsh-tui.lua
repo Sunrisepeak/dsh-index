@@ -18,9 +18,9 @@ package = {
         origin = "orriduck/dsh-tui",
 
         versions = {
-            ["0.2.0"] = { ref = "a1325b76538f303af013883b712f6fecbde68160" },
+            ["0.2.1"] = { ref = "a1325b76538f303af013883b712f6fecbde68160" },
         },
-        latest = "0.2.0",
+        latest = "0.2.1",
 
         needs_build = false,
         license = "MIT",

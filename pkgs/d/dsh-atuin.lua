@@ -18,9 +18,9 @@ package = {
         origin = "RealAlexandreAI/dsh-atuin",
 
         versions = {
-            ["0.1.0"] = { ref = "72a43d92bb81be12dedabafddf7d9855286f448a" },
+            ["0.1.1"] = { ref = "72a43d92bb81be12dedabafddf7d9855286f448a" },
         },
-        latest = "0.1.0",
+        latest = "0.1.1",
 
         needs_build = false,
         license = "MIT",

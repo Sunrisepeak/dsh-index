@@ -22,7 +22,7 @@ package = {
         },
         latest = "0.0.1",
 
-        needs_build = true,
+        needs_build = false,
         license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the

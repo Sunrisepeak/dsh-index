@@ -17,9 +17,9 @@ package = {
         origin = "dingyi222666/dsh-focus-chat",
 
         versions = {
-            ["0.1.0"] = { ref = "0844db5280cf0b8028fad715fc9e5f1b3b4160f1" },
+            ["0.1.1"] = { ref = "0844db5280cf0b8028fad715fc9e5f1b3b4160f1" },
         },
-        latest = "0.1.0",
+        latest = "0.1.1",
 
         needs_build = true,
         license = "NONE",

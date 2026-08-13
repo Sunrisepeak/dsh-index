@@ -18,14 +18,21 @@ package = {
         origin = "ccch1mneyyy/dsh-cc-tui",
 
         versions = {
-            ["0.1.2"] = { ref = "8516ffb3aac3ada74760eff9b8c14c65d344b67d" },
+            ["0.1.6"] = { ref = "8516ffb3aac3ada74760eff9b8c14c65d344b67d" },
         },
-        latest = "0.1.2",
+        latest = "0.1.6",
 
         needs_build = false,
         license = "BSD-3-Clause",
 
-        -- Mirror-eligible. The `mirror` block is filled in by the
-        -- mirror pipeline once a tarball is published to xlings-res.
+        -- Published by tools/mirror.py: built from the pinned sha in CI and
+        -- byte-verified after upload. No `cn` yet -- the GitCode release does
+        -- not exist, and a CN URL that 404s is worse than none.
+        mirror = {
+            ["0.1.6"] = {
+                tarball = "dsh-cc-tui-0.1.6.tgz",
+                sha256  = "b8016904a72e7bf4858a0bb24e6eb952357ecdc7e963a482f33e143ea2312d1b",
+            },
+        },
     },
 }

@@ -18,11 +18,11 @@ package = {
         origin = "omdsh-dev/dsh-custom-tool",
 
         versions = {
-            ["0.1.0"] = { ref = "b0392bb332cc7bfad65279e160b4b015c6c6d3ca" },
+            ["0.1.1"] = { ref = "b0392bb332cc7bfad65279e160b4b015c6c6d3ca" },
         },
-        latest = "0.1.0",
+        latest = "0.1.1",
 
-        needs_build = true,
+        needs_build = false,
         license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the

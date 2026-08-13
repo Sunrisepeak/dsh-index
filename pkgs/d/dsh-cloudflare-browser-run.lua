@@ -18,9 +18,9 @@ package = {
         origin = "RealAlexandreAI/dsh-cloudflare-browser-run",
 
         versions = {
-            ["0.1.0"] = { ref = "f85ec677f77665640315d89aebe876b4877995bd" },
+            ["0.1.1"] = { ref = "f85ec677f77665640315d89aebe876b4877995bd" },
         },
-        latest = "0.1.0",
+        latest = "0.1.1",
 
         needs_build = false,
         license = "MIT",

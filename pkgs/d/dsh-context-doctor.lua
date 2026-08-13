@@ -18,9 +18,9 @@ package = {
         origin = "Zhenyu98/dsh-context-doctor",
 
         versions = {
-            ["0.2.0"] = { ref = "4a91502c106f7fed86981421c740566abf309977" },
+            ["0.5.0"] = { ref = "4a91502c106f7fed86981421c740566abf309977" },
         },
-        latest = "0.2.0",
+        latest = "0.5.0",
 
         needs_build = false,
         license = "BSD-3-Clause",

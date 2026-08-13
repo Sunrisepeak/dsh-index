@@ -18,9 +18,9 @@ package = {
         origin = "RealAlexandreAI/dsh-nocturne-memory",
 
         versions = {
-            ["0.1.0"] = { ref = "56e8f339a7a5e16fb9712cb945a0b5b45b6cadf3" },
+            ["0.1.1"] = { ref = "56e8f339a7a5e16fb9712cb945a0b5b45b6cadf3" },
         },
-        latest = "0.1.0",
+        latest = "0.1.1",
 
         needs_build = false,
         license = "MIT",

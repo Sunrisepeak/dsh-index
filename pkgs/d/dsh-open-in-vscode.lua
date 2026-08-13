@@ -18,11 +18,11 @@ package = {
         origin = "omdsh-dev/dsh-open-in-vscode",
 
         versions = {
-            ["0.1.0"] = { ref = "149f21aed3d05d2b392206394c4a023e35d694c7" },
+            ["0.1.5"] = { ref = "149f21aed3d05d2b392206394c4a023e35d694c7" },
         },
-        latest = "0.1.0",
+        latest = "0.1.5",
 
-        needs_build = true,
+        needs_build = false,
         license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the

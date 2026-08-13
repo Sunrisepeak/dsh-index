@@ -18,11 +18,11 @@ package = {
         origin = "titanwings/dsh-automation",
 
         versions = {
-            ["0.1.1"] = { ref = "3c0188d7d94ed5b1e8caffeb73d7ac7ab34aabb3" },
+            ["0.1.5"] = { ref = "3c0188d7d94ed5b1e8caffeb73d7ac7ab34aabb3" },
         },
-        latest = "0.1.1",
+        latest = "0.1.5",
 
-        needs_build = true,
+        needs_build = false,
         license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the

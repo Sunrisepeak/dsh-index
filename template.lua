@@ -12,10 +12,11 @@
 -- Two architectures share this one file. The branch is a single condition --
 -- whether `package.dsh.mirror` exists:
 --
---   mirror present  (C)  index-mirrored tarball: GLOBAL/CN + sha256, works
---                        offline, survives upstream deletion, and needs no
---                        pnpm build authorisation because the build already
---                        happened in this index's CI.
+--   mirror present  (C)  index-mirrored tarball: a real xpm resource with a
+--                        sha256, works offline, survives upstream deletion,
+--                        and needs no pnpm build authorisation because the
+--                        build already happened in this index's CI. A CN URL
+--                        is added only once the GitCode release is confirmed.
 --   mirror absent   (A)  pnpm fetches straight from upstream. No CN mirror is
 --                        possible -- xim's mirror table hangs off the xpm
 --                        resource, and A's resource is `{}`.
@@ -52,15 +53,20 @@ do
             local m = MIRROR and MIRROR[ver]
             if m then
                 local tag = package.name .. "-" .. ver
-                t[ver] = {
-                    url = {
-                        GLOBAL = ("https://github.com/xlings-res/%s/releases/download/%s/%s")
-                                 :format(RES_REPO, tag, m.tarball),
-                        CN     = ("https://gitcode.com/xlings-res/%s/releases/download/%s/%s")
-                                 :format(RES_REPO, tag, m.tarball),
-                    },
-                    sha256 = m.sha256,
+                local urls = {
+                    GLOBAL = ("https://github.com/xlings-res/%s/releases/download/%s/%s")
+                             :format(RES_REPO, tag, m.tarball),
                 }
+                -- CN is emitted only when the mirror pipeline confirmed the
+                -- GitCode release exists. Declaring a CN URL that 404s is
+                -- worse than having none: a user on the CN mirror gets a
+                -- failed download instead of falling back, and the index
+                -- would be promising an acceleration it does not have.
+                if m.cn then
+                    urls.CN = ("https://gitcode.com/xlings-res/%s/releases/download/%s/%s")
+                              :format(RES_REPO, tag, m.tarball)
+                end
+                t[ver] = { url = urls, sha256 = m.sha256 }
             else
                 t[ver] = {}   -- architecture A: nothing to download; pnpm fetches
             end

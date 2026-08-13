@@ -18,9 +18,9 @@ package = {
         origin = "fuhefei/dsh-sentinel",
 
         versions = {
-            ["0.2.0"] = { ref = "35884673abb10ae3d19f4c0275987502d84bc1f5" },
+            ["0.2.1"] = { ref = "35884673abb10ae3d19f4c0275987502d84bc1f5" },
         },
-        latest = "0.2.0",
+        latest = "0.2.1",
 
         needs_build = false,
         license = "BSD-3-Clause",

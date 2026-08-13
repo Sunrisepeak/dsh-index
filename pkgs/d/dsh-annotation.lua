@@ -13,7 +13,7 @@ package = {
     keywords = {"dsh", "annotation"},
 
     dsh = {
-        bundle_name = "@dsh-external/dsh-annotation",
+        bundle_name = "@omdsh-dev/dsh-annotation",
         source = "github",
         origin = "omdsh-dev/dsh-annotation",
 

@@ -18,9 +18,9 @@ package = {
         origin = "omdsh-dev/dsh-notification",
 
         versions = {
-            ["0.1.0"] = { ref = "3e33100f51f25f24cece20bfd3d50cfbde0cbca5" },
+            ["0.1.1"] = { ref = "3e33100f51f25f24cece20bfd3d50cfbde0cbca5" },
         },
-        latest = "0.1.0",
+        latest = "0.1.1",
 
         needs_build = false,
         license = "MIT",

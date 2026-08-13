@@ -18,9 +18,9 @@ package = {
         origin = "SiYue-ZO/dsh-translator",
 
         versions = {
-            ["0.1.0"] = { ref = "7ab238541380bb194478df088607d5dc5c351b77" },
+            ["0.2.0"] = { ref = "7ab238541380bb194478df088607d5dc5c351b77" },
         },
-        latest = "0.1.0",
+        latest = "0.2.0",
 
         needs_build = false,
         license = "MIT",

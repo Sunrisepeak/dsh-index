@@ -18,11 +18,11 @@ package = {
         origin = "titanwings/dsh-plannotator",
 
         versions = {
-            ["0.1.0"] = { ref = "c0fe880107aa09ef595a8b6fdac6d7099e4b46da" },
+            ["0.1.3"] = { ref = "c0fe880107aa09ef595a8b6fdac6d7099e4b46da" },
         },
-        latest = "0.1.0",
+        latest = "0.1.3",
 
-        needs_build = true,
+        needs_build = false,
         license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the

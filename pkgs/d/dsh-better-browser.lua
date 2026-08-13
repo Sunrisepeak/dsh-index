@@ -18,9 +18,9 @@ package = {
         origin = "titanwings/dsh-better-browser",
 
         versions = {
-            ["0.3.1"] = { ref = "506493224a21510c3f9cc7329a17e84af20879dc" },
+            ["0.3.6"] = { ref = "506493224a21510c3f9cc7329a17e84af20879dc" },
         },
-        latest = "0.3.1",
+        latest = "0.3.6",
 
         needs_build = false,
         license = "BSD-3-Clause",

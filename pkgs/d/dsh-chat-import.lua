@@ -18,9 +18,9 @@ package = {
         origin = "Nwflower/dsh-chat-import",
 
         versions = {
-            ["0.1.0"] = { ref = "c6913244337f9ed70e8fea2a83622ac8550ea1ee" },
+            ["0.1.1"] = { ref = "c6913244337f9ed70e8fea2a83622ac8550ea1ee" },
         },
-        latest = "0.1.0",
+        latest = "0.1.1",
 
         needs_build = false,
         license = "MIT",

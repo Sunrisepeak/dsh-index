@@ -17,9 +17,9 @@ package = {
         origin = "dingyi222666/dsh-session-notification",
 
         versions = {
-            ["0.1.0"] = { ref = "499c52ed0e1f7cef6a9c1a0667daad0d97e8e6b6" },
+            ["0.1.1"] = { ref = "499c52ed0e1f7cef6a9c1a0667daad0d97e8e6b6" },
         },
-        latest = "0.1.0",
+        latest = "0.1.1",
 
         needs_build = true,
         license = "NONE",

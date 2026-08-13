@@ -18,9 +18,9 @@ package = {
         origin = "RealAlexandreAI/dsh-all-search",
 
         versions = {
-            ["0.1.0"] = { ref = "2caa5a336e45d5d9033b7607ce6ae92a94064e6a" },
+            ["0.1.1"] = { ref = "2caa5a336e45d5d9033b7607ce6ae92a94064e6a" },
         },
-        latest = "0.1.0",
+        latest = "0.1.1",
 
         needs_build = false,
         license = "MIT",

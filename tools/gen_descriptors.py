@@ -7,7 +7,15 @@ it emits is measured, never guessed -- the sha comes from the repo's default
 branch head, the license from GitHub's own SPDX classification, and
 needs_build from whether the upstream package.json has a `prepare` script.
 
-Usage: tools/gen_descriptors.py <scan.jsonl> <shas.tsv> [topics.tsv]
+The authoritative source is `atsha.jsonl`: name, version, dsh.bundle and the
+prepare script all read from package.json **at the pinned sha**. An earlier
+version took the version from one survey and the sha from another taken minutes
+later; 19 of 169 disagreed, and one repo had stopped declaring dsh.bundle
+entirely. A descriptor whose version key does not describe the bytes at its own
+pinned commit is worse than a missing descriptor -- tools/mirror.py now refuses
+that case outright, and this generator makes it unrepresentable.
+
+Usage: tools/gen_descriptors.py <atsha.jsonl> <shas.tsv> <topics.tsv> <scan.jsonl>
 """
 import json
 import pathlib
@@ -35,13 +43,24 @@ def lua_str(s: str) -> str:
 
 
 def main() -> int:
-    scan_path, shas_path = sys.argv[1], sys.argv[2]
+    atsha_path, shas_path = sys.argv[1], sys.argv[2]
     topics_path = sys.argv[3] if len(sys.argv) > 3 else None
+    desc_path = sys.argv[4] if len(sys.argv) > 4 else None
+
+    # Everything that describes the CODE comes from the pinned sha.
     scan = {}
-    for line in open(scan_path, encoding="utf-8"):
+    for line in open(atsha_path, encoding="utf-8"):
         r = json.loads(line)
         if r.get("bundle") and r.get("pkg"):
             scan[r["repo"]] = r
+
+    # Descriptions are prose about the project, not about a commit, so they
+    # come from the repo survey.
+    descs = {}
+    if desc_path:
+        for line in open(desc_path, encoding="utf-8"):
+            r = json.loads(line)
+            descs[r["repo"]] = r.get("desc") or ""
 
     meta = {}
     for line in open(shas_path, encoding="utf-8", errors="replace"):
@@ -67,8 +86,13 @@ def main() -> int:
         if not m:
             skipped.append((repo, "no sha (repo gone or unreachable)"))
             continue
-        if not SHA_RE.match(m["sha"]):
-            skipped.append((repo, f"bad sha {m['sha']!r}"))
+        # The sha the metadata was READ AT, not one fetched separately.
+        sha = str(r.get("sha") or "")
+        if not SHA_RE.match(sha):
+            skipped.append((repo, f"bad sha {sha!r}"))
+            continue
+        if sha != m["sha"]:
+            skipped.append((repo, "sha moved between surveys; re-run both"))
             continue
 
         name = index_name(repo, r["pkg"])
@@ -84,7 +108,7 @@ def main() -> int:
         ver = str(r.get("version") or "0.0.0")
         lic = m["license"]
         patch = r["bundle"].get("patch") if isinstance(r["bundle"], dict) else None
-        desc = (r.get("desc") or "").strip() or f"dsh plugin from {repo}"
+        desc = (descs.get(repo) or "").strip() or f"dsh plugin from {repo}"
         desc = re.sub(r"\s+", " ", desc)[:110]
 
         L = []
@@ -110,7 +134,7 @@ def main() -> int:
         L.append(f"        origin = {lua_str(repo)},")
         L.append("")
         L.append("        versions = {")
-        L.append(f'            ["{ver}"] = {{ ref = "{m["sha"]}" }},')
+        L.append(f'            ["{ver}"] = {{ ref = "{sha}" }},')
         L.append("        },")
         L.append(f'        latest = "{ver}",')
         L.append("")

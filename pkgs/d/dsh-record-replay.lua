@@ -18,9 +18,9 @@ package = {
         origin = "humblebanana/dsh-record-replay",
 
         versions = {
-            ["0.1.0"] = { ref = "32d06f7db906914e278d1552728d1d63f191d6ad" },
+            ["0.2.0"] = { ref = "32d06f7db906914e278d1552728d1d63f191d6ad" },
         },
-        latest = "0.1.0",
+        latest = "0.2.0",
 
         needs_build = false,
         license = "MIT",
