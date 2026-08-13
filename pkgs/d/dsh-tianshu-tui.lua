@@ -2,7 +2,7 @@ package = {
     spec = "1",
 
     name = "dsh-tianshu-tui",
-    description = "Tianshu terminal UI for DeepSeek Harness",
+    description = "dsh-tianshu-tui — DeepSeek Harness terminal UI",
     repo = "https://github.com/huiliyi37/dsh-tianshu-tui",
     homepage = "https://github.com/huiliyi37/dsh-tianshu-tui",
     licenses = {"Apache-2.0"},
@@ -10,7 +10,7 @@ package = {
 
     status = "dev",
     categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin", "tui", "terminal"},
+    keywords = {"dsh", "plugin"},
 
     dsh = {
         bundle_name = "@huiliyi37/dsh-tianshu-tui",
@@ -25,8 +25,7 @@ package = {
         needs_build = false,
         license = "Apache-2.0",
 
-        -- Mirror-eligible. The `mirror` block is filled in by the mirror
-        -- pipeline once a tarball is published to xlings-res; until then
-        -- this package installs via architecture A.
+        -- Mirror-eligible. The `mirror` block is filled in by the
+        -- mirror pipeline once a tarball is published to xlings-res.
     },
 }

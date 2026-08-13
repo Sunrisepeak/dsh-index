@@ -2,7 +2,7 @@ package = {
     spec = "1",
 
     name = "dsh-vision-toolkit",
-    description = "Helps text-only models handle vision tasks",
+    description = "让纯文本模型更好地做视觉任务的DeepSeek Harness插件：带意图的图片问答、长截图 OCR、UI 还原等｜DeepSeek Harness-native integration for agent-vision",
     repo = "https://github.com/Anionex/dsh-vision-toolkit",
     homepage = "https://github.com/Anionex/dsh-vision-toolkit",
     licenses = {"MIT"},
@@ -10,7 +10,7 @@ package = {
 
     status = "dev",
     categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin", "vision", "toolkit"},
+    keywords = {"dsh", "plugin"},
 
     dsh = {
         bundle_name = "@dsh-external/dsh-vision-toolkit",
@@ -25,8 +25,7 @@ package = {
         needs_build = false,
         license = "MIT",
 
-        -- Mirror-eligible. The `mirror` block is filled in by the mirror
-        -- pipeline once a tarball is published to xlings-res; until then
-        -- this package installs via architecture A.
+        -- Mirror-eligible. The `mirror` block is filled in by the
+        -- mirror pipeline once a tarball is published to xlings-res.
     },
 }

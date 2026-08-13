@@ -2,7 +2,7 @@ package = {
     spec = "1",
 
     name = "dsh-workflow",
-    description = "Multi-agent workflow orchestration",
+    description = "把Claude Code的UltraCode模式带给DSH，把 DSH 的一次性多 Agent 调度，升级为可生成、可保存、可治理、可观察、可恢复的 Workflow 层",
     repo = "https://github.com/icetomoyo/dsh_workflow",
     homepage = "https://github.com/icetomoyo/dsh_workflow",
     licenses = {"MIT"},
@@ -10,7 +10,7 @@ package = {
 
     status = "dev",
     categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin", "workflow", "multi-agent"},
+    keywords = {"dsh", "plugin"},
 
     dsh = {
         bundle_name = "@dsh-external/workflow",
@@ -25,8 +25,7 @@ package = {
         needs_build = false,
         license = "MIT",
 
-        -- Mirror-eligible. The `mirror` block is filled in by the mirror
-        -- pipeline once a tarball is published to xlings-res; until then
-        -- this package installs via architecture A.
+        -- Mirror-eligible. The `mirror` block is filled in by the
+        -- mirror pipeline once a tarball is published to xlings-res.
     },
 }

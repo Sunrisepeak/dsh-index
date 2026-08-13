@@ -2,7 +2,7 @@ package = {
     spec = "1",
 
     name = "dsh-open-in-vscode",
-    description = "Open dsh workspace directories in VS Code",
+    description = "Open DeepSeek Harness workspace directories in VS Code directly from the web GUI.",
     repo = "https://github.com/omdsh-dev/dsh-open-in-vscode",
     homepage = "https://github.com/omdsh-dev/dsh-open-in-vscode",
     licenses = {"MIT"},
@@ -10,7 +10,7 @@ package = {
 
     status = "dev",
     categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin", "vscode", "editor"},
+    keywords = {"dsh", "plugin"},
 
     dsh = {
         bundle_name = "dsh-open-in-vscode",
@@ -25,8 +25,7 @@ package = {
         needs_build = true,
         license = "MIT",
 
-        -- Mirror-eligible. The `mirror` block is filled in by the mirror
-        -- pipeline once a tarball is published to xlings-res; until then
-        -- this package installs via architecture A.
+        -- Mirror-eligible. The `mirror` block is filled in by the
+        -- mirror pipeline once a tarball is published to xlings-res.
     },
 }

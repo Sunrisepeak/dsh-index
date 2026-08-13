@@ -2,7 +2,7 @@ package = {
     spec = "1",
 
     name = "oh-dsh-desktop",
-    description = "Extensible macOS workbench with a native PTY",
+    description = "Extensible macOS workbench for DeepSeek Harness with a native PTY, workspace tools, live bilingual plugins, an",
     repo = "https://github.com/hust-open-atom-club/oh-dsh-desktop",
     homepage = "https://github.com/hust-open-atom-club/oh-dsh-desktop",
     licenses = {"BSD-3-Clause"},
@@ -10,7 +10,7 @@ package = {
 
     status = "dev",
     categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin", "desktop", "macos", "pty"},
+    keywords = {"dsh", "plugin"},
 
     dsh = {
         bundle_name = "@oh-dsh/desktop",
@@ -28,8 +28,7 @@ package = {
         -- non-default bundle patch path
         patch = "./dist/cordis.patch.yml",
 
-        -- Mirror-eligible. The `mirror` block is filled in by the mirror
-        -- pipeline once a tarball is published to xlings-res; until then
-        -- this package installs via architecture A.
+        -- Mirror-eligible. The `mirror` block is filled in by the
+        -- mirror pipeline once a tarball is published to xlings-res.
     },
 }

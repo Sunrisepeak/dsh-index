@@ -2,7 +2,7 @@ package = {
     spec = "1",
 
     name = "modlens",
-    description = "Vision plugin and vision bridge for DeepSeek Harness",
+    description = "CLI toolkit for AI agents — converts images into structured JSON evidence (OCR, layout, semantics), bridging t",
     repo = "https://github.com/liustack/modlens",
     homepage = "https://github.com/liustack/modlens",
     licenses = {"MIT"},
@@ -10,7 +10,7 @@ package = {
 
     status = "dev",
     categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin", "vision", "bridge"},
+    keywords = {"dsh", "plugin"},
 
     dsh = {
         bundle_name = "@liustack/modlens",
@@ -18,15 +18,14 @@ package = {
         origin = "liustack/modlens",
 
         versions = {
-            ["3.9.1"] = { ref = "6d933a09985e7a8b2a386a3d08b807289327ed6c" },
+            ["3.9.1"] = { ref = "56045a985692ec5663e5757361e6c180648e6f04" },
         },
         latest = "3.9.1",
 
         needs_build = false,
         license = "MIT",
 
-        -- Mirror-eligible. The `mirror` block is filled in by the mirror
-        -- pipeline once a tarball is published to xlings-res; until then
-        -- this package installs via architecture A.
+        -- Mirror-eligible. The `mirror` block is filled in by the
+        -- mirror pipeline once a tarball is published to xlings-res.
     },
 }

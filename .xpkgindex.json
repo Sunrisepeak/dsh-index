@@ -45,20 +45,20 @@
     "license": "Apache-2.0"
   },
   "theme": {
-    "accent": "#4d6bfe",
-    "style": "auto",
+    "accent": "#2d5f9e",
+    "style": "dark",
     "tones": {
-      "module": "#4d6bfe",
-      "header": "#1e232c",
-      "tool": "#3a65c2",
-      "neutral": "#8691a1"
+      "module": "#2d5f9e",
+      "header": "#1a3870",
+      "tool": "#4a8ac4",
+      "neutral": "#81858c"
     },
     "dark": {
       "accent": "#679efe",
       "tones": {
         "module": "#679efe",
         "header": "#e6e8ea",
-        "tool": "#73a3d2",
+        "tool": "#4a8ac4",
         "neutral": "#81858c"
       }
     }
@@ -75,10 +75,18 @@
   ],
   "install_command_template": "xlings install dsh:{ref}",
   "install": {
-    "label": {
-      "en": "Set up",
-      "zh": "准备环境",
-      "zh-Hant": "準備環境"
+    "primary": {
+      "label": {
+        "en": "Install dsh",
+        "zh": "安装 dsh",
+        "zh-Hant": "安裝 dsh"
+      },
+      "command": "xlings install dsh pnpm -y"
+    },
+    "summary": {
+      "en": "Don't have xlings yet?",
+      "zh": "还没装 xlings?",
+      "zh-Hant": "還沒安裝 xlings?"
     },
     "os": [
       {
