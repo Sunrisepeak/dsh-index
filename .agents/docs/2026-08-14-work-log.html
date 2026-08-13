@@ -1,0 +1,294 @@
+<title>dsh 生态接入 · 工作记录</title>
+<style>
+  :root {
+    --ground: #f7f8fa;
+    --surface: #ffffff;
+    --surface-2: #eef1f5;
+    --ink: #0f1419;
+    --ink-2: #47535f;
+    --ink-3: #6b7885;
+    --rule: #dde3ea;
+    --accent: #2d5f9e;
+    --accent-soft: #e8eef7;
+    --ocean-deep: #1a3870;
+    --good: #2f7d5a;
+    --warn: #9a6b1f;
+    --stop: #a13d3d;
+    --good-bg: #e6f2ec;
+    --warn-bg: #f7efdf;
+    --stop-bg: #f7e8e8;
+
+    --sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", "Noto Sans SC",
+            "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Mono",
+            Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #0a0a0a;
+      --surface: #151a21;
+      --surface-2: #1f2630;
+      --ink: #e6e8ea;
+      --ink-2: #a7b3c0;
+      --ink-3: #81858c;
+      --rule: #262d37;
+      --accent: #679efe;
+      --accent-soft: #16233a;
+      --ocean-deep: #4a8ac4;
+      --good: #6ac295;
+      --warn: #dfb464;
+      --stop: #e08585;
+      --good-bg: #12241c;
+      --warn-bg: #241d10;
+      --stop-bg: #251313;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #0a0a0a; --surface: #151a21; --surface-2: #1f2630;
+    --ink: #e6e8ea; --ink-2: #a7b3c0; --ink-3: #81858c; --rule: #262d37;
+    --accent: #679efe; --accent-soft: #16233a; --ocean-deep: #4a8ac4;
+    --good: #6ac295; --warn: #dfb464; --stop: #e08585;
+    --good-bg: #12241c; --warn-bg: #241d10; --stop-bg: #251313;
+  }
+  :root[data-theme="light"] {
+    --ground: #f7f8fa; --surface: #ffffff; --surface-2: #eef1f5;
+    --ink: #0f1419; --ink-2: #47535f; --ink-3: #6b7885; --rule: #dde3ea;
+    --accent: #2d5f9e; --accent-soft: #e8eef7; --ocean-deep: #1a3870;
+    --good: #2f7d5a; --warn: #9a6b1f; --stop: #a13d3d;
+    --good-bg: #e6f2ec; --warn-bg: #f7efdf; --stop-bg: #f7e8e8;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--ground); color: var(--ink);
+    font-family: var(--sans); font-size: 15px; line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 940px; margin: 0 auto; padding: 56px 24px 96px; }
+
+  header { border-bottom: 2px solid var(--ink); padding-bottom: 20px; margin-bottom: 8px; }
+  .eyebrow {
+    font-family: var(--mono); font-size: 11px; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--ink-3); margin: 0 0 10px;
+  }
+  h1 {
+    font-size: clamp(28px, 4vw, 40px); line-height: 1.15; margin: 0 0 10px;
+    letter-spacing: -.02em; font-weight: 650; text-wrap: balance;
+  }
+  .lede { margin: 0; color: var(--ink-2); max-width: 62ch; }
+
+  section { margin-top: 52px; }
+  h2 {
+    font-size: 13px; font-family: var(--mono); letter-spacing: .12em;
+    text-transform: uppercase; color: var(--accent); font-weight: 600;
+    margin: 0 0 6px; padding-bottom: 8px; border-bottom: 1px solid var(--rule);
+  }
+  h2 + .note { margin-top: 14px; }
+  .note { color: var(--ink-2); max-width: 66ch; margin: 0 0 20px; }
+
+  /* ── figures ─────────────────────────────────────────── */
+  .figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1px;
+             background: var(--rule); border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+  .fig { background: var(--surface); padding: 16px 18px; }
+  .fig b { display: block; font-family: var(--mono); font-size: 26px; font-weight: 600;
+           letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1.1; }
+  .fig span { display: block; font-size: 12px; color: var(--ink-3); margin-top: 5px; }
+  .fig.is-cut b { color: var(--stop); }
+  .fig.is-live b { color: var(--good); }
+
+  /* ── repo ledger ─────────────────────────────────────── */
+  .repo { border: 1px solid var(--rule); border-radius: 6px; background: var(--surface);
+          margin-bottom: 14px; overflow: hidden; }
+  .repo > h3 {
+    margin: 0; padding: 12px 18px; background: var(--surface-2);
+    font-family: var(--mono); font-size: 13px; font-weight: 600;
+    border-bottom: 1px solid var(--rule); display: flex; flex-wrap: wrap;
+    gap: 10px; align-items: baseline;
+  }
+  .repo > h3 small { font-family: var(--sans); font-weight: 400; color: var(--ink-3); font-size: 12px; }
+  .repo ul { list-style: none; margin: 0; padding: 6px 0; }
+  .repo li { display: grid; grid-template-columns: 60px 1fr auto; gap: 14px;
+             padding: 8px 18px; align-items: baseline; }
+  .repo li + li { border-top: 1px dashed var(--rule); }
+  .pr { font-family: var(--mono); font-size: 13px; color: var(--accent); font-weight: 600; }
+  .sha { font-family: var(--mono); font-size: 11.5px; color: var(--ink-3); }
+
+  .tag { font-family: var(--mono); font-size: 10.5px; letter-spacing: .06em;
+         text-transform: uppercase; padding: 2px 7px; border-radius: 3px; white-space: nowrap; }
+  .tag.merged { background: var(--good-bg); color: var(--good); }
+  .tag.open   { background: var(--warn-bg); color: var(--warn); }
+
+  /* ── findings ────────────────────────────────────────── */
+  .scroll { overflow-x: auto; border: 1px solid var(--rule); border-radius: 6px; background: var(--surface); }
+  table { border-collapse: collapse; width: 100%; min-width: 660px; font-size: 14px; }
+  th, td { text-align: left; padding: 11px 16px; vertical-align: top; border-bottom: 1px solid var(--rule); }
+  th { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase;
+       color: var(--ink-3); font-weight: 600; background: var(--surface-2); }
+  tbody tr:last-child td { border-bottom: 0; }
+  td.assumed { color: var(--ink-2); }
+  td.measured { color: var(--ink); }
+  td.measured b { color: var(--stop); font-weight: 600; }
+  code { font-family: var(--mono); font-size: .88em; background: var(--surface-2);
+         padding: 1px 5px; border-radius: 3px; }
+
+  .callout { border-left: 3px solid var(--ocean-deep); background: var(--accent-soft);
+             padding: 14px 18px; border-radius: 0 6px 6px 0; margin: 22px 0 0; }
+  .callout p { margin: 0; color: var(--ink-2); max-width: 64ch; }
+  .callout strong { color: var(--ink); }
+
+  ul.plain { list-style: none; padding: 0; margin: 0; }
+  ul.plain li { padding: 9px 0; border-bottom: 1px dashed var(--rule); color: var(--ink-2); }
+  ul.plain li:last-child { border-bottom: 0; }
+  ul.plain b { color: var(--ink); font-weight: 600; }
+
+  footer { margin-top: 64px; padding-top: 18px; border-top: 1px solid var(--rule);
+           color: var(--ink-3); font-size: 12.5px; font-family: var(--mono); }
+  a { color: var(--accent); }
+  @media (max-width: 620px) { .repo li { grid-template-columns: 54px 1fr; } .repo li .tag { grid-column: 2; justify-self: start; } }
+</style>
+
+<div class="wrap">
+
+<header>
+  <p class="eyebrow">工作记录 · 2026-08-13 → 08-14</p>
+  <h1>把 DeepSeek Harness 及其插件生态接进 xlings</h1>
+  <p class="lede">
+    四个仓库：dsh 本体入官方索引、插件索引从零建起、站点生成器修了两个 bug、
+    镜像仓库建起并双侧发布。下面是落点、被检查挡下的东西，以及还没完的部分。
+  </p>
+</header>
+
+<section>
+  <h2>数字</h2>
+  <div class="figures">
+    <div class="fig"><b>281</b><span>topic:dsh-plugin 仓库</span></div>
+    <div class="fig"><b>169</b><span>其中可安装 bundle</span></div>
+    <div class="fig is-cut"><b>100</b><span>坏包 / star&lt;2 已剔除</span></div>
+    <div class="fig is-live"><b>68</b><span>索引现存</span></div>
+    <div class="fig is-live"><b>41</b><span>已双镜像</span></div>
+    <div class="fig"><b>73</b><span>xlings-res release</span></div>
+  </div>
+</section>
+
+<section>
+  <h2>落点</h2>
+
+  <div class="repo">
+    <h3>openxlings/xim-pkgindex <small>xlings 官方包索引 · 加 <code>xim:dsh</code></small></h3>
+    <ul>
+      <li><span class="pr">#617</span><span>收录 DeepSeek Harness 0.1.0-rc.6，走 npm 通道（上游无 release、无 tag）<br><span class="sha">ed11025</span></span><span class="tag merged">merged</span></li>
+      <li><span class="pr">#618</span><span>去掉 <code>--ignore-scripts</code> 让 node-pty 真正构建；<code>node&gt;=24</code>；shim 绑定依赖的解释器<br><span class="sha">95ccb07</span></span><span class="tag merged">merged</span></li>
+      <li><span class="pr">#619</span><span>npm 输出前加空行，与 xlings 自己的输出分开<br><span class="sha">faa5cfa</span></span><span class="tag merged">merged</span></li>
+      <li><span class="pr">#620</span><span>pnpm 进依赖；去掉冗余的 <code>xim:npm</code>；<code>archs</code> 收窄到能真装的架构<br><span class="sha">b7effc6</span></span><span class="tag merged">merged</span></li>
+    </ul>
+  </div>
+
+  <div class="repo">
+    <h3>d2learn/xpkgindex <small>包索引站点生成器</small></h3>
+    <ul>
+      <li><span class="pr">#4</span><span>主题值用 <code>tojson</code> 而非手拼引号 —— 原来生成的是非法 JS，连带把语言重定向一起弄死<br><span class="sha">c949d84</span></span><span class="tag merged">merged</span></li>
+      <li><span class="pr">#5</span><span>多值 facet 按契约拆开渲染，不再显示成一个拼接的怪词<br><span class="sha">08c866d</span></span><span class="tag merged">merged</span></li>
+    </ul>
+  </div>
+
+  <div class="repo">
+    <h3>Sunrisepeak/dsh-index <small>dsh 插件索引 · 命名空间 <code>dsh</code></small></h3>
+    <ul>
+      <li><span class="pr">#1</span><span>建索引：数据型描述符 + 一份 <code>template.lua</code>，C/A 双分发架构，站点上线<br><span class="sha">b4803f8</span></span><span class="tag merged">merged</span></li>
+      <li><span class="pr">#2</span><span>profile 归属修复；剔除坏包与低信号包；回填 41 个镜像</span><span class="tag open">CI 中</span></li>
+    </ul>
+  </div>
+
+  <div class="repo">
+    <h3>xlings-res/dsh-plugins <small>镜像仓库 · 新建</small></h3>
+    <ul>
+      <li><span class="pr">新建</span><span>GitHub + GitCode 双侧同 tag 同资产，各带 <code>.sha256</code>；发布后三方逐字节比对才写 <code>cn = true</code></span><span class="tag merged">live</span></li>
+    </ul>
+  </div>
+</section>
+
+<section>
+  <h2>被检查挡下来的</h2>
+  <p class="note">
+    这一天真正起作用的不是写了多少代码，是几道拒绝放行的门。左列是当时以为的，右列是测出来的。
+  </p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th style="width:44%">以为</th><th>实测</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="assumed"><code>--ignore-scripts</code> 安全 —— 根 package.json 没有 scripts</td>
+          <td class="measured">该 flag 作用于整棵树。<b>node-pty 在 Linux 无预编译产物</b>，跳过安装脚本后 <code>--version</code> 照过，但每次 profile 启动都死</td>
+        </tr>
+        <tr>
+          <td class="assumed">描述符里的版本号和 pin 的 commit 是一致的</td>
+          <td class="measured">来自相隔几分钟的两次快照。<b>169 个里 19 个对不上</b>，另有 1 个在 pin 处已不再是 bundle</td>
+        </tr>
+        <tr>
+          <td class="assumed"><code>theme.style: "dark"</code> 能强制深色</td>
+          <td class="measured">生成 <code>var fixed = &amp;#34;dark&amp;#34;;</code> —— script 里实体不解码，<b>整段 IIFE 语法错误</b>，语言重定向一并失效</td>
+        </tr>
+        <tr>
+          <td class="assumed">profile 会跟随当前 subos</td>
+          <td class="measured"><code>XLINGS_SUBOS</code> 这个变量<b>不存在</b>，分支是死代码，所有插件都落进 <code>web</code>。正解是 <code>system.subos_sysrootdir()</code> 这个 API</td>
+        </tr>
+        <tr>
+          <td class="assumed">卡片上印 <code>dsh plugin add &lt;包名&gt;</code> 方便复制</td>
+          <td class="measured">这条命令<b>会 404</b> —— 包名在本生态不是可解析标识符，正是我自己在文档里反复强调的那点</td>
+        </tr>
+        <tr>
+          <td class="assumed">声明 <code>xim:node</code> 和 <code>xim:npm</code> 更保险</td>
+          <td class="measured">node 本来就提供 npm，多这一条造成<b>同一 xvm 名双 owner</b> —— 规范里点名最危险的那种</td>
+        </tr>
+        <tr>
+          <td class="assumed">169 个 bundle 都能装</td>
+          <td class="measured"><b>至少 45 个谁都装不上</b>：依赖不存在、依赖范围无解、<code>main</code> 不在自己的 tarball 里</td>
+        </tr>
+        <tr>
+          <td class="assumed">批量报告记下了失败原因</td>
+          <td class="measured">记的是 Python traceback。修了两遍才拿到 pnpm 自己的报错 —— <b>同一个盲点低一层又出现一次</b></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout">
+    <p>
+      <strong>贯穿的一条：</strong>凡是「验证过」的结论，都要问清楚验的是哪个面。
+      <code>dsh --version</code> 通过不代表 dsh 能用；描述符生成成功不代表版本号描述的是那次提交的字节；
+      测试通过不代表它真的跑了 —— 有一条 sha 校验用例在 <code>source</code> 字段删除后每次提前返回，静默失效。
+    </p>
+  </div>
+</section>
+
+<section>
+  <h2>架构上的两个决定</h2>
+  <ul class="plain">
+    <li>
+      <b>许可证决定分发方式，不是偏好。</b>镜像等于再分发，所以只有许可证允许的才进镜像
+      （双镜像 + sha256 + 免构建授权）；其余直连上游，站点如实标注「无 CN 加速、上游删库就装不回来」。
+      无法识别许可证的按 GitHub 的惯例标 <code>unknown</code>，<b>不删除</b> —— 它们装得上，只是不能镜像。
+    </li>
+    <li>
+      <b>范式统一到可以模板化。</b>169 个 bundle 里 166 个连 patch 路径都相同，
+      所以描述符只写数据，四个生命周期 hook 全部来自一份 <code>template.lua</code>，
+      由索引构建期追加 —— 上游改了用法，改一个文件而不是 169 个。
+    </li>
+  </ul>
+</section>
+
+<section>
+  <h2>还没完的</h2>
+  <ul class="plain">
+    <li><b>dsh-index #2</b> —— CI 跑完待合入。</li>
+    <li><b>aarch64 装不了插件</b> —— <code>xim:pnpm</code> 没有 arm64 资产。已在配方里写明，等上游补齐自动闭合。</li>
+    <li><b>bun.lua / openclaw.lua</b> —— 同样声明了冗余的 <code>xim:node</code> + <code>xim:npm</code>，值得一个后续 PR。</li>
+    <li><b>剩下 27 个未镜像</b> —— 许可证不允许，属预期而非遗漏。</li>
+  </ul>
+</section>
+
+<footer>
+  站点 https://sunrisepeak.github.io/dsh-index &nbsp;·&nbsp; 设计依据见同目录 2026-08-13-dsh-plugin-index-design.md
+</footer>
+
+</div>
