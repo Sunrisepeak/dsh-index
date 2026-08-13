@@ -26,7 +26,6 @@ dsh 插件生态在 2026-08-09 之后**只剩一条官方分发通道**——pro
 | xpm 版本项 | `{url = {GLOBAL, CN}, sha256}` | `{}` |
 | CN 加速 | ✅ | ❌ 结构上不可能（§3.3） |
 | 上游删库后 | ✅ 仍可装 | ❌ |
-| `xlings use <plugin> <ver>` | ✅ | ❌ |
 | `prepare` 需用户授权 | ❌ 不需要 | ⚠️ 需要 |
 
 两条路线**共用同一份 `template.lua`**，分支点只有 `dsh.mirror` 存不存在——
@@ -42,7 +41,9 @@ dsh 插件生态在 2026-08-09 之后**只剩一条官方分发通道**——pro
 
 - `latest -> 0.1.0-rc.6`，另跟踪 `0.1.0-rc.3` 作为可切换 pin
 - 走 npm 通道（上游无 GitHub release / 无 git tag，唯一发布渠道是 `@deepseek-ai/dsh`）
-- `deps = {"xim:node", "xim:npm"}`；**pnpm 故意不是硬依赖**（见 §3.4）
+- `deps = {"xim:node@>=24", "xim:npm"}`；**pnpm 故意不是硬依赖**（见 §3.4）
+- config() 用 `pkginfo.dep_install_dir("xim:node")` 绑定解释器，
+  不跟 `xlings use node` 漂（#618）
 
 本设计负责的是**它的插件生态**。
 
@@ -60,7 +61,7 @@ dsh 插件生态在 2026-08-09 之后**只剩一条官方分发通道**——pro
 - 不做 dsh 本体的分发（已由 `xim:dsh` 覆盖）；
 - 不做插件的兼容性检测（`AdamPlatin123/awesome-dsh-plugins` 已经在做四维兼容矩阵 +
   运行级实测，本索引**消费**它的结论，不重复造）；
-- 不做插件托管/镜像（第一期；见 §12 分期）。
+- 不做插件的托管/构建服务；镜像只是**再分发已构建产物**，且仅限许可证允许的包（§3.3.1）。
 
 ---
 
@@ -239,9 +240,6 @@ change what runs"。）
 
 → **设计取向：把 sha/spec 当作真实版本，`package.json#version` 当作展示用标签。**
 
-至于 xlings 侧用什么做"版本切换"轴，取决于架构选型，见 §3.3 决策 2：
-走 A 只能靠 profile 并存，走 C 则 `xvm use <plugin> <ver>` 成立。
-
 ### 2.7 许可证普查（决定谁能进镜像）
 
 对 169 个 bundle 逐仓查 GitHub 的 `license.spdx_id`：
@@ -294,6 +292,66 @@ GitHub 搜索索引不收它的仓库，尽管按 URL 直接读得到。
 于是索引记的坐标和实际装的东西**静默脱钩**。必须按 **repo id** 而非 `full_name`
 检测 move。
 
+### 2.9 版本切换：store 管字节，xvm 管视图（实测，2026-08-14）
+
+这一节修正过一次，修正本身是结论的一部分。
+
+**第一次只测了"换版本要不要重下"。** 同一个插件的两个 commit 来回切：
+
+| 动作 | pnpm 自报计数 | 用时 |
+|---|---|---|
+| 装版本 A（store 冷） | `reused 1, downloaded 0` | 7.2s |
+| 切到版本 B（store 里没有） | `resolved 2, reused 1, **downloaded 1**` | 11.8s |
+| **切回版本 A（store 里有过）** | `resolved 2, **reused 2, downloaded 0**` | **5.3s** |
+
+落盘形态：`node_modules/@scope/<pkg>` 下每个文件 `stat -c %h` 都是 **`links=2`**
+——硬链接进 pnpm 的内容寻址 store（`~/.local/share/pnpm/store/v11`），不是拷贝。
+
+于是当时得出"pnpm 已经够了，不需要 xvm"。**这个结论是错的**，因为它把
+"不重下"当成了"版本切换"。
+
+**第二次测的是并存能力，差别在这里：**
+
+```
+$ 逐个 subos 读 .xlings.json 的 workspace
+  node:  19 个 subos，2 种 active
+         default = 26.7.0 , the-mcpp-world = 24.15.0   ← 同时成立
+  gcc:   5 个 subos，2 种 active
+         default = 16.1.0 , dev-hello = 15.1.0         ← 同时成立
+```
+
+| 能力 | pnpm store | xvm |
+|---|---|---|
+| 换版本不重下 | ✅ 内容寻址 + 硬链接 | — |
+| **同机多环境同时持有不同 active** | ❌ | ✅ 按 subos 隔离 |
+| 切换方式 | 破坏性改写某个目录的 `package.json` + lockfile | 进哪个 subos 就是哪个版本，不改文件 |
+| 选择方式 | 每条命令手打 `--profile X` | shell 环境自带 |
+| 作用域 | 一个 profile 目录 | 一个 subos（多 shell 共享） |
+
+**两者是分层互补，不是二选一：**
+
+- **store = 字节层**：同一份字节被多个环境复用，切换成本接近零
+- **xvm = 视图层**：决定"此刻这个 shell 里，这个名字是哪个版本"
+
+pnpm 没有任何东西对应视图层——它的 active 是单个目录的属性。
+所以 **xvm 保留**，索引照常注册。
+
+### 2.9.1 xvm 的 active 怎么让 profile 跟上（待实现）
+
+xvm 翻转 active 之后，`$DSH_HOME/profiles/<p>` 不会自己变。两条候选路径：
+
+**(a) profile 跟随 subos（倾向这条）**——`DSH_PROFILE` 缺省不写死 `web`，
+而是取当前 subos 名。于是"进不同 subos = 不同 profile = 不同插件集与版本"，
+和 xvm 的 subos 语义天然对齐，用户也不必每条命令手打 `--profile`。
+
+**(b) 显式对账**——`config()` / 一个 `dsh-sync` 子命令读 xvm 的 active，
+把 profile 里的依赖 spec 改成对应版本再跑一次 `dsh plugin add`
+（走 C 时实参是 payload 里的 tarball，store 命中，代价就是上面测到的 ~5s）。
+
+(a) 决定"哪个 profile"，(b) 决定"profile 里是哪个版本"，**两者不冲突，
+大概率都要**。具体形状必须实测后再定（§13 未决 3）——
+xvm 对 `type = "group"` 节点的翻转究竟触发什么，不能照 glibc 的 lib 符号链接类推。
+
 ---
 
 ## 3. 阻抗失配与架构决策
@@ -303,14 +361,15 @@ GitHub 搜索索引不收它的仓库，尽管按 URL 直接读得到。
 | | xim / xlings 模型 | dsh 插件模型 |
 |---|---|---|
 | 安装产物 | `~/.xlings/data/xpkgs/<ns>-x-<name>/<ver>/` 下的不可变 payload | `$DSH_HOME/profiles/<p>/node_modules`，pnpm 拥有 |
-| 版本切换 | `xvm use <name>@<ver>` 改 shim | 换 spec 重装 / 换 profile |
+| 版本切换 | `xvm use <name>@<ver>`，**按 subos 隔离** | pnpm store 命中重 `add`，**单目录属性**（§2.9） |
 | 依赖解析 | libxpkg 的 `deps` | pnpm + lockfile |
 | 卸载 | 删 payload + `xvm.remove` | `dsh plugin remove` 改 profile 清单 |
 | 注册面 | 可执行程序（shim） | **没有可执行程序** |
 
-最后一行是关键：**dsh 插件不提供任何命令**，所以 `xvm_enable` 必须是 `false`，
-xvm 在这里没有位置。这不是缺陷，是形态差异——索引管的是"这个 profile 里有哪些 bundle"，
-不是"PATH 上有哪个可执行文件"。
+最后一行说明索引管的是"这个 profile 里有哪些 bundle"，不是"PATH 上有哪个可执行文件"。
+但**这不意味着 xvm 用不上**：xvm 也管 lib 和 group 节点（全仓 `type = "lib"` 22 处、
+`type = "group"` 25 处），它的价值在于**按 subos 隔离 active 版本**——
+这是 pnpm 完全没有的能力（§2.9）。所以 `xvm_enable = true`，注册为 `type = "group"`。
 
 ### 3.2 三个候选架构
 
@@ -321,7 +380,7 @@ xvm 在这里没有位置。这不是缺陷，是形态差异——索引管的�
 - ✅ profile 只有一个真相源（pnpm 的 lockfile）；`dsh` 自己负责 bundles 对账
 - ✅ 用户手敲的命令和索引跑的命令**逐字相同**，出问题好排查
 - ✅ 上游改了对账逻辑，索引不用跟着改
-- ❌ payload 目录是空的；xvm 用不上
+- ❌ payload 目录是空的：不可镜像、不可离线、无 CN
 - ❌ config() 期需要 pnpm + 网络
 
 **B. xim 拥有 payload，profile 用 `link:` 指过去**
@@ -353,8 +412,7 @@ users run `dsh plugin add ./hello-plugin-0.1.0.tgz`"）。
 > | 今日规模 | **127 / 169** | 29 无 license + 13 待核 |
 > | CN 加速 | ✅ GLOBAL/CN 双镜像 | ❌ 直连上游 |
 > | 上游删库后 | ✅ 仍可安装 | ❌ 装不回来 |
-> | `xlings use <plugin> <ver>` | ✅ payload 即切换对象 | ❌ 只能换 profile |
-> | `prepare` 构建授权 | ✅ 不需要（CI 里已构建完） | ⚠️ 需 `DSH_ALLOW_BUILDS=1` |
+> > | `prepare` 构建授权 | ✅ 不需要（CI 里已构建完） | ⚠️ 需 `DSH_ALLOW_BUILDS=1` |
 
 这个决策一开始写错过，纠正的过程值得留下来：初版把 C 排到第三期，理由是
 "当天就能跑通"。三条独立的事实推翻了它——
@@ -369,18 +427,20 @@ CN 条目 **0 条**，有 CN 镜像的（`claude`、`codex`）无一例外都有
 `GIT_CONFIG_COUNT` 注入 `insteadOf` 重定向（不污染用户 git config），
 但**重定向目标得先存在**——那就是 C 的镜像工作本身，只是换成 git 形态。
 
-**2. xvm 需要一个可指的路径。** 初版写"xvm 在这里没有位置，因为插件不提供可执行文件"
-——这是错的。xvm 的模型是 **name → 版本集 → active**，与是否可执行无关：
-`glibc.lua` 用 `xvm.add(lib, { type = "lib" })` 注册 `libc.so` / `crt1.o`，
-`musl.lua` 用 `xvm.add("musl", { type = "group" })` 注册一个不对应任何 artifact 的根节点
-（全仓 `type = "lib"` 22 处、`type = "group"` 25 处）。
+**2. 上游会搬家、会删库**（§2.8）。在这种生态里"装过的东西还能再装一次"
+不是优化，是索引存在的意义。今天 `topic:dsh-plugin` 的 281 个仓库里
+已经**没有一个**还在 `dsh-external` 下，`toybox`、`dsh-superpowers` 直接 404。
 
-但 xvm 的切换**动作**是"重新指向一条路径"。A 的 payload 是空的，没有路径可指；
-C 的 payload 就是切换对象。所以准确的说法是：
-**xvm 不是对插件没用，是在 A 下没有着力点。**
+**3. 38 个带 `prepare` 的包，构建可以搬进索引 CI**，用户装 tarball 不需要
+`allowBuilds` 授权（上游 publish.md 明确支持 tarball 安装）。
 
-**3. 上游会搬家、会删库**（§2.6）。在这种生态里"装过的东西还能再装一次"
-不是优化，是索引存在的意义。
+**4. xvm 的 subos 级版本隔离需要一个可指的对象。** 这条论据修正过两次，
+留在这里因为过程有信息量：先写成"只有 C 能支持 xvm 切换"，
+然后实测 pnpm store 换版本零下载（`downloaded 0, reused 2`，`links=2` 硬链进 store），
+一度据此判定"xvm 多余"——**那是把字节层当成了视图层**。
+再测才看清：`node` 能在 `default` 是 26.7.0、在 `the-mcpp-world` 同时是 24.15.0，
+**pnpm 对这种并存毫无对应物**（§2.9）。
+所以 xvm 保留；而它要发挥作用，payload 里得有东西——这仍然指向 C。
 
 ### 3.3.1 镜像资格：许可证门（D1a）
 
@@ -535,7 +595,7 @@ package = {
         license = "MIT",
 
         -- ── 走 C 的包才有这一段：真实 xpm 资源，由镜像流水线回填 ──
-        -- 有 mirror 段 = 架构 C（GLOBAL/CN + sha256 + xvm 版本切换）
+        -- 有 mirror 段 = 架构 C（GLOBAL/CN + sha256，可离线可复现）
         -- 无 mirror 段 = 架构 A（直连上游，无 CN，网站标注）
         mirror = {
             ["0.0.1"] = {
@@ -586,7 +646,6 @@ package = {
 | `xpm` 版本项 | `{ url = {GLOBAL,CN}, sha256 }` 真资源 | `{}` 空 |
 | `install()` | xlings 下载校验 tarball 进 payload | 空转 |
 | `config()` | `dsh plugin add <payload>/<pkg>.tgz` | `dsh plugin add github:<origin>#<sha>` |
-| `xvm.add` | `type = "group"`，支持 `xlings use` | 不注册 |
 
 `sync.py` 负责保证一致性：**有 `mirror` 段却在镜像仓库里找不到对应 tag 的，
 CI 必须 fail closed**，而不是悄悄降级成 A——那会让用户以为自己装的是可复现的字节。
@@ -611,8 +670,9 @@ package.archs = {"x86_64"}     -- 受限于 xim:pnpm，见 D2
 local MIRROR   = package.dsh.mirror              -- 有 = 架构 C，无 = 架构 A
 local RES_BASE = "dsh-plugins/releases/download" -- xlings-res 下的统一镜像位
 
--- xvm 只在 C 下有意义：A 的 payload 是空的，没有路径可指（§3.3 决策 2）
-package.xvm_enable = MIRROR ~= nil
+-- 注册 xvm：pnpm 的 store 只解决"换版本不重下"（字节层），
+-- 而"同机多个 subos 同时持有不同 active"只有 xvm 有（视图层，§2.9 实测）。
+package.xvm_enable = true
 
 do
     local xpm = {}
@@ -646,7 +706,12 @@ import("xim.libxpkg.system")
 import("xim.libxpkg.xvm")
 import("xim.libxpkg.log")
 
-local function profile()  return os.getenv("DSH_PROFILE") or "web" end
+-- profile 缺省跟随当前 subos（§2.9.1 路径 a）：进不同 subos = 不同 profile，
+-- 和 xvm 的 subos 隔离语义对齐，用户不必每条命令手打 --profile。
+-- 取不到 subos 名时退回 "web"。
+local function profile()
+    return os.getenv("DSH_PROFILE") or os.getenv("XLINGS_SUBOS") or "web"
+end
 local function dsh_home() return os.getenv("DSH_HOME")
                                  or path.join(os.getenv("HOME") or os.getenv("USERPROFILE"), ".dsh") end
 local function profile_manifest()
@@ -704,29 +769,29 @@ function config()
         return false        -- R4：断言 profile 清单真的收下了
     end
 
-    -- 只有 C 注册 xvm。type = "group"：这个名字不对应任何可执行文件，
-    -- 留成默认 program 类型会生成一个永远失败的 shim（openxlings/xlings#452）。
-    if MIRROR then
-        xvm.add(package.name, { type = "group" })
-    end
+    -- type = "group"：这个名字不对应任何可执行文件。留成默认 program 类型
+    -- 会生成一个永远失败的 shim（subos/*/bin/<name> -> bin/xlings），
+    -- self doctor 会报成 orphan（openxlings/xlings#452）。
+    xvm.add(package.name, { type = "group" })
     return true
 end
 
 function uninstall()
-    if MIRROR then
-        xvm.remove(package.name)
-    end
+    xvm.remove(package.name)
     system.exec(("dsh plugin --profile %s remove %s")
                 :format(profile(), package.dsh.bundle_name))
     return true
 end
 ```
 
-> ⚠️ **`xvm use <plugin> <ver>` 之后 profile 不会自动跟着动。**
-> xvm 的切换是"重指路径"，而 pnpm 已经把 tarball 内容**拷贝**进了
-> `profiles/<p>/node_modules`——它不是符号链接，不会感知 xvm 的切换。
-> 所以切换动作大概率还要跟一次 `dsh plugin add <新版本 tarball>`。
-> 这条**必须实测**再定形，不能照着 glibc 的 lib 切换想当然（§13 未决 3）。
+`xvm.add` 给的是**视图层**能力：同一台机器上多个 subos 可以同时持有这个插件的
+不同 active 版本（实测 `node` 在两个 subos 同时是 26.7.0 和 24.15.0）。
+pnpm 的 store 给的是字节层——两者分层互补，见 §2.9。
+
+> ⚠️ `xvm use <plugin> <ver>` 翻转 active 之后 profile 怎么跟上，
+> 形状未定（§2.9.1 / §13 未决 3）。**先注册、先记账**，
+> 对账机制实测之后再补——但不能因为对账没做好就不注册，
+> 那会让这个插件在 `xlings use` 的世界里根本不存在。
 
 > 上面是设计稿的形状，不是最终代码。落地时必须逐条过 §6.2 的沙箱约束
 > （`os.getenv` / `io.open` 在构建沙箱里可用，但 hook 运行时的可用面要单独确认；
@@ -949,11 +1014,13 @@ C 和 A 共用同一份 `template.lua`，分支只有 `dsh.mirror` 一个判断�
    > 参考 `xim:dsh` 自己的解法（xim-pkgindex#618）：它用
    > `pkginfo.dep_install_dir("xim:node")` 拿到 node payload 再 exec，
    > 本索引很可能要照抄这个形状去拿 `xim:dsh` 的 payload。
-3. **`xvm use <plugin> <ver>` 之后 profile 到底跟不跟**：pnpm 把 tarball 内容
-   **拷贝**进 `node_modules`（不是符号链接），所以 xvm 重指路径很可能不被感知，
-   切换动作还要跟一次 `dsh plugin add`。**必须实测**，不能照 glibc 的 lib 切换类推。
-   如果实测证明 xvm 在这里做不出真正的切换，那 `xvm.add` 就只剩"版本记账"价值，
-   要么保留并说明，要么去掉——不能留一个看起来能切、实际不切的东西。
+3. **`xvm use <plugin> <ver>` 翻转 active 之后，profile 怎么跟上**（部分结案）。
+   已测清的：pnpm store 让换版本零下载（字节层），xvm 提供 subos 级并存（视图层），
+   两者互补，**xvm 保留并注册为 `type = "group"`**（§2.9）。
+   仍待实测的：xvm 翻转一个 group 节点究竟触发什么？profile 的对账走
+   §2.9.1 的 (a) 跟随 subos、(b) 显式 `dsh-sync`，还是两者都要？
+   在测清之前，模板**先注册先记账**——不能因为对账没做好就不注册，
+   那会让插件在 `xlings use` 的世界里根本不存在。
 4. **`os.getenv` 在 hook runtime 的可用性**：`DSH_PROFILE` / `DSH_HOME` / `DSH_ALLOW_BUILDS`
    三个读取点都依赖它，落地前必须实测（xpkg-creater skill 已记录多个"hook runtime
    里没绑定的东西会静默毁掉安装"的先例）。
