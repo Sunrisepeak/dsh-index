@@ -13,16 +13,13 @@ package = {
 
     dsh = {
         bundle_name = "@deepseek-ai/dsh-agent-budget",
-        source = "github",
-        origin = "vibeinging/dsh-agent-budget",
 
         versions = {
-            ["0.0.1"] = { ref = "2702e6d4846d478c01ff09ccbb54fc9f6313daba" },
+            ["0.0.1"] = { commit = "2702e6d4846d478c01ff09ccbb54fc9f6313daba" },
         },
         latest = "0.0.1",
 
         needs_build = false,
-        license = "NONE",
 
         -- Upstream ships no redistributable license, so this index has
         -- no right to mirror it: no `mirror` block, installs straight

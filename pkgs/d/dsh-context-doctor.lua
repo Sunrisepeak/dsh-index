@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-context-doctor",
-        source = "github",
-        origin = "Zhenyu98/dsh-context-doctor",
 
         versions = {
-            ["0.5.0"] = { ref = "4a91502c106f7fed86981421c740566abf309977" },
+            ["0.5.0"] = { commit = "4a91502c106f7fed86981421c740566abf309977" },
         },
         latest = "0.5.0",
 
         needs_build = false,
-        license = "BSD-3-Clause",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

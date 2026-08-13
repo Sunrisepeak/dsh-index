@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "@mattheliu/session-teleport",
-        source = "github",
-        origin = "omdsh-dev/session-teleport",
 
         versions = {
-            ["0.6.0-rc.1"] = { ref = "d76e0d98b09ad1d08f2592ffd47161acb907bfc4" },
+            ["0.6.0-rc.1"] = { commit = "d76e0d98b09ad1d08f2592ffd47161acb907bfc4" },
         },
         latest = "0.6.0-rc.1",
 
         needs_build = false,
-        license = "BSD-3-Clause",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

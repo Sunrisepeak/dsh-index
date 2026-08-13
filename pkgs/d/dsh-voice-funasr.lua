@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-voice-funasr",
-        source = "github",
-        origin = "omdsh-dev/dsh-voice-funasr",
 
         versions = {
-            ["0.1.2"] = { ref = "2ac730e83730ee7408704b3607eb8f3d96a52050" },
+            ["0.1.2"] = { commit = "2ac730e83730ee7408704b3607eb8f3d96a52050" },
         },
         latest = "0.1.2",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

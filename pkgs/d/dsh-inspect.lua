@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "@dsh-external/dsh-inspect",
-        source = "github",
-        origin = "omdsh-dev/dsh-inspect",
 
         versions = {
-            ["0.1.0"] = { ref = "9876349054f0fec33114f7f594b4901b7e9420f1" },
+            ["0.1.0"] = { commit = "9876349054f0fec33114f7f594b4901b7e9420f1" },
         },
         latest = "0.1.0",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

@@ -76,12 +76,16 @@ def parse_descriptor(path: pathlib.Path) -> dict:
             if depth == 0:
                 block = body[i:k + 1]
                 break
-    versions = dict(re.findall(r'\["([^"]+)"\]\s*=\s*\{\s*ref\s*=\s*"([0-9a-f]{40})"', block))
+    versions = dict(re.findall(r'\["([^"]+)"\]\s*=\s*\{\s*commit\s*=\s*"([0-9a-f]{40})"', block))
+    repo_url = field(body, "repo") or ""
+    lic = re.search(r'licenses\s*=\s*\{"([^"]+)"', body)
     return {
         "name": field(body, "name"),
-        "origin": field(block, "origin"),
+        # Derived, not stored: `repo` is the standard xpkg field and a second
+        # copy of the same fact is a second thing to keep in sync.
+        "origin": repo_url.split("github.com/", 1)[-1].rstrip("/") if "github.com/" in repo_url else "",
         "bundle_name": field(block, "bundle_name"),
-        "license": field(block, "license"),
+        "license": lic.group(1) if lic else "NONE",
         "latest": field(block, "latest"),
         "patch": field(block, "patch") or "./cordis.patch.yml",
         "versions": versions,

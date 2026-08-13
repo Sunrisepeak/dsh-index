@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "@dsh-external/dsh-minigames",
-        source = "github",
-        origin = "lhh010/dsh-minigames",
 
         versions = {
-            ["0.3.2"] = { ref = "a22b3c143839e4ed75e98e64345e41fb02f8d9c0" },
+            ["0.3.2"] = { commit = "a22b3c143839e4ed75e98e64345e41fb02f8d9c0" },
         },
         latest = "0.3.2",
 
         needs_build = false,
-        license = "BSD-3-Clause",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

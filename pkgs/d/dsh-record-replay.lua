@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-record-replay",
-        source = "github",
-        origin = "humblebanana/dsh-record-replay",
 
         versions = {
-            ["0.2.0"] = { ref = "32d06f7db906914e278d1552728d1d63f191d6ad" },
+            ["0.2.0"] = { commit = "32d06f7db906914e278d1552728d1d63f191d6ad" },
         },
         latest = "0.2.0",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

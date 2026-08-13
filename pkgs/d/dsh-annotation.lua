@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "@omdsh-dev/dsh-annotation",
-        source = "github",
-        origin = "omdsh-dev/dsh-annotation",
 
         versions = {
-            ["1.3.13"] = { ref = "a37edb01c3dbb0b19249cab3b93138ad529281ed" },
+            ["1.3.13"] = { commit = "a37edb01c3dbb0b19249cab3b93138ad529281ed" },
         },
         latest = "1.3.13",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

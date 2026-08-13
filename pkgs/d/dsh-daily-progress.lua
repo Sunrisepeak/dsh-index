@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-daily-progress",
-        source = "github",
-        origin = "omdsh-dev/dsh-daily-progress",
 
         versions = {
-            ["0.1.0"] = { ref = "c7bcc9dfac36fc8a3393e86eba4df6f74104278e" },
+            ["0.1.0"] = { commit = "c7bcc9dfac36fc8a3393e86eba4df6f74104278e" },
         },
         latest = "0.1.0",
 
         needs_build = false,
-        license = "BSD-3-Clause",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-acp-for-bitfun",
-        source = "github",
-        origin = "bobleer/dsh-acp-for-bitfun",
 
         versions = {
-            ["0.1.0"] = { ref = "8dedce1ee1a463cfb21e2ac0d8518a8d3c67c5aa" },
+            ["0.1.0"] = { commit = "8dedce1ee1a463cfb21e2ac0d8518a8d3c67c5aa" },
         },
         latest = "0.1.0",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

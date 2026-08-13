@@ -13,16 +13,13 @@ package = {
 
     dsh = {
         bundle_name = "@huanlin/dsh-plugin-spur",
-        source = "github",
-        origin = "HuanLinOTO/dsh-plugin-spur",
 
         versions = {
-            ["0.1.0"] = { ref = "0411e76690a19976bdb8f0423654d9c6b27b4a57" },
+            ["0.1.0"] = { commit = "0411e76690a19976bdb8f0423654d9c6b27b4a57" },
         },
         latest = "0.1.0",
 
         needs_build = false,
-        license = "NOASSERTION",
 
         -- Upstream ships no redistributable license, so this index has
         -- no right to mirror it: no `mirror` block, installs straight

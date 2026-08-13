@@ -119,6 +119,9 @@ def main() -> int:
         L.append(f"    description = {lua_str(desc)},")
         L.append(f'    repo = "https://github.com/{repo}",')
         L.append(f'    homepage = "https://github.com/{repo}",')
+        # Standard xpkg field, not a dsh-private copy. Absent means upstream
+        # declares none -- which is exactly what makes it un-mirrorable, so the
+        # gate reads the same field a human does.
         if lic not in ("NONE", "NOASSERTION"):
             L.append(f"    licenses = {{{lua_str(lic)}}},")
         L.append(f"    authors = {{{lua_str(repo.split('/')[0])}}},")
@@ -128,18 +131,18 @@ def main() -> int:
         L.append("    categories = {" + ", ".join(lua_str(c) for c in cats) + "},")
         L.append("    keywords = {" + ", ".join(lua_str(k) for k in (["dsh"] + kws)) + "},")
         L.append("")
+        # Only what xpkg cannot express lives here. `origin` and `source` are
+        # derivable from `repo` above, and the license is `licenses` above --
+        # a second copy of either is a second thing to keep in sync.
         L.append("    dsh = {")
         L.append(f"        bundle_name = {lua_str(r['pkg'])},")
-        L.append('        source = "github",')
-        L.append(f"        origin = {lua_str(repo)},")
         L.append("")
         L.append("        versions = {")
-        L.append(f'            ["{ver}"] = {{ ref = "{sha}" }},')
+        L.append(f'            ["{ver}"] = {{ commit = "{sha}" }},')
         L.append("        },")
         L.append(f'        latest = "{ver}",')
         L.append("")
         L.append(f"        needs_build = {'true' if r.get('prepare') else 'false'},")
-        L.append(f"        license = {lua_str(lic)},")
         if patch and patch != "./cordis.patch.yml":
             L.append("")
             L.append("        -- non-default bundle patch path")

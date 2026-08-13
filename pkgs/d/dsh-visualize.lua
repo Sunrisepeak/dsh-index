@@ -13,16 +13,13 @@ package = {
 
     dsh = {
         bundle_name = "@dsh-external/dsh-visualize",
-        source = "github",
-        origin = "Nagi-ovo/dsh-visualize",
 
         versions = {
-            ["0.1.2"] = { ref = "b80557ec9c4ab12857eca5ebe134beb48c575418" },
+            ["0.1.2"] = { commit = "b80557ec9c4ab12857eca5ebe134beb48c575418" },
         },
         latest = "0.1.2",
 
         needs_build = false,
-        license = "NONE",
 
         -- Upstream ships no redistributable license, so this index has
         -- no right to mirror it: no `mirror` block, installs straight

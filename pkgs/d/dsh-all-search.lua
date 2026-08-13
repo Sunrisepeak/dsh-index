@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-all-search",
-        source = "github",
-        origin = "RealAlexandreAI/dsh-all-search",
 
         versions = {
-            ["0.1.1"] = { ref = "2caa5a336e45d5d9033b7607ce6ae92a94064e6a" },
+            ["0.1.1"] = { commit = "2caa5a336e45d5d9033b7607ce6ae92a94064e6a" },
         },
         latest = "0.1.1",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

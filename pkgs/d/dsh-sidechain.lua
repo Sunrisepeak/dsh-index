@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "@dsh-external/dsh-sidechain",
-        source = "github",
-        origin = "Buyi-wsgzg/dsh-sidechain",
 
         versions = {
-            ["0.6.2"] = { ref = "dd4e1a712d0d34bf59aac2df09f0846e09e3e5f2" },
+            ["0.6.2"] = { commit = "dd4e1a712d0d34bf59aac2df09f0846e09e3e5f2" },
         },
         latest = "0.6.2",
 
         needs_build = false,
-        license = "BSD-3-Clause",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

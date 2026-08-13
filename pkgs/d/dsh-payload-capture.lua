@@ -13,16 +13,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-payload-capture",
-        source = "github",
-        origin = "Moeblack/dsh-payload-capture",
 
         versions = {
-            ["0.1.0"] = { ref = "75cd434c6b854323f0f6bdb75ea8694480082d03" },
+            ["0.1.0"] = { commit = "75cd434c6b854323f0f6bdb75ea8694480082d03" },
         },
         latest = "0.1.0",
 
         needs_build = false,
-        license = "NONE",
 
         -- Upstream ships no redistributable license, so this index has
         -- no right to mirror it: no `mirror` block, installs straight

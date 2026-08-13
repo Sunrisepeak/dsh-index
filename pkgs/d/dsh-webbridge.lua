@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "@dsh-external/dsh-webbridge",
-        source = "github",
-        origin = "bill9109/dsh-webbridge",
 
         versions = {
-            ["0.0.1"] = { ref = "a7f85bef095c42b61a4823b9002a6e22f5713754" },
+            ["0.0.1"] = { commit = "a7f85bef095c42b61a4823b9002a6e22f5713754" },
         },
         latest = "0.0.1",
 
         needs_build = false,
-        license = "BSD-3-Clause",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-cloudflare-browser-run",
-        source = "github",
-        origin = "RealAlexandreAI/dsh-cloudflare-browser-run",
 
         versions = {
-            ["0.1.1"] = { ref = "f85ec677f77665640315d89aebe876b4877995bd" },
+            ["0.1.1"] = { commit = "f85ec677f77665640315d89aebe876b4877995bd" },
         },
         latest = "0.1.1",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-llm-fallbacks",
-        source = "github",
-        origin = "btspoony/dsh-llm-fallbacks",
 
         versions = {
-            ["0.1.0-alpha.1"] = { ref = "21fbed9fc8e3dd33b66db56d9097622a77483b1d" },
+            ["0.1.0-alpha.1"] = { commit = "21fbed9fc8e3dd33b66db56d9097622a77483b1d" },
         },
         latest = "0.1.0-alpha.1",
 
         needs_build = true,
-        license = "MIT",
 
         -- non-default bundle patch path
         patch = "./bundle/cordis.patch.yml",

@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-notification",
-        source = "github",
-        origin = "omdsh-dev/dsh-notification",
 
         versions = {
-            ["0.1.1"] = { ref = "3e33100f51f25f24cece20bfd3d50cfbde0cbca5" },
+            ["0.1.1"] = { commit = "3e33100f51f25f24cece20bfd3d50cfbde0cbca5" },
         },
         latest = "0.1.1",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

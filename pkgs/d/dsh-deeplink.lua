@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "@dsh-community/dsh-deeplink",
-        source = "github",
-        origin = "qyw233/dsh-deeplink",
 
         versions = {
-            ["0.5.0"] = { ref = "0ec5da351b246dfcbf9a91a3d0c7b7f2699370e6" },
+            ["0.5.0"] = { commit = "0ec5da351b246dfcbf9a91a3d0c7b7f2699370e6" },
         },
         latest = "0.5.0",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

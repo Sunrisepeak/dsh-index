@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "@huiliyi37/dsh-tianshu-tui",
-        source = "github",
-        origin = "huiliyi37/dsh-tianshu-tui",
 
         versions = {
-            ["0.1.0-rc.6"] = { ref = "47908f40599a45c16275ec1adeae60cb29f903b5" },
+            ["0.1.0-rc.6"] = { commit = "47908f40599a45c16275ec1adeae60cb29f903b5" },
         },
         latest = "0.1.0-rc.6",
 
         needs_build = false,
-        license = "Apache-2.0",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

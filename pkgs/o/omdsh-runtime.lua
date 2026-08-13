@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "@omdsh/runtime",
-        source = "github",
-        origin = "omdsh-dev/omdsh-runtime",
 
         versions = {
-            ["0.0.0"] = { ref = "7b63a27edef055a1c35d97d97651e78d41ea8a2f" },
+            ["0.0.0"] = { commit = "7b63a27edef055a1c35d97d97651e78d41ea8a2f" },
         },
         latest = "0.0.0",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

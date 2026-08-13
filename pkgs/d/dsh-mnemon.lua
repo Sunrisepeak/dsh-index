@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-mnemon",
-        source = "github",
-        origin = "omdsh-dev/dsh-mnemon",
 
         versions = {
-            ["0.1.0"] = { ref = "f5d0e48af121b3ba3911540380b8fa1f19679b7f" },
+            ["0.1.0"] = { commit = "f5d0e48af121b3ba3911540380b8fa1f19679b7f" },
         },
         latest = "0.1.0",
 
         needs_build = false,
-        license = "BSD-3-Clause",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

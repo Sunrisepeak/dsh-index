@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "@deepseek-ai/dsh-pet-corner",
-        source = "github",
-        origin = "omdsh-dev/dsh-pet-corner",
 
         versions = {
-            ["0.0.1-rc.3"] = { ref = "986739867546b5539083aaf638f54249cd8f5347" },
+            ["0.0.1-rc.3"] = { commit = "986739867546b5539083aaf638f54249cd8f5347" },
         },
         latest = "0.0.1-rc.3",
 
         needs_build = false,
-        license = "BSD-3-Clause",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

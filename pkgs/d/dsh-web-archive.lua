@@ -13,16 +13,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-web-archive",
-        source = "github",
-        origin = "renat3u/dsh-web-archive",
 
         versions = {
-            ["0.1.1"] = { ref = "e106daf623fef5b1b4e3fc375ace130253e38243" },
+            ["0.1.1"] = { commit = "e106daf623fef5b1b4e3fc375ace130253e38243" },
         },
         latest = "0.1.1",
 
         needs_build = false,
-        license = "NONE",
 
         -- Upstream ships no redistributable license, so this index has
         -- no right to mirror it: no `mirror` block, installs straight

@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-chat-import",
-        source = "github",
-        origin = "Nwflower/dsh-chat-import",
 
         versions = {
-            ["0.1.1"] = { ref = "c6913244337f9ed70e8fea2a83622ac8550ea1ee" },
+            ["0.1.1"] = { commit = "c6913244337f9ed70e8fea2a83622ac8550ea1ee" },
         },
         latest = "0.1.1",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

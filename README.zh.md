@@ -62,12 +62,9 @@ package = {
 
     dsh = {
         bundle_name = "dsh-cc-tui",
-        source = "github",
-        origin = "ccch1mneyyy/dsh-cc-tui",
-        versions = { ["0.1.2"] = { ref = "<40 位 commit sha>" } },
+        versions = { ["0.1.2"] = { commit = "<40 位 sha>" } },
         latest = "0.1.2",
         needs_build = false,
-        license = "BSD-3-Clause",
     },
 }
 ```

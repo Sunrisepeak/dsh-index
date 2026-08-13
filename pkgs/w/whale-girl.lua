@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "whale-girl",
-        source = "github",
-        origin = "vlln/whale-girl",
 
         versions = {
-            ["0.1.0"] = { ref = "ecba322be408138fcc265588cacf00737154d31e" },
+            ["0.1.0"] = { commit = "ecba322be408138fcc265588cacf00737154d31e" },
         },
         latest = "0.1.0",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

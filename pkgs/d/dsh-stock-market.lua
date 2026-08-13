@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-stock-market",
-        source = "github",
-        origin = "AnacondaKC/dsh-stock-market",
 
         versions = {
-            ["0.2.0"] = { ref = "02278af12330102c534c843a668d1c8407dbde1b" },
+            ["0.2.0"] = { commit = "02278af12330102c534c843a668d1c8407dbde1b" },
         },
         latest = "0.2.0",
 
         needs_build = false,
-        license = "BSD-3-Clause",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

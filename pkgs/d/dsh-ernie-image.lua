@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-ernie-image",
-        source = "github",
-        origin = "omdsh-dev/dsh-ernie-image",
 
         versions = {
-            ["0.1.0"] = { ref = "2c8292bc23a587f479604e7f0707e8cb25f43f01" },
+            ["0.1.0"] = { commit = "2c8292bc23a587f479604e7f0707e8cb25f43f01" },
         },
         latest = "0.1.0",
 
         needs_build = false,
-        license = "BSD-3-Clause",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

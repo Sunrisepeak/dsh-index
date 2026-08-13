@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-revive",
-        source = "github",
-        origin = "omdsh-dev/dsh-revive",
 
         versions = {
-            ["0.1.4"] = { ref = "8569ed48e9f6a7f446c5638e88ae276d36aa18ac" },
+            ["0.1.4"] = { commit = "8569ed48e9f6a7f446c5638e88ae276d36aa18ac" },
         },
         latest = "0.1.4",
 
         needs_build = false,
-        license = "BSD-3-Clause",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

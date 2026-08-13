@@ -13,16 +13,13 @@ package = {
 
     dsh = {
         bundle_name = "@dsh-external/dsh-diff-viewer",
-        source = "github",
-        origin = "lehhair/dsh-diff-viewer",
 
         versions = {
-            ["0.1.0"] = { ref = "7c9c5f977c71e864e1551e30cd48151310b23ab4" },
+            ["0.1.0"] = { commit = "7c9c5f977c71e864e1551e30cd48151310b23ab4" },
         },
         latest = "0.1.0",
 
         needs_build = false,
-        license = "NONE",
 
         -- Upstream ships no redistributable license, so this index has
         -- no right to mirror it: no `mirror` block, installs straight

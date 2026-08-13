@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "@dsh-external/dsh-mobile",
-        source = "github",
-        origin = "lehhair/dsh-mobile",
 
         versions = {
-            ["0.1.0"] = { ref = "25764098e335d56b4980e3f6b0a0b16dcdcd341f" },
+            ["0.1.0"] = { commit = "25764098e335d56b4980e3f6b0a0b16dcdcd341f" },
         },
         latest = "0.1.0",
 
         needs_build = false,
-        license = "BSD-3-Clause",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

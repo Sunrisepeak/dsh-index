@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "@a179-sanae/dsh-code-check",
-        source = "github",
-        origin = "a179-sanae/dsh-code-check",
 
         versions = {
-            ["0.1.0"] = { ref = "8b28f145aaa282ce57b946303074109f1aa1bad0" },
+            ["0.1.0"] = { commit = "8b28f145aaa282ce57b946303074109f1aa1bad0" },
         },
         latest = "0.1.0",
 
         needs_build = true,
-        license = "BSD-3-Clause",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

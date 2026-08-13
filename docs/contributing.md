@@ -49,16 +49,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-cc-tui",     -- upstream package.json#name
-        source = "github",              -- github | npm
-        origin = "ccch1mneyyy/dsh-cc-tui",
 
         versions = {
-            ["0.1.2"] = { ref = "4aa91903ed71a2a4ce9050978f4f3e92ec4314e1" },
+            ["0.1.2"] = { commit = "4aa91903ed71a2a4ce9050978f4f3e92ec4314e1" },
         },
         latest = "0.1.2",
 
         needs_build = false,            -- true iff upstream has scripts.prepare
-        license = "BSD-3-Clause",       -- decides mirror eligibility
 
         -- patch = "./dist/cordis.patch.yml",   -- only if not the default
     },
@@ -69,11 +66,11 @@ package = {
 
 | Rule | Why |
 |---|---|
-| `ref` is 40 lowercase hex | A branch or tag can be moved under you. Upstream's own docs say pin a commit. |
+| `commit` is 40 lowercase hex | A branch or tag can be moved under you. Not spelled `ref`: xpkg already uses that for aliases (`["latest"] = { ref = "2.13.5" }`), and template.lua emits that form into the same file. |
 | `bundle_name` is never the install spec | 36 community repos name themselves into `@deepseek-ai/`, a scope DeepSeek owns on npm. A bare name can resolve elsewhere later. |
 | `latest` names a declared version | Otherwise `xlings install dsh:<name>` resolves to nothing. |
 | `needs_build` is explicit | It gates arbitrary code execution on the user's machine. |
-| `license` is recorded | It is the mirror gate — see below. |
+| `licenses` is the standard xpkg field | It is the mirror gate. Absent means upstream declares none, so the gate is fail-closed by construction — no `dsh.license` copy to drift. |
 | No hooks / `xpm` / `type` in a descriptor | `template.lua` supplies them; a local copy would be silently overridden. |
 
 ## 3. Mirroring (optional, license-gated)

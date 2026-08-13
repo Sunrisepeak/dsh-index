@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-advisor",
-        source = "github",
-        origin = "btspoony/dsh-advisor",
 
         versions = {
-            ["0.1.0"] = { ref = "56aa668ce375e0bbb7a1705fa8133aa94f55a1e2" },
+            ["0.1.0"] = { commit = "56aa668ce375e0bbb7a1705fa8133aa94f55a1e2" },
         },
         latest = "0.1.0",
 
         needs_build = true,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

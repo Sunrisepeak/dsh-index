@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-openai-codex-auth",
-        source = "github",
-        origin = "yoke233/dsh-openai-codex-auth",
 
         versions = {
-            ["0.2.0"] = { ref = "0beaeb17a8971a3f442297403ae9a90493d70d77" },
+            ["0.2.0"] = { commit = "0beaeb17a8971a3f442297403ae9a90493d70d77" },
         },
         latest = "0.2.0",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

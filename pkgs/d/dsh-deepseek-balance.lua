@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-deepseek-balance",
-        source = "github",
-        origin = "lin-cheng-lab/dsh-deepseek-balance",
 
         versions = {
-            ["0.1.0"] = { ref = "543f04dbb82a64db1e92ef968d86a058e0c9dd6a" },
+            ["0.1.0"] = { commit = "543f04dbb82a64db1e92ef968d86a058e0c9dd6a" },
         },
         latest = "0.1.0",
 
         needs_build = true,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "@dsh-external/dsh-stickers",
-        source = "github",
-        origin = "william-jin-cmu/dsh-stickers",
 
         versions = {
-            ["0.1.0"] = { ref = "1703f09915db1058b6031b31e52fd404560e0a78" },
+            ["0.1.0"] = { commit = "1703f09915db1058b6031b31e52fd404560e0a78" },
         },
         latest = "0.1.0",
 
         needs_build = true,
-        license = "BSD-3-Clause",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

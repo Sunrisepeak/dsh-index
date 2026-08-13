@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "mmv-dspic",
-        source = "github",
-        origin = "sjscy05/matlab-modelsim-vivado-plugin",
 
         versions = {
-            ["0.1.0"] = { ref = "3105101f317190e2cb0928d8efc1a1abcf7a234b" },
+            ["0.1.0"] = { commit = "3105101f317190e2cb0928d8efc1a1abcf7a234b" },
         },
         latest = "0.1.0",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

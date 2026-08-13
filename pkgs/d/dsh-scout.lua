@@ -13,16 +13,13 @@ package = {
 
     dsh = {
         bundle_name = "@deepseek-ai/dsh-tool-scout",
-        source = "github",
-        origin = "omdsh-dev/dsh-scout",
 
         versions = {
-            ["0.0.1-rc.2"] = { ref = "3fa0c5c0e0063e517ddeea032bb8c3964b80f47f" },
+            ["0.0.1-rc.2"] = { commit = "3fa0c5c0e0063e517ddeea032bb8c3964b80f47f" },
         },
         latest = "0.0.1-rc.2",
 
         needs_build = true,
-        license = "NONE",
 
         -- Upstream ships no redistributable license, so this index has
         -- no right to mirror it: no `mirror` block, installs straight

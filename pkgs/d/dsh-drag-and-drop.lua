@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "@dsh-external/dsh-drag-and-drop",
-        source = "github",
-        origin = "bill9109/dsh-drag-and-drop",
 
         versions = {
-            ["0.1.2"] = { ref = "00a77506ad80fa326af9e052bb4bbc067b1aa30e" },
+            ["0.1.2"] = { commit = "00a77506ad80fa326af9e052bb4bbc067b1aa30e" },
         },
         latest = "0.1.2",
 
         needs_build = false,
-        license = "BSD-3-Clause",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

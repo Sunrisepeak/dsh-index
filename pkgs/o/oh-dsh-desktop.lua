@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "@oh-dsh/desktop",
-        source = "github",
-        origin = "hust-open-atom-club/oh-dsh-desktop",
 
         versions = {
-            ["0.1.2"] = { ref = "f20581ca3b944f792d8ab7e2b49053c3cb2f68c1" },
+            ["0.1.2"] = { commit = "f20581ca3b944f792d8ab7e2b49053c3cb2f68c1" },
         },
         latest = "0.1.2",
 
         needs_build = false,
-        license = "BSD-3-Clause",
 
         -- non-default bundle patch path
         patch = "./dist/cordis.patch.yml",

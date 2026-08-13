@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-douyin",
-        source = "github",
-        origin = "AnacondaKC/dsh-douyin",
 
         versions = {
-            ["0.2.0"] = { ref = "2f28338b29503f20d159b1f0123a985530134b6a" },
+            ["0.2.0"] = { commit = "2f28338b29503f20d159b1f0123a985530134b6a" },
         },
         latest = "0.2.0",
 
         needs_build = false,
-        license = "BSD-3-Clause",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

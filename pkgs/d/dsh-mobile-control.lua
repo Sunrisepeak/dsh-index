@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-mobile-control",
-        source = "github",
-        origin = "PangYiMing/dsh-mobile-control",
 
         versions = {
-            ["0.1.0"] = { ref = "a72f381cf9211bd79d035e0fa2b25087896df390" },
+            ["0.1.0"] = { commit = "a72f381cf9211bd79d035e0fa2b25087896df390" },
         },
         latest = "0.1.0",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

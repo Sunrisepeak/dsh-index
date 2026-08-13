@@ -13,16 +13,13 @@ package = {
 
     dsh = {
         bundle_name = "nowledge-mem-deepseek-harness",
-        source = "github",
-        origin = "nowledge-co/nowledge-mem-deepseek-harness",
 
         versions = {
-            ["0.1.0"] = { ref = "97956d33e793c5c3f2ac4847fdbb004993b235e6" },
+            ["0.1.0"] = { commit = "97956d33e793c5c3f2ac4847fdbb004993b235e6" },
         },
         latest = "0.1.0",
 
         needs_build = false,
-        license = "NONE",
 
         -- Upstream ships no redistributable license, so this index has
         -- no right to mirror it: no `mirror` block, installs straight

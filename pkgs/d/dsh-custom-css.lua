@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-custom-css",
-        source = "github",
-        origin = "AnacondaKC/dsh-custom-css",
 
         versions = {
-            ["0.2.0"] = { ref = "d1e2ee86b223775947eb5e26c62291a45df2fdcd" },
+            ["0.2.0"] = { commit = "d1e2ee86b223775947eb5e26c62291a45df2fdcd" },
         },
         latest = "0.2.0",
 
         needs_build = false,
-        license = "BSD-3-Clause",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "@dsh-external/dsh-navbar",
-        source = "github",
-        origin = "vlln/dsh-navbar",
 
         versions = {
-            ["0.3.0"] = { ref = "6e23640bd60c0157043ae5c29a6d80034287b41b" },
+            ["0.3.0"] = { commit = "6e23640bd60c0157043ae5c29a6d80034287b41b" },
         },
         latest = "0.3.0",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

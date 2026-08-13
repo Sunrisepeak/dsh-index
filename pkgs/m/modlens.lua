@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "@liustack/modlens",
-        source = "github",
-        origin = "liustack/modlens",
 
         versions = {
-            ["3.9.1"] = { ref = "56045a985692ec5663e5757361e6c180648e6f04" },
+            ["3.9.1"] = { commit = "56045a985692ec5663e5757361e6c180648e6f04" },
         },
         latest = "3.9.1",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

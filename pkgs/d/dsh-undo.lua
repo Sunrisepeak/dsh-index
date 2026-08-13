@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-undo",
-        source = "github",
-        origin = "LingLambda/dsh-undo",
 
         versions = {
-            ["0.1.1"] = { ref = "3a5f085fac5d9ca161515ed4f7e233bf2dd23505" },
+            ["0.1.1"] = { commit = "3a5f085fac5d9ca161515ed4f7e233bf2dd23505" },
         },
         latest = "0.1.1",
 
         needs_build = true,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

@@ -13,16 +13,13 @@ package = {
 
     dsh = {
         bundle_name = "@loserfox/distill",
-        source = "github",
-        origin = "LoserFox/distill",
 
         versions = {
-            ["0.1.0"] = { ref = "d2aaa395adeffe88e429be796c12d829752cbad1" },
+            ["0.1.0"] = { commit = "d2aaa395adeffe88e429be796c12d829752cbad1" },
         },
         latest = "0.1.0",
 
         needs_build = false,
-        license = "NONE",
 
         -- Upstream ships no redistributable license, so this index has
         -- no right to mirror it: no `mirror` block, installs straight

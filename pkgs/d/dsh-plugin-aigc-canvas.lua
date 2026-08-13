@@ -13,16 +13,13 @@ package = {
 
     dsh = {
         bundle_name = "@huanlin/dsh-plugin-aigc-canvas",
-        source = "github",
-        origin = "HuanLinOTO/dsh-plugin-aigc-canvas",
 
         versions = {
-            ["0.1.0"] = { ref = "3685141d2b995c71a15ed6fc1f3628a6268f3194" },
+            ["0.1.0"] = { commit = "3685141d2b995c71a15ed6fc1f3628a6268f3194" },
         },
         latest = "0.1.0",
 
         needs_build = true,
-        license = "NOASSERTION",
 
         -- Upstream ships no redistributable license, so this index has
         -- no right to mirror it: no `mirror` block, installs straight

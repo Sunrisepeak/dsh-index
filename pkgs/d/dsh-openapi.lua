@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-openapi",
-        source = "github",
-        origin = "Degurechaff57/dsh-openapi",
 
         versions = {
-            ["0.1.0"] = { ref = "fb854355b89e495ded090b9e2eb94c33430d2366" },
+            ["0.1.0"] = { commit = "fb854355b89e495ded090b9e2eb94c33430d2366" },
         },
         latest = "0.1.0",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

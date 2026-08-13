@@ -56,7 +56,13 @@ class DshPlugin(Plugin):
     def on_package(self, pkg, raw: Dict[str, Any]) -> None:
         dsh = raw.get("dsh") or {}
         mirror = dsh.get("mirror") or {}
-        license_id = str(dsh.get("license") or "")
+        # The license is the standard xpkg field, not a dsh-private copy.
+        # Absent means upstream declares none -- which is exactly what makes a
+        # package un-mirrorable, so the badge and the gate read the same fact.
+        licenses = raw.get("licenses") or []
+        license_id = str(licenses[0]) if licenses else "NONE"
+        repo_url = str(raw.get("repo") or "")
+        origin = repo_url.split("github.com/", 1)[-1].rstrip("/") if "github.com/" in repo_url else ""
 
         delivery = "mirrored" if mirror else "direct"
         # An un-mirrored package with a build script is the only case where
@@ -65,8 +71,7 @@ class DshPlugin(Plugin):
 
         ext = {
             "bundle_name": str(dsh.get("bundle_name") or ""),
-            "origin": str(dsh.get("origin") or ""),
-            "source": str(dsh.get("source") or "github"),
+            "origin": origin,
             "license": license_id,
             "delivery": delivery,
             "mirror_eligible": license_id in MIRRORABLE,
@@ -238,7 +243,7 @@ class DshPlugin(Plugin):
             pins = []
             for ver in sorted(versions):
                 entry = versions[ver] or {}
-                ref = str(entry.get("ref") or "")
+                ref = str(entry.get("commit") or "")
                 pins.append({"key": ver, "value": ref[:12] or "-", "mono": True})
             blocks.append(Block(kind="kv",
                                 title=_t("Pinned commits", "版本与 commit",

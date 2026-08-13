@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "@dsh-external/dsh-plannotator",
-        source = "github",
-        origin = "titanwings/dsh-plannotator",
 
         versions = {
-            ["0.1.3"] = { ref = "c0fe880107aa09ef595a8b6fdac6d7099e4b46da" },
+            ["0.1.3"] = { commit = "c0fe880107aa09ef595a8b6fdac6d7099e4b46da" },
         },
         latest = "0.1.3",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

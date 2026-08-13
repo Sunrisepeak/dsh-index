@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-tool-approval",
-        source = "github",
-        origin = "ilharp/dsh-tool-approval",
 
         versions = {
-            ["0.1.0"] = { ref = "c01801a7e39c36515d8445747abff6a6388c1278" },
+            ["0.1.0"] = { commit = "c01801a7e39c36515d8445747abff6a6388c1278" },
         },
         latest = "0.1.0",
 
         needs_build = false,
-        license = "BSD-3-Clause",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

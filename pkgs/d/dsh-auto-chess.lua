@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "@deepseek-ai/dsh-auto-chess",
-        source = "github",
-        origin = "omdsh-dev/dsh-auto-chess",
 
         versions = {
-            ["0.0.1"] = { ref = "cc0728d808cb9c9b563cc6be95e5bf60ae2a5025" },
+            ["0.0.1"] = { commit = "cc0728d808cb9c9b563cc6be95e5bf60ae2a5025" },
         },
         latest = "0.0.1",
 
         needs_build = true,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

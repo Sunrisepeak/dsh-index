@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "@your-scope/dsh-plugin-template",
-        source = "github",
-        origin = "omdsh-dev/plugin-template",
 
         versions = {
-            ["0.0.1"] = { ref = "68e1a7dce77471d0850c2c8e4e68d508be885917" },
+            ["0.0.1"] = { commit = "68e1a7dce77471d0850c2c8e4e68d508be885917" },
         },
         latest = "0.0.1",
 
         needs_build = true,
-        license = "BSD-3-Clause",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

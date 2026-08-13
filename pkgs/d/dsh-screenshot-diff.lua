@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-screenshot-diff",
-        source = "github",
-        origin = "PangYiMing/dsh-screenshot-diff",
 
         versions = {
-            ["0.1.0"] = { ref = "28600f8b88dcf71f60674977cc99553227f8eb00" },
+            ["0.1.0"] = { commit = "28600f8b88dcf71f60674977cc99553227f8eb00" },
         },
         latest = "0.1.0",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

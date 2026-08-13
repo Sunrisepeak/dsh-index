@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "@dsh-external/dsh-computer-use",
-        source = "github",
-        origin = "Anionex/dsh-computer-use",
 
         versions = {
-            ["0.1.0"] = { ref = "56a9605e69737bca24e3dface29de7498cf29d96" },
+            ["0.1.0"] = { commit = "56a9605e69737bca24e3dface29de7498cf29d96" },
         },
         latest = "0.1.0",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "@dsh-external/dsh-kb-sieve",
-        source = "github",
-        origin = "omdsh-dev/dsh-kb-sieve",
 
         versions = {
-            ["0.1.0"] = { ref = "01aba653f576658974b70514573c1f6b7b4ce4df" },
+            ["0.1.0"] = { commit = "01aba653f576658974b70514573c1f6b7b4ce4df" },
         },
         latest = "0.1.0",
 
         needs_build = false,
-        license = "Apache-2.0",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

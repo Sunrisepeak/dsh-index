@@ -13,16 +13,13 @@ package = {
 
     dsh = {
         bundle_name = "@huanlin/dsh-plugin-anti-ads",
-        source = "github",
-        origin = "HuanLinOTO/dsh-plugin-anti-ads",
 
         versions = {
-            ["0.2.0"] = { ref = "a72aa231b9aaae1e4ce2331fb7cffad2541356fa" },
+            ["0.2.0"] = { commit = "a72aa231b9aaae1e4ce2331fb7cffad2541356fa" },
         },
         latest = "0.2.0",
 
         needs_build = false,
-        license = "NOASSERTION",
 
         -- Upstream ships no redistributable license, so this index has
         -- no right to mirror it: no `mirror` block, installs straight

@@ -14,21 +14,15 @@ package = {
 
     dsh = {
         bundle_name = "dsh-cc-tui",
-        source = "github",
-        origin = "ccch1mneyyy/dsh-cc-tui",
 
         versions = {
-            ["0.1.6"] = { ref = "8516ffb3aac3ada74760eff9b8c14c65d344b67d" },
+            ["0.1.6"] = { commit = "8516ffb3aac3ada74760eff9b8c14c65d344b67d" },
         },
         latest = "0.1.6",
 
         needs_build = false,
-        license = "BSD-3-Clause",
 
-        -- Published by tools/mirror.py to both mirrors and verified three
-        -- ways: the bytes built here, what GitHub serves, and what GitCode
-        -- serves all hash to the same digest. `cn = true` is what turns the
-        -- CN URL on in template.lua.
+        -- Published by tools/mirror.py to both mirrors and verified three ways.
         mirror = {
             ["0.1.6"] = {
                 tarball = "dsh-cc-tui-0.1.6.tgz",

@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-explain",
-        source = "github",
-        origin = "yuezengwu/dsh-explain",
 
         versions = {
-            ["0.1.0"] = { ref = "ed25029189db2c5d1a9a1f80ac6af4609431efc2" },
+            ["0.1.0"] = { commit = "ed25029189db2c5d1a9a1f80ac6af4609431efc2" },
         },
         latest = "0.1.0",
 
         needs_build = true,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

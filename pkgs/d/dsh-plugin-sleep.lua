@@ -13,16 +13,13 @@ package = {
 
     dsh = {
         bundle_name = "@huanlin/dsh-plugin-sleep",
-        source = "github",
-        origin = "HuanLinOTO/dsh-plugin-sleep",
 
         versions = {
-            ["0.1.0"] = { ref = "daeeaeecd5b3fa46431f6eddb598aec22adfb84c" },
+            ["0.1.0"] = { commit = "daeeaeecd5b3fa46431f6eddb598aec22adfb84c" },
         },
         latest = "0.1.0",
 
         needs_build = false,
-        license = "NOASSERTION",
 
         -- Upstream ships no redistributable license, so this index has
         -- no right to mirror it: no `mirror` block, installs straight

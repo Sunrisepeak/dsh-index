@@ -13,16 +13,13 @@ package = {
 
     dsh = {
         bundle_name = "@deepseek-ai/dsh-sandbox-microsandbox",
-        source = "github",
-        origin = "omdsh-dev/sandbox-micro",
 
         versions = {
-            ["0.0.2"] = { ref = "ebc8be539a4ed4e66157d1f8255c58a4db4e4dc4" },
+            ["0.0.2"] = { commit = "ebc8be539a4ed4e66157d1f8255c58a4db4e4dc4" },
         },
         latest = "0.0.2",
 
         needs_build = true,
-        license = "NONE",
 
         -- Upstream ships no redistributable license, so this index has
         -- no right to mirror it: no `mirror` block, installs straight

@@ -13,16 +13,13 @@ package = {
 
     dsh = {
         bundle_name = "@dsh-external/dsh-ads",
-        source = "github",
-        origin = "Nagi-ovo/dsh-ads",
 
         versions = {
-            ["0.1.0"] = { ref = "35547f7001afd6b853c2010b196365f61eebf8f1" },
+            ["0.1.0"] = { commit = "35547f7001afd6b853c2010b196365f61eebf8f1" },
         },
         latest = "0.1.0",
 
         needs_build = false,
-        license = "NONE",
 
         -- Upstream ships no redistributable license, so this index has
         -- no right to mirror it: no `mirror` block, installs straight

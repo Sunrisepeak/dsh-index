@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-tool-monitor",
-        source = "github",
-        origin = "yoke233/dsh-tool-monitor",
 
         versions = {
-            ["0.1.0"] = { ref = "707b3f4ed8fc2301393dccdf537d531d128d449c" },
+            ["0.1.0"] = { commit = "707b3f4ed8fc2301393dccdf537d531d128d449c" },
         },
         latest = "0.1.0",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "@dsh-external/dsh-task-status",
-        source = "github",
-        origin = "vlln/dsh-task-status",
 
         versions = {
-            ["0.3.0"] = { ref = "4453da02d62289aeb19b046b4d2b5439dd4ce55a" },
+            ["0.3.0"] = { commit = "4453da02d62289aeb19b046b4d2b5439dd4ce55a" },
         },
         latest = "0.3.0",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

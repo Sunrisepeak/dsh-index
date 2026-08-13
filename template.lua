@@ -31,6 +31,13 @@ package.archs = {"x86_64"}   -- bounded by xim:pnpm, which ships x86_64 only
 local MIRROR   = package.dsh.mirror
 local RES_REPO = "dsh-plugins"   -- one xlings-res repo, tagged <plugin>-<version>
 
+-- `origin` is not a field: it is `package.repo` with the host stripped. Two
+-- copies of the same fact are two things to keep in sync, and xpkg already has
+-- `repo`. Same reason there is no `dsh.license` -- that is `package.licenses`.
+local function origin()
+    return (package.repo:gsub("^https?://[^/]+/", ""):gsub("%.git$", ""))
+end
+
 -- xvm is registered even though a plugin has no executable. `xvm use` is not
 -- about executables -- glibc.lua registers `libc.so` as `type = "lib"`, musl.lua
 -- registers a `type = "group"` root that names no artifact at all. What xvm
@@ -113,10 +120,7 @@ local function spec(version)
     if MIRROR and MIRROR[version] then
         return path.join(pkginfo.install_dir(), MIRROR[version].tarball)
     end
-    if package.dsh.source == "npm" then
-        return package.dsh.origin .. "@" .. version
-    end
-    return "github:" .. package.dsh.origin .. "#" .. package.dsh.versions[version].ref
+    return "github:" .. origin() .. "#" .. package.dsh.versions[version].commit
 end
 
 -- Truth lives in the profile manifest, not in xim's own installed marker: the
@@ -156,7 +160,8 @@ function config()
                .. "Running it means executing this package's code on your "
                .. "machine at install time, outside any agent sandbox.\n"
                .. "If you trust it, reinstall with DSH_ALLOW_BUILDS=1.")
-               :format(package.name, package.dsh.license or "unknown"))
+               :format(package.name,
+                       (package.licenses and package.licenses[1]) or "none declared"))
         return false
     end
 

@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "@deepseek-ai/dsh-toolkit",
-        source = "github",
-        origin = "omdsh-dev/dsh-toolkit",
 
         versions = {
-            ["0.0.1"] = { ref = "35a713fd53e07fbe46e4f14e65498520e5a73981" },
+            ["0.0.1"] = { commit = "35a713fd53e07fbe46e4f14e65498520e5a73981" },
         },
         latest = "0.0.1",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

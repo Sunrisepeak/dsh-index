@@ -13,16 +13,13 @@ package = {
 
     dsh = {
         bundle_name = "@loserfox/git-identity",
-        source = "github",
-        origin = "LoserFox/dsh-git-identity",
 
         versions = {
-            ["0.1.0"] = { ref = "39c608ca8e0779c93c66648ad457decffdf61903" },
+            ["0.1.0"] = { commit = "39c608ca8e0779c93c66648ad457decffdf61903" },
         },
         latest = "0.1.0",
 
         needs_build = false,
-        license = "NONE",
 
         -- Upstream ships no redistributable license, so this index has
         -- no right to mirror it: no `mirror` block, installs straight

@@ -13,16 +13,13 @@ package = {
 
     dsh = {
         bundle_name = "@dsh-external/dsh-super-injector",
-        source = "github",
-        origin = "yjh051108/dsh-super-injector",
 
         versions = {
-            ["0.2.5"] = { ref = "d8986d6f482efee8714bdf80d106c91407b24c56" },
+            ["0.2.5"] = { commit = "d8986d6f482efee8714bdf80d106c91407b24c56" },
         },
         latest = "0.2.5",
 
         needs_build = false,
-        license = "NONE",
 
         -- Upstream ships no redistributable license, so this index has
         -- no right to mirror it: no `mirror` block, installs straight

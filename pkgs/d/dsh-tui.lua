@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-tui",
-        source = "github",
-        origin = "orriduck/dsh-tui",
 
         versions = {
-            ["0.2.1"] = { ref = "a1325b76538f303af013883b712f6fecbde68160" },
+            ["0.2.1"] = { commit = "a1325b76538f303af013883b712f6fecbde68160" },
         },
         latest = "0.2.1",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

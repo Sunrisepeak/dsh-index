@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-port-guard",
-        source = "github",
-        origin = "PangYiMing/dsh-port-guard",
 
         versions = {
-            ["0.1.0"] = { ref = "35911b26ff579bb1110497fe35dee3ece1e88540" },
+            ["0.1.0"] = { commit = "35911b26ff579bb1110497fe35dee3ece1e88540" },
         },
         latest = "0.1.0",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

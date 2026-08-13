@@ -13,16 +13,13 @@ package = {
 
     dsh = {
         bundle_name = "@dsh-external/dsh-evolve",
-        source = "github",
-        origin = "william-jin-cmu/dsh-evolve",
 
         versions = {
-            ["0.1.0"] = { ref = "37462647f89612ab89b18fadb88299e550748200" },
+            ["0.1.0"] = { commit = "37462647f89612ab89b18fadb88299e550748200" },
         },
         latest = "0.1.0",
 
         needs_build = false,
-        license = "NONE",
 
         -- Upstream ships no redistributable license, so this index has
         -- no right to mirror it: no `mirror` block, installs straight

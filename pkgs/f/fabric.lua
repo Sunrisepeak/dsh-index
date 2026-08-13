@@ -13,16 +13,13 @@ package = {
 
     dsh = {
         bundle_name = "cordis-fabric-bundle",
-        source = "github",
-        origin = "omdsh-dev/fabric",
 
         versions = {
-            ["0.0.2"] = { ref = "08358f930cd1122268f801cb7b11160338bac2c9" },
+            ["0.0.2"] = { commit = "08358f930cd1122268f801cb7b11160338bac2c9" },
         },
         latest = "0.0.2",
 
         needs_build = false,
-        license = "NONE",
 
         -- Upstream ships no redistributable license, so this index has
         -- no right to mirror it: no `mirror` block, installs straight

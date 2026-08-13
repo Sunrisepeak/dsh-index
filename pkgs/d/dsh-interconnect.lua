@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-interconnect",
-        source = "github",
-        origin = "Chinesezjc/dsh-interconnect",
 
         versions = {
-            ["0.1.0"] = { ref = "07ca402da2f1067103553b6da8316243d11e4e71" },
+            ["0.1.0"] = { commit = "07ca402da2f1067103553b6da8316243d11e4e71" },
         },
         latest = "0.1.0",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

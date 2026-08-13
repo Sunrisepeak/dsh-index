@@ -13,16 +13,13 @@ package = {
 
     dsh = {
         bundle_name = "@humanize/dsh-humanize",
-        source = "github",
-        origin = "zevorn/dsh-humanize",
 
         versions = {
-            ["1.18.0"] = { ref = "f39c19d5a596735c9dfaa1cbb0b95c02152b039c" },
+            ["1.18.0"] = { commit = "f39c19d5a596735c9dfaa1cbb0b95c02152b039c" },
         },
         latest = "1.18.0",
 
         needs_build = true,
-        license = "NONE",
 
         -- Upstream ships no redistributable license, so this index has
         -- no right to mirror it: no `mirror` block, installs straight

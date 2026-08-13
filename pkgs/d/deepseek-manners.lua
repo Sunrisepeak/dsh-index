@@ -13,16 +13,13 @@ package = {
 
     dsh = {
         bundle_name = "deepseek-manners",
-        source = "github",
-        origin = "Moeblack/deepseek-manners",
 
         versions = {
-            ["0.1.0"] = { ref = "32f58a8a008797a624f0f46367cb91fed9de5dee" },
+            ["0.1.0"] = { commit = "32f58a8a008797a624f0f46367cb91fed9de5dee" },
         },
         latest = "0.1.0",
 
         needs_build = false,
-        license = "NONE",
 
         -- Upstream ships no redistributable license, so this index has
         -- no right to mirror it: no `mirror` block, installs straight

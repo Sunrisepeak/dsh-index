@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "@omdsh-dev/dsh-genui",
-        source = "github",
-        origin = "omdsh-dev/dsh-genui",
 
         versions = {
-            ["0.8.0"] = { ref = "57b4338222632f8ea81c2665d44e5f9e80b52686" },
+            ["0.8.0"] = { commit = "57b4338222632f8ea81c2665d44e5f9e80b52686" },
         },
         latest = "0.8.0",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

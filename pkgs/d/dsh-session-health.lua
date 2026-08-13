@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "@deepseek-ai/dsh-session-health",
-        source = "github",
-        origin = "omdsh-dev/dsh-session-health",
 
         versions = {
-            ["0.0.1"] = { ref = "e63fe6ca874bef46eacba5e3e4cf05eef86cfb68" },
+            ["0.0.1"] = { commit = "e63fe6ca874bef46eacba5e3e4cf05eef86cfb68" },
         },
         latest = "0.0.1",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

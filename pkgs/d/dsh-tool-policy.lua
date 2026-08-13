@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-tool-policy",
-        source = "github",
-        origin = "Drifter-yh/dsh-tool-policy",
 
         versions = {
-            ["0.1.0"] = { ref = "35a5ba3ee291e0e3562fd61055c3efb39679c6ca" },
+            ["0.1.0"] = { commit = "35a5ba3ee291e0e3562fd61055c3efb39679c6ca" },
         },
         latest = "0.1.0",
 
         needs_build = true,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "@openmaic/dsh-openmaic",
-        source = "github",
-        origin = "THU-MAIC/dsh-openmaic",
 
         versions = {
-            ["0.4.0"] = { ref = "09c1693cfe83224db89fdd4abd245ac9174d3a05" },
+            ["0.4.0"] = { commit = "09c1693cfe83224db89fdd4abd245ac9174d3a05" },
         },
         latest = "0.4.0",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "@deepseek-ai/dsh-gomoku",
-        source = "github",
-        origin = "omdsh-dev/dsh-gomoku",
 
         versions = {
-            ["0.0.1"] = { ref = "25210233b51d5691c5ba81aa58df5932542e7a01" },
+            ["0.0.1"] = { commit = "25210233b51d5691c5ba81aa58df5932542e7a01" },
         },
         latest = "0.0.1",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

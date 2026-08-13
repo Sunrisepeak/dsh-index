@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-open-in-vscode",
-        source = "github",
-        origin = "omdsh-dev/dsh-open-in-vscode",
 
         versions = {
-            ["0.1.5"] = { ref = "149f21aed3d05d2b392206394c4a023e35d694c7" },
+            ["0.1.5"] = { commit = "149f21aed3d05d2b392206394c4a023e35d694c7" },
         },
         latest = "0.1.5",
 
         needs_build = false,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

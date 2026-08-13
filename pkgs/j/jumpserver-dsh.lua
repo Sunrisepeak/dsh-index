@@ -14,16 +14,13 @@ package = {
 
     dsh = {
         bundle_name = "dsh-jumpserver",
-        source = "github",
-        origin = "jumpserver-east/jumpserver-dsh",
 
         versions = {
-            ["0.1.0"] = { ref = "334c4688e6623b7a497e8dee15aa1c111486b3b0" },
+            ["0.1.0"] = { commit = "334c4688e6623b7a497e8dee15aa1c111486b3b0" },
         },
         latest = "0.1.0",
 
         needs_build = true,
-        license = "MIT",
 
         -- Mirror-eligible. The `mirror` block is filled in by the
         -- mirror pipeline once a tarball is published to xlings-res.

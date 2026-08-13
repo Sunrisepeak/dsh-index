@@ -82,29 +82,64 @@ class TestDshBlock:
         assert "dsh = {" in body
 
     @pytest.mark.static
-    def test_bundle_name_and_origin(self, pkg):
+    def test_bundle_name(self, pkg):
         _, body = pkg
-        d = _dsh_block(body)
-        assert _field(d, "bundle_name"), "bundle_name required"
-        origin = _field(d, "origin")
-        assert origin and "/" in origin, "origin must be owner/repo"
+        assert _field(_dsh_block(body), "bundle_name"), "bundle_name required"
 
     @pytest.mark.static
-    def test_pinned_sha_is_40_hex(self, pkg):
-        """github sources must pin an immutable commit.
+    def test_origin_comes_from_the_standard_repo_field(self, pkg):
+        """`repo` is xpkg's own field; `dsh.origin` would be a second copy."""
+        _, body = pkg
+        repo = _field(body, "repo") or ""
+        assert "github.com/" in repo, "repo must be a github URL"
+        assert len(repo.split("github.com/", 1)[1].strip("/").split("/")) == 2
 
-        Package NAMES are not trustworthy here: 36 community repos name
-        themselves into the `@deepseek-ai/` scope that DeepSeek owns on npm,
-        so a bare name can silently resolve to different code later.
+    @pytest.mark.static
+    def test_no_fields_xpkg_already_has(self, pkg):
+        """Nothing in `dsh` may duplicate a standard xpkg field.
+
+        license -> package.licenses, origin/source -> package.repo. A second
+        copy of a fact is a second thing to keep in sync, and they drift.
         """
         _, body = pkg
         d = _dsh_block(body)
-        if _field(d, "source") != "github":
-            return
-        refs = re.findall(r'ref\s*=\s*"([^"]*)"', d)
-        assert refs, "github source must pin at least one ref"
-        for r in refs:
-            assert SHA_RE.match(r), f"ref must be a 40-hex commit sha, got {r!r}"
+        for dup in ("license", "origin", "source"):
+            assert not _field(d, dup), (
+                f"dsh.{dup} duplicates a standard xpkg field"
+            )
+
+    @pytest.mark.static
+    def test_every_version_pins_a_40_hex_commit(self, pkg):
+        """xpkg can express a git URL but not a commit, so this index adds one.
+
+        It is spelled `commit`, never `ref`: xpkg already uses `ref` for
+        ALIASES -- `["latest"] = { ref = "2.13.5" }` and
+        `ubuntu = { ref = "linux" }` -- and template.lua emits exactly that
+        form into the same synthesised file. One word, two meanings, in one
+        file is how a reader ends up trusting the wrong one.
+
+        The pin matters because package names are not trustworthy here: 36
+        community repos name themselves into the `@deepseek-ai/` scope that
+        DeepSeek owns on npm.
+        """
+        _, body = pkg
+        d = _dsh_block(body)
+        commits = re.findall(r'commit\s*=\s*"([^"]*)"', d)
+        assert commits, "every version must pin a commit"
+        for c in commits:
+            assert SHA_RE.match(c), f"commit must be 40-hex, got {c!r}"
+
+    @pytest.mark.static
+    def test_commit_count_matches_version_count(self, pkg):
+        """Guards the previous test against silently passing on zero work --
+        it did exactly that once, when the `source` field it branched on was
+        removed and the early return made it a no-op."""
+        _, body = pkg
+        d = _dsh_block(body)
+        vblock = d[d.index("versions = {"):]
+        vblock = vblock[:vblock.index("},")]
+        assert len(re.findall(r'commit\s*=', vblock)) == \
+               len(re.findall(r'\["[^"]+"\]\s*=', vblock))
 
     @pytest.mark.static
     def test_latest_points_at_a_declared_version(self, pkg):
@@ -127,18 +162,15 @@ class TestLicensePolicy:
     """Mirroring is redistribution -- the license is the gate, not a flag."""
 
     @pytest.mark.static
-    def test_license_recorded(self, pkg):
-        _, body = pkg
-        assert _field(_dsh_block(body), "license"), \
-            "dsh.license required; it decides mirror eligibility"
-
-    @pytest.mark.static
     def test_no_mirror_without_a_permissive_license(self, pkg):
+        """`licenses` absent means upstream declares none, which grants no
+        redistribution right -- so the check is fail-closed by construction."""
         _, body = pkg
         d = _dsh_block(body)
         if "mirror = {" not in d:
             return
-        lic = _field(d, "license")
+        m = re.search(r'licenses\s*=\s*\{"([^"]+)"', body)
+        lic = m.group(1) if m else None
         assert lic in MIRRORABLE, (
             f"license {lic!r} does not grant redistribution, so this package "
             f"must not carry a mirror block"
