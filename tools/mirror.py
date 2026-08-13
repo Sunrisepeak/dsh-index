@@ -18,8 +18,14 @@ Steps, in order:
   4. `pnpm pack`
   5. verify the tarball actually contains what a bundle needs: the manifest,
      the patch file it points at, and the `main` entry
-  6. publish to GitHub with a .sha256 sidecar
-  7. print the mirror block for the descriptor
+  6. publish to GitHub AND GitCode with a .sha256 sidecar on each
+  7. download from both and compare against the local digest, three ways
+  8. print the mirror block for the descriptor
+
+Both mirrors or neither: `cn = true` is only written after the GitCode URL has
+actually served the right bytes. A CN URL that 404s is worse than none -- a
+user on the CN mirror gets a failed download instead of a fallback, and the
+index would advertise an acceleration it does not have.
 
 Usage:
   tools/mirror.py <pkgs/x/name.lua> [--publish]
@@ -41,6 +47,10 @@ import sys
 import tempfile
 
 RES_REPO = "xlings-res/dsh-plugins"
+# GitCode publishing goes through the org's existing tool rather than a second
+# implementation of the same API.
+GTC = pathlib.Path(__file__).resolve().parents[2] / "xim-pkgindex" / "tools" / "gtc"
+CN_URL = ("https://gitcode.com/{repo}/releases/download/{tag}/{asset}")
 MIRRORABLE = {"MIT", "BSD-3-Clause", "Apache-2.0", "GPL-3.0"}
 
 
@@ -181,7 +191,7 @@ def main() -> int:
 
         tag = f"{name}-{version}"
         if args.publish:
-            print(f"[5/6] publish {tag} to {RES_REPO}")
+            print(f"[5/8] publish {tag} to GitHub")
             run(["gh", "release", "create", tag, "--repo", RES_REPO,
                  "--title", tag,
                  "--notes", f"Mirror of https://github.com/{d['origin']} at {sha}\n\n"
@@ -190,22 +200,57 @@ def main() -> int:
                             f"sha256: {digest}",
                  str(final), str(work / f"{asset}.sha256")], capture=False)
 
-            print("[6/6] verify the published bytes round-trip")
-            check = work / "roundtrip.tgz"
+            cn_ok = False
+            if GTC.is_file():
+                print(f"[6/8] publish {tag} to GitCode")
+                notes = work / "notes.md"
+                notes.write_text(
+                    f"Mirror of https://github.com/{d['origin']} at {sha}\n\n"
+                    f"License: {d['license']} (redistributed under its terms; the "
+                    f"upstream LICENSE ships inside the tarball)\n"
+                    f"sha256: {digest}\n\nByte-identical to the GitHub release "
+                    f"of the same tag.\n", encoding="utf-8")
+                run([sys.executable, str(GTC), "release", "publish", RES_REPO,
+                     "--tag", tag, "--name", tag, "--body-file", str(notes),
+                     "--target", "main",
+                     "--asset", str(final),
+                     "--asset", str(work / f"{asset}.sha256")], capture=False)
+                cn_ok = True
+            else:
+                print(f"[6/8] gtc not found at {GTC}; GitHub only, no CN")
+
+            # Three-way: the bytes we built, what GitHub serves, what GitCode
+            # serves. Comparing only against our own digest would not catch a
+            # mirror that stored something else.
+            print("[7/8] compare local / GLOBAL / CN")
+            gl = work / "gl.tgz"
             run(["gh", "release", "download", tag, "--repo", RES_REPO,
-                 "--pattern", asset, "--output", str(check), "--clobber"])
-            back = hashlib.sha256(check.read_bytes()).hexdigest()
-            if back != digest:
-                fail(f"{name}: published bytes differ ({back} != {digest})")
+                 "--pattern", asset, "--output", str(gl), "--clobber"])
+            if hashlib.sha256(gl.read_bytes()).hexdigest() != digest:
+                fail(f"{name}: GitHub serves different bytes than were built")
+
+            if cn_ok:
+                cn = work / "cn.tgz"
+                url = CN_URL.format(repo=RES_REPO, tag=tag, asset=asset)
+                rc = subprocess.run(["curl", "-sfL", "-o", str(cn), url]).returncode
+                if rc != 0 or hashlib.sha256(cn.read_bytes()).hexdigest() != digest:
+                    # Not fatal: publish GitHub-only and leave cn unset, so the
+                    # template simply omits the CN URL.
+                    print(f"WARNING: CN mirror did not serve matching bytes; "
+                          f"leaving cn unset", file=sys.stderr)
+                    cn_ok = False
         else:
-            print(f"[5/6] --publish not given; would publish tag {tag}")
-            print("[6/6] skipped")
+            cn_ok = False
+            print(f"[5/8] --publish not given; would publish tag {tag}")
+            print("[6/8] [7/8] skipped")
 
         print()
         print(f"        mirror = {{")
         print(f'            ["{version}"] = {{')
         print(f'                tarball = "{asset}",')
         print(f'                sha256  = "{digest}",')
+        if cn_ok:
+            print(f'                cn      = true,')
         print(f"            }},")
         print(f"        }},")
         return 0

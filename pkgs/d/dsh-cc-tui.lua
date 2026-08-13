@@ -25,13 +25,15 @@ package = {
         needs_build = false,
         license = "BSD-3-Clause",
 
-        -- Published by tools/mirror.py: built from the pinned sha in CI and
-        -- byte-verified after upload. No `cn` yet -- the GitCode release does
-        -- not exist, and a CN URL that 404s is worse than none.
+        -- Published by tools/mirror.py to both mirrors and verified three
+        -- ways: the bytes built here, what GitHub serves, and what GitCode
+        -- serves all hash to the same digest. `cn = true` is what turns the
+        -- CN URL on in template.lua.
         mirror = {
             ["0.1.6"] = {
                 tarball = "dsh-cc-tui-0.1.6.tgz",
                 sha256  = "b8016904a72e7bf4858a0bb24e6eb952357ecdc7e963a482f33e143ea2312d1b",
+                cn      = true,
             },
         },
     },
