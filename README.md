@@ -68,15 +68,15 @@ xlings remove dsh:dsh-cc-tui -y
 
 Installing prints the answer, but the rule is:
 
-| Plugin kind | Profile | Launch |
+| How you installed it | Profile | Launch |
 | --- | --- | --- |
-| surface (`tui`, `desktop`) | named after the plugin | `dsh --profile <plugin>` |
-| additive (tools, skills, …) | your current subos | `dsh --profile <subos>` |
-| anything, with `DSH_PROFILE` set | that value | `dsh --profile <value>` |
+| `xlings install dsh:<plugin>` | `web` | `dsh web` |
+| `DSH_PROFILE=<name> xlings install …` | `<name>` | `dsh --profile <name>` |
 
-A surface defines a runnable app and overrides base rows, so two of them in one
-profile fight over the same rows — hence its own. Additive plugins share, so one
-composition can hold several.
+This index does not name profiles — upstream's model says the name is yours,
+and `DSH_PROFILE` is the same choice `dsh plugin --profile` gives you. Two
+plugins that both override base rows will conflict in one profile, exactly as
+they do upstream; put them in separate profiles if that happens.
 
 ```bash
 # what is actually installed, and in what order the layers apply
@@ -86,12 +86,23 @@ dsh --profile <profile> --dump-config | grep '^# == '
 
 </details>
 
-`dsh-cc-tui` is a *surface* plugin (a TUI), so it lands in a profile of its own
-and the installer prints how to start it:
+Plugins install into the `web` profile — the one upstream's own `dsh web`
+boots. Launch it the way upstream does:
 
 ```bash
-dsh --profile dsh-cc-tui
+dsh web
 ```
+
+To use any other profile, name it exactly as you would with `dsh plugin`:
+
+```bash
+DSH_PROFILE=cc-tui xlings install dsh:dsh-cc-tui -y
+dsh --profile cc-tui
+```
+
+The profile name is yours, not the plugin's. `DSH_PROFILE` maps one-to-one
+onto upstream's `--profile`, so every example in upstream's docs works here
+unchanged.
 
 pnpm arrives as a dependency of `dsh` — `dsh plugin` is a pnpm forwarder and
 upstream requires pnpm on `PATH`, so it belongs in the package that needs it

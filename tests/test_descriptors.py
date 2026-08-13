@@ -250,41 +250,73 @@ class TestSitePlugin:
 
 
 class TestProfileResolution:
+    """Profile naming follows upstream, and this index adds nothing to it.
+
+    Upstream's model: the name is the user's. `dsh plugin --profile <name>`
+    creates whatever you pass, and their docs pick `demo`, `cc-tui`, anything.
+    Two earlier rules here -- naming a surface plugin's profile after itself,
+    and deriving one from the current subos -- each looked reasonable and
+    together made every profile name in every upstream document wrong under
+    this index. A user following dsh-cc-tui's own README got "profile does not
+    exist" twice.
+    """
+
+    @pytest.mark.static
+    def test_only_dsh_profile_and_web(self):
+        t = (ROOT / "template.lua").read_text(encoding="utf-8")
+        body = t[t.index("local function profile()"):]
+        body = body[:body.index("\nend")]
+        assert 'os.getenv("DSH_PROFILE")' in body
+        assert '"web"' in body
+        # No invented sources: not the subos, not the package name.
+        assert "subos" not in body.lower(), "the subos is not a profile name"
+        assert "package.name" not in body, "a plugin does not name its profile"
+
+    @pytest.mark.static
+    def test_no_xlings_env_var_is_read(self):
+        """An earlier version read `XLINGS_SUBOS`, which xlings does not set,
+        so the branch was dead code while the docs claimed it worked."""
+        t = (ROOT / "template.lua").read_text(encoding="utf-8")
+        assert 'os.getenv("XLINGS' not in t
+
+    @pytest.mark.static
+    def test_install_prints_upstreams_own_launch_command(self):
+        """`dsh web` is how upstream spells the web profile; anything else is
+        `--profile <name>`. The user should be able to copy what is printed."""
+        t = (ROOT / "template.lua").read_text(encoding="utf-8")
+        assert '"dsh web"' in t
+        assert '"dsh --profile "' in t
+        assert "log.info" in t
+
+
+class TestSitePlugin:
+    """The site plugin is the only place descriptors become user-visible, so
+    its contract with the core is worth pinning down here."""
+
+    @pytest.mark.static
+    def test_facets_are_whitespace_joined_strings(self):
+        """pkg.facets is Dict[str, str] and the core splits on whitespace.
+
+        Assigning a list made every value render as its Python repr, so
+        "['web-ui'," and "'session']" appeared as separate facet buttons on the
+        home page. The plugin must join, and must drop values containing
+        whitespace rather than let them split into two facets.
+        """
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            "dshplug", ROOT / ".xpkgindex" / "plugins" / "dsh.py")
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+
+        assert mod._facet_value(["a", "b", "a"]) == "a b", "join and dedupe"
+        assert mod._facet_value(["ok", "not ok"]) == "ok", "drop spaced values"
+        assert mod._facet_value(["a", "b", "c"], limit=2) == "a b"
+        assert mod._facet_value([]) == ""
+        for v in mod._facet_value(["x", "y"]).split():
+            assert "[" not in v and "'" not in v, "no python repr leakage"
+
+
+class TestProfileResolution:
     """The profile a plugin lands in is the one fact a user must not have to
     guess -- and the resolution chain reads environment variables, which is
     exactly where an unverified name turns into dead code."""
-
-    @pytest.mark.static
-    def test_subos_comes_from_the_api_not_the_environment(self):
-        """An earlier version read `XLINGS_SUBOS`, which xlings does not set --
-        the branch was dead code while the docs claimed it worked.
-
-        The fix is not a better variable name: libxpkg answers this directly
-        with system.subos_sysrootdir(), so no XLINGS_* variable should be read
-        at all. An answer from the toolchain beats one inferred from whatever
-        happens to be exported into the shell.
-        """
-        t = (ROOT / "template.lua").read_text(encoding="utf-8")
-        assert "XLINGS_" not in t.replace("XLINGS_SUBOS`", "").replace(
-            "XLINGS_SUBOS_LIB", ""), "no XLINGS_* env var should be read"
-        assert "system.subos_sysrootdir" in t
-
-    @pytest.mark.static
-    def test_new_libxpkg_modules_are_feature_detected(self):
-        """`if system.x then` is true on every client whether or not the
-        function exists -- the spec calls this out explicitly."""
-        t = (ROOT / "template.lua").read_text(encoding="utf-8")
-        assert 'type(system.subos_sysrootdir) ~= "function"' in t
-
-    @pytest.mark.static
-    def test_current_symlink_is_not_used_as_a_profile_name(self):
-        """`subos/current` is a symlink to the active subos, so a profile named
-        after it would follow the symlink instead of staying put."""
-        t = (ROOT / "template.lua").read_text(encoding="utf-8")
-        assert '"current"' in t
-
-    @pytest.mark.static
-    def test_install_reports_the_profile(self):
-        """`dsh --profile <plugin-name>` is the natural guess and always fails."""
-        t = (ROOT / "template.lua").read_text(encoding="utf-8")
-        assert "dsh --profile" in t and "log.info" in t

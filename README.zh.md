@@ -68,14 +68,14 @@ xlings remove dsh:dsh-cc-tui -y
 
 安装完会打印答案，规则是：
 
-| 插件类型 | profile | 启动 |
+| 怎么装的 | profile | 启动 |
 | --- | --- | --- |
-| surface（`tui` / `desktop`） | 以插件名命名 | `dsh --profile <plugin>` |
-| 叠加型（tool / skill 等） | 当前 subos | `dsh --profile <subos>` |
-| 设了 `DSH_PROFILE` | 该值 | `dsh --profile <value>` |
+| `xlings install dsh:<plugin>` | `web` | `dsh web` |
+| `DSH_PROFILE=<name> xlings install …` | `<name>` | `dsh --profile <name>` |
 
-surface 定义一个可运行的应用、会覆盖 base 行，两个 surface 放同一个 profile 会
-抢同样的行，所以各占一个；叠加型则共用，一个组合里可以装多个。
+本索引不替你给 profile 起名 —— 上游模型里这个名字就是你的，`DSH_PROFILE` 和
+`dsh plugin --profile` 给你的是同一个选择。两个都覆盖 base 行的插件放一起会冲突，
+这和直接用上游时一模一样，遇到就分开放。
 
 ```bash
 # 实际装了什么、层按什么顺序叠
@@ -85,11 +85,21 @@ dsh --profile <profile> --dump-config | grep '^# == '
 
 </details>
 
-`dsh-cc-tui` 是 *surface* 类插件（一个 TUI），会落在独立 profile 里，安装时会打印启动方式：
+插件默认装进 `web` profile —— 就是上游 `dsh web` 启动的那个。启动方式和上游一致：
 
 ```bash
-dsh --profile dsh-cc-tui
+dsh web
 ```
+
+想用别的 profile，名字自己起，和直接用 `dsh plugin` 时一样：
+
+```bash
+DSH_PROFILE=cc-tui xlings install dsh:dsh-cc-tui -y
+dsh --profile cc-tui
+```
+
+**profile 名是你的，不是插件的。** `DSH_PROFILE` 与上游的 `--profile` 一一对应，
+所以上游文档里的每个例子在这里都原样成立。
 
 pnpm 由 `dsh` 的依赖带入 —— `dsh plugin` 本身就是 pnpm 转发器，上游要求 PATH 上有
 pnpm，所以它该待在需要它的那个包的依赖里，而不是出现在每条安装命令上。

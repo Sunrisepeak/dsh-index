@@ -88,53 +88,30 @@ import("xim.libxpkg.system")
 import("xim.libxpkg.xvm")
 import("xim.libxpkg.log")
 
--- Which profile a plugin lands in, in one predictable rule.
+-- Which profile a plugin lands in — upstream's rule, not one of ours.
 --
--- 1. DSH_PROFILE, if set. One variable, user-facing, documented.
--- 2. A *surface* plugin gets a profile named after itself. A surface defines a
---    runnable app -- it overrides base rows rather than adding to them -- and
---    upstream's own docs give it its own profile (dsh-cc-tui's README says
---    `dsh --profile cc-tui`). Two surfaces in one profile fight over the same
---    rows.
--- 3. Otherwise the current subos, so a plugin set travels with the environment
---    it was installed into -- the same axis `xlings use` switches on.
--- 4. "web" if that cannot be determined, which is what `dsh web` boots.
+-- In upstream's model the profile name is the USER's: `dsh plugin --profile
+-- <name> add <pkg>` creates whatever name you pass, and their docs pick
+-- `demo`, `cc-tui`, anything. Nothing about a plugin says what its profile
+-- should be called.
 --
--- Step 3 reads a libxpkg API, NOT an environment variable. The first attempt
--- read `XLINGS_SUBOS`, which xlings does not set, so the branch was dead code
--- while the docs claimed it worked. `system.subos_sysrootdir()` returns
--- `<home>/subos/<name>`, so the name is its last component -- an answer from
--- the toolchain rather than one inferred from whatever happens to be exported
--- into the shell.
+-- So this index does not name profiles. `xlings install dsh:<plugin>` has
+-- nowhere to ask, so it uses `web` — the profile upstream's own `dsh web`
+-- boots, and the one its quick start creates. `DSH_PROFILE` is how you say
+-- otherwise, and it maps one-to-one onto upstream's `--profile`.
 --
--- Whatever it resolves to is printed at the end of config() with the launch
--- command, because an unpredictable profile is only a problem if the user has
--- to guess it.
-local function is_surface()
-    for _, c in ipairs(package.categories or {}) do
-        if c == "tui" or c == "desktop" then return true end
-    end
-    return false
-end
-
-local function subos_name()
-    -- Feature-detected: it arrives as a module, and `if system.x then` is true
-    -- on every client whether or not the function exists.
-    if type(system.subos_sysrootdir) ~= "function" then return nil end
-    local ok, dir = pcall(system.subos_sysrootdir)
-    if not ok or type(dir) ~= "string" or dir == "" then return nil end
-    local name = path.filename(dir)
-    -- `current` is a symlink to the active subos; a profile named after it
-    -- would follow the symlink instead of staying with its environment.
-    if name == "" or name == "current" then return nil end
-    return name
-end
-
+-- Two earlier rules were removed for the same reason: deriving a profile from
+-- the current subos, and giving a "surface" plugin a profile named after
+-- itself. Both were defensible defaults and both made every example in
+-- upstream's documentation wrong under this index -- a user following
+-- dsh-cc-tui's README typed `dsh --profile cc-tui` and got "profile does not
+-- exist", because we had silently named it something else. Composing two
+-- surfaces into one profile can conflict, but that is the user's composition
+-- to manage, exactly as it is when they use `dsh plugin` directly.
 local function profile()
     local p = os.getenv("DSH_PROFILE")
     if p and p ~= "" then return p end
-    if is_surface() then return package.name end
-    return subos_name() or "web"
+    return "web"
 end
 
 local function dsh_home()
@@ -217,8 +194,12 @@ function config()
     -- guess the profile name, and the obvious guess -- the plugin's own name --
     -- is always wrong: `dsh --profile <plugin>` fails with "profile does not
     -- exist".
-    log.info(("%s is installed in profile '%s'.\n  Launch it:  dsh --profile %s")
-             :format(package.name, profile(), profile()))
+    -- `dsh web` is upstream's own spelling for the web profile; anything else
+    -- is `--profile <name>`. Print what the user should actually type.
+    local p = profile()
+    local launch = (p == "web") and "dsh web" or ("dsh --profile " .. p)
+    log.info(("%s is installed in profile '%s'.\n  Launch it:  %s")
+             :format(package.name, p, launch))
 
     -- `type = "group"`: this name backs no executable. Left as the default
     -- program kind it would generate a shim that always fails
