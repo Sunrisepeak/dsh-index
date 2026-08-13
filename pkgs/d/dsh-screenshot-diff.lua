@@ -9,8 +9,8 @@ package = {
     authors = {"PangYiMing"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "vision", "tools"},
+    keywords = {"dsh", "image-diff", "pixelmatch", "visual-testing"},
 
     dsh = {
         bundle_name = "dsh-screenshot-diff",

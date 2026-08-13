@@ -9,8 +9,8 @@ package = {
     authors = {"Flyvhidbwo"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "vision"},
+    keywords = {"dsh", "ocr", "vision", "vlm"},
 
     dsh = {
         bundle_name = "dsh-vision-proxy",

@@ -9,8 +9,8 @@ package = {
     authors = {"PangYiMing"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "session"},
+    keywords = {"dsh", "benchmarking", "regression-testing", "statistics"},
 
     dsh = {
         bundle_name = "dsh-batch-regression",

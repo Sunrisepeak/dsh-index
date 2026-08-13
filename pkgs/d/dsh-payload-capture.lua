@@ -8,8 +8,8 @@ package = {
     authors = {"Moeblack"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "provider"},
+    keywords = {"dsh", "payload", "capture"},
 
     dsh = {
         bundle_name = "dsh-payload-capture",

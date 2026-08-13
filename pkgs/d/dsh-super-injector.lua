@@ -8,8 +8,8 @@ package = {
     authors = {"yjh051108"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "uncategorized"},
+    keywords = {"dsh", "super", "injector"},
 
     dsh = {
         bundle_name = "@dsh-external/dsh-super-injector",

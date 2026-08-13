@@ -9,8 +9,8 @@ package = {
     authors = {"hust-open-atom-club"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "desktop"},
+    keywords = {"dsh", "desktop"},
 
     dsh = {
         bundle_name = "@oh-dsh/desktop",

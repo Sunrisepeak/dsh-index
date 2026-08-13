@@ -14,8 +14,6 @@
   },
   "links": {
     "github": "https://github.com/Sunrisepeak/dsh-index",
-    "docs": "https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/user/index.md",
-    "forum": "https://forum.d2learn.org",
     "custom": [
       {
         "label": "DeepSeek Harness",
@@ -32,8 +30,8 @@
     ]
   },
   "about": {
-    "project_name": "dsh-index",
-    "project_url": "https://github.com/Sunrisepeak/dsh-index",
+    "project_name": "xlings",
+    "project_url": "https://github.com/openxlings/xlings",
     "description": {
       "en": "Every plugin here is a DeepSeek Harness profile bundle, installed through xlings and composed by dsh itself",
       "zh": "这里的每个插件都是 DeepSeek Harness 的 profile bundle，由 xlings 安装、由 dsh 自己组合",
@@ -46,7 +44,7 @@
   },
   "theme": {
     "accent": "#2d5f9e",
-    "style": "auto",
+    "style": "dark",
     "tones": {
       "module": "#2d5f9e",
       "header": "#1a3870",
@@ -81,7 +79,7 @@
         "zh": "安装 dsh",
         "zh-Hant": "安裝 dsh"
       },
-      "command": "xlings install dsh pnpm -y"
+      "command": "xlings install dsh -y"
     },
     "summary": {
       "en": "Don't have xlings yet?",
@@ -146,7 +144,7 @@
         "zh-Hant": "裝好 dsh，加入這個索引，然後裝第一個外掛。"
       },
       "lines": [
-        "xlings install dsh pnpm -y",
+        "xlings install dsh -y",
         "xlings config --index-repo dsh:https://github.com/Sunrisepeak/dsh-index.git",
         "xlings install dsh:dsh-cc-tui -y"
       ],

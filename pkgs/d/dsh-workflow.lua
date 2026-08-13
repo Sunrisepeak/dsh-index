@@ -9,8 +9,8 @@ package = {
     authors = {"icetomoyo"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "workflow"},
+    keywords = {"dsh", "agent-orchestration", "dshtopic", "multi-agent", "workflow"},
 
     dsh = {
         bundle_name = "@dsh-external/workflow",

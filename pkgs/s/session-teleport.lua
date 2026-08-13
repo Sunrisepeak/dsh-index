@@ -9,8 +9,8 @@ package = {
     authors = {"omdsh-dev"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "session"},
+    keywords = {"dsh", "data-migration", "postgresql", "session-management", "typescript"},
 
     dsh = {
         bundle_name = "@mattheliu/session-teleport",

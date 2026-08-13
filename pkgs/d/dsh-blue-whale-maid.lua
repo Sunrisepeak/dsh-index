@@ -8,8 +8,8 @@ package = {
     authors = {"yuxino"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "fun"},
+    keywords = {"dsh", "blue-whale-maid", "desktop-pet", "pet", "pixel-pet"},
 
     dsh = {
         bundle_name = "dsh-blue-whale-maid",

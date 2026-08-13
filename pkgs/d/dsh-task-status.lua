@@ -9,8 +9,8 @@ package = {
     authors = {"vlln"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "web-ui", "session"},
+    keywords = {"dsh", "ui"},
 
     dsh = {
         bundle_name = "@dsh-external/dsh-task-status",

@@ -9,8 +9,8 @@ package = {
     authors = {"btspoony"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "provider"},
+    keywords = {"dsh", "fallbacks", "subagents"},
 
     dsh = {
         bundle_name = "dsh-llm-fallbacks",

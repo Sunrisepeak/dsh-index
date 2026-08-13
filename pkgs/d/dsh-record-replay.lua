@@ -9,8 +9,8 @@ package = {
     authors = {"humblebanana"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "desktop", "vision"},
+    keywords = {"dsh", "computer-use", "macos", "record-replay"},
 
     dsh = {
         bundle_name = "dsh-record-replay",

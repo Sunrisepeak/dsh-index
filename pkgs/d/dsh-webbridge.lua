@@ -9,8 +9,8 @@ package = {
     authors = {"bill9109"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "web-ui"},
+    keywords = {"dsh", "webbridge"},
 
     dsh = {
         bundle_name = "@dsh-external/dsh-webbridge",

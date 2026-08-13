@@ -9,8 +9,8 @@ package = {
     authors = {"RealAlexandreAI"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "memory"},
+    keywords = {"dsh", "nocturne", "memory"},
 
     dsh = {
         bundle_name = "dsh-nocturne-memory",

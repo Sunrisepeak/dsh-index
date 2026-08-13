@@ -9,8 +9,8 @@ package = {
     authors = {"yoke233"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "tools"},
+    keywords = {"dsh", "background-jobs", "bash", "powershell"},
 
     dsh = {
         bundle_name = "dsh-tool-monitor",

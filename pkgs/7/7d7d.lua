@@ -9,8 +9,8 @@ package = {
     authors = {"omdsh-dev"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "web-ui"},
+    keywords = {"dsh", "mini-games", "react", "typescript"},
 
     dsh = {
         bundle_name = "@mattheliu/7d7d",

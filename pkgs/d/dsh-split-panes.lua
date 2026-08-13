@@ -9,8 +9,8 @@ package = {
     authors = {"lehhair"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "uncategorized"},
+    keywords = {"dsh", "split", "panes"},
 
     dsh = {
         bundle_name = "@dsh-external/dsh-split-panes",

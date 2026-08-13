@@ -8,8 +8,8 @@ package = {
     authors = {"nowledge-co"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "memory", "tools"},
+    keywords = {"dsh", "knowledge-graph", "mcp", "memory", "nowledge-mem", "ontology"},
 
     dsh = {
         bundle_name = "nowledge-mem-deepseek-harness",

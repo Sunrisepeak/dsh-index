@@ -9,8 +9,8 @@ package = {
     authors = {"yoke233"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "provider"},
+    keywords = {"dsh", "openai-codex"},
 
     dsh = {
         bundle_name = "dsh-openai-codex-auth",

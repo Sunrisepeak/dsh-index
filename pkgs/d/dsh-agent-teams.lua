@@ -8,8 +8,8 @@ package = {
     authors = {"NanmiCoder"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "workflow"},
+    keywords = {"dsh", "agentteams", "deepseekharness", "dsh-agent-teams"},
 
     dsh = {
         bundle_name = "dsh-agent-teams",

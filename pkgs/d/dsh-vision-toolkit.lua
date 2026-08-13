@@ -9,8 +9,8 @@ package = {
     authors = {"Anionex"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "vision", "skills"},
+    keywords = {"dsh", "agent-skills", "agent-vision-toolkit", "computer-vision", "gui-automation", "ocr", "python", "screenshot-testing", "text-only-llm"},
 
     dsh = {
         bundle_name = "@dsh-external/dsh-vision-toolkit",

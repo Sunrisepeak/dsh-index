@@ -9,8 +9,8 @@ package = {
     authors = {"Small-tailqwq"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "uncategorized"},
+    keywords = {"dsh", "tps"},
 
     dsh = {
         bundle_name = "@dsh-external/tps",

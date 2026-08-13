@@ -9,8 +9,8 @@ package = {
     authors = {"titanwings"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "workflow", "session"},
+    keywords = {"dsh", "automation", "coding-agent", "cordis", "scheduled-tasks"},
 
     dsh = {
         bundle_name = "@dsh-external/dsh-automation",

@@ -9,8 +9,8 @@ package = {
     authors = {"YYTbit"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "skills", "provider"},
+    keywords = {"dsh", "codex"},
 
     dsh = {
         bundle_name = "dsh-plugin-codex-bridge",

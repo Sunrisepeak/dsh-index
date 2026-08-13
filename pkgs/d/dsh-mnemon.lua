@@ -9,8 +9,8 @@ package = {
     authors = {"omdsh-dev"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "memory", "provider"},
+    keywords = {"dsh", "agent-memory", "ai-agent", "cordis", "external-memory", "knowledge-graph", "llm-agent", "llm-memory", "llm-supervised"},
 
     dsh = {
         bundle_name = "dsh-mnemon",

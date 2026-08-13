@@ -9,8 +9,8 @@ package = {
     authors = {"vlln"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "desktop", "web-ui"},
+    keywords = {"dsh", "dsh-repository-plugin", "pet"},
 
     dsh = {
         bundle_name = "whale-girl",

@@ -9,8 +9,8 @@ package = {
     authors = {"ZSeven-W"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "uncategorized"},
+    keywords = {"dsh", "openpencil"},
 
     dsh = {
         bundle_name = "@zseven-w/dsh-openpencil",

@@ -8,8 +8,8 @@ package = {
     authors = {"HuanLinOTO"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "workflow"},
+    keywords = {"dsh", "plugin", "yet", "another", "subagent"},
 
     dsh = {
         bundle_name = "@huanlin/dsh-plugin-yet-another-subagent",

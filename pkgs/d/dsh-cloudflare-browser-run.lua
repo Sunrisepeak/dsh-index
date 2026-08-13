@@ -9,8 +9,8 @@ package = {
     authors = {"RealAlexandreAI"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "vision", "tools"},
+    keywords = {"dsh", "cloudflare", "browser", "run"},
 
     dsh = {
         bundle_name = "dsh-cloudflare-browser-run",

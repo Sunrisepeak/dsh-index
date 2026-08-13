@@ -9,8 +9,8 @@ package = {
     authors = {"btspoony"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "workflow", "session"},
+    keywords = {"dsh", "advisor", "agentic-ai"},
 
     dsh = {
         bundle_name = "dsh-advisor",

@@ -9,8 +9,8 @@ package = {
     authors = {"sjscy05"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "provider"},
+    keywords = {"dsh", "cordis", "digital-communication", "eda", "fpga", "ic-design", "matlab", "modelsim", "verilog"},
 
     dsh = {
         bundle_name = "mmv-dspic",

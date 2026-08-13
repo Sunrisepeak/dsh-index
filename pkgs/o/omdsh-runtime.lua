@@ -9,8 +9,8 @@ package = {
     authors = {"omdsh-dev"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "uncategorized"},
+    keywords = {"dsh", "nodejs", "plugin-runtime", "profile-management", "runtime"},
 
     dsh = {
         bundle_name = "@omdsh/runtime",

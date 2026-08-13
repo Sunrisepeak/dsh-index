@@ -9,8 +9,8 @@ package = {
     authors = {"titanwings"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "workflow"},
+    keywords = {"dsh", "plan-review", "plannotator"},
 
     dsh = {
         bundle_name = "@dsh-external/dsh-plannotator",

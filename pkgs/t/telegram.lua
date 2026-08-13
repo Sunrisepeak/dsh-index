@@ -8,8 +8,8 @@ package = {
     authors = {"LoserFox"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "session", "provider"},
+    keywords = {"dsh", "telegram"},
 
     dsh = {
         bundle_name = "@loserfox/telegram",

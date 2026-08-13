@@ -9,8 +9,8 @@ package = {
     authors = {"ilharp"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "tools", "sandbox"},
+    keywords = {"dsh", "tool", "approval"},
 
     dsh = {
         bundle_name = "dsh-tool-approval",

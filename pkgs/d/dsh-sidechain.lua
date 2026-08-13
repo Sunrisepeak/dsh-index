@@ -9,8 +9,8 @@ package = {
     authors = {"Buyi-wsgzg"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "web-ui", "session"},
+    keywords = {"dsh", "side-conversation", "sidechain"},
 
     dsh = {
         bundle_name = "@dsh-external/dsh-sidechain",

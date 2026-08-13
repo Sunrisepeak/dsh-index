@@ -9,8 +9,8 @@ package = {
     authors = {"orriduck"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "tui", "session"},
+    keywords = {"dsh", "coding-agent", "tui"},
 
     dsh = {
         bundle_name = "dsh-tui",

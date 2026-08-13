@@ -8,8 +8,8 @@ package = {
     authors = {"william-jin-cmu"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "tools", "session"},
+    keywords = {"dsh", "evolve"},
 
     dsh = {
         bundle_name = "@dsh-external/dsh-evolve",

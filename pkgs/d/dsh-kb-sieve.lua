@@ -9,8 +9,8 @@ package = {
     authors = {"omdsh-dev"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "memory"},
+    keywords = {"dsh", "sieve"},
 
     dsh = {
         bundle_name = "@dsh-external/dsh-kb-sieve",

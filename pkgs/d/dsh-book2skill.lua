@@ -9,8 +9,8 @@ package = {
     authors = {"omdsh-dev"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "skills"},
+    keywords = {"dsh", "book2skill"},
 
     dsh = {
         bundle_name = "dsh-book2skill",

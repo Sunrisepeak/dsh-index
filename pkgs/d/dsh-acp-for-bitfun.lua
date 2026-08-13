@@ -9,8 +9,8 @@ package = {
     authors = {"bobleer"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "provider"},
+    keywords = {"dsh", "bitfun"},
 
     dsh = {
         bundle_name = "dsh-acp-for-bitfun",

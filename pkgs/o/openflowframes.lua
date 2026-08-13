@@ -9,8 +9,8 @@ package = {
     authors = {"ZeroHackz"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "uncategorized"},
+    keywords = {"dsh", "openflowframes"},
 
     dsh = {
         bundle_name = "@zerohackz/dsh-openflowframes",

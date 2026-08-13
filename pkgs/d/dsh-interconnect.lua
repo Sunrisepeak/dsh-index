@@ -9,8 +9,8 @@ package = {
     authors = {"Chinesezjc"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "workflow"},
+    keywords = {"dsh", "interconnect"},
 
     dsh = {
         bundle_name = "dsh-interconnect",

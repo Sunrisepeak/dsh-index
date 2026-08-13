@@ -9,8 +9,8 @@ package = {
     authors = {"Moeblack"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "skills"},
+    keywords = {"dsh", "prompt", "studio"},
 
     dsh = {
         bundle_name = "dsh-prompt-studio",

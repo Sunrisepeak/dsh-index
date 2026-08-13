@@ -7,12 +7,15 @@ it emits is measured, never guessed -- the sha comes from the repo's default
 branch head, the license from GitHub's own SPDX classification, and
 needs_build from whether the upstream package.json has a `prepare` script.
 
-Usage: tools/gen_descriptors.py <scan.jsonl> <shas.tsv>
+Usage: tools/gen_descriptors.py <scan.jsonl> <shas.tsv> [topics.tsv]
 """
 import json
 import pathlib
 import re
 import sys
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from classify import classify  # noqa: E402
 
 MIRRORABLE = {"MIT", "BSD-3-Clause", "Apache-2.0", "GPL-3.0"}
 SHA_RE = re.compile(r"^[0-9a-f]{40}$")
@@ -33,6 +36,7 @@ def lua_str(s: str) -> str:
 
 def main() -> int:
     scan_path, shas_path = sys.argv[1], sys.argv[2]
+    topics_path = sys.argv[3] if len(sys.argv) > 3 else None
     scan = {}
     for line in open(scan_path, encoding="utf-8"):
         r = json.loads(line)
@@ -48,6 +52,12 @@ def main() -> int:
         meta[parts[0]] = {"branch": parts[1], "license": parts[2],
                           "archived": parts[3] == "true",
                           "stars": int(parts[4] or 0), "sha": parts[5]}
+
+    topics = {}
+    if topics_path:
+        for line in open(topics_path, encoding="utf-8"):
+            parts = line.rstrip("\n").split("\t")
+            topics[parts[0]] = parts[1].split(",") if len(parts) > 1 and parts[1] else []
 
     out = pathlib.Path("pkgs")
     written, skipped, names = 0, [], {}
@@ -90,8 +100,9 @@ def main() -> int:
         L.append(f"    authors = {{{lua_str(repo.split('/')[0])}}},")
         L.append("")
         L.append('    status = "dev",')
-        L.append('    categories = {"dsh-plugin"},')
-        L.append('    keywords = {"dsh", "plugin"},')
+        cats, kws = classify(name, topics.get(repo, []), desc)
+        L.append("    categories = {" + ", ".join(lua_str(c) for c in cats) + "},")
+        L.append("    keywords = {" + ", ".join(lua_str(k) for k in (["dsh"] + kws)) + "},")
         L.append("")
         L.append("    dsh = {")
         L.append(f"        bundle_name = {lua_str(r['pkg'])},")

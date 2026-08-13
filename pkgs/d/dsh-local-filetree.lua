@@ -8,8 +8,8 @@ package = {
     authors = {"Mongfayi"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "web-ui", "tools"},
+    keywords = {"dsh", "local", "filetree"},
 
     dsh = {
         bundle_name = "dsh-local-filetree",

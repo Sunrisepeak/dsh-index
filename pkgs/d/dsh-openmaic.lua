@@ -9,8 +9,8 @@ package = {
     authors = {"THU-MAIC"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "vision"},
+    keywords = {"dsh", "openmaic"},
 
     dsh = {
         bundle_name = "@openmaic/dsh-openmaic",

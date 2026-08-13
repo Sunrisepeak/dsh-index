@@ -9,8 +9,8 @@ package = {
     authors = {"lin-cheng-lab"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "provider"},
+    keywords = {"dsh", "deepseek", "balance"},
 
     dsh = {
         bundle_name = "dsh-deepseek-balance",

@@ -9,8 +9,8 @@ package = {
     authors = {"omdsh-dev"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "tools"},
+    keywords = {"dsh", "collection", "toolkit", "zero-dependency"},
 
     dsh = {
         bundle_name = "@deepseek-ai/dsh-toolkit",

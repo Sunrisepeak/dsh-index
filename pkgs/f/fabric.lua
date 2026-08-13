@@ -8,8 +8,8 @@ package = {
     authors = {"omdsh-dev"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "uncategorized"},
+    keywords = {"dsh", "fabric"},
 
     dsh = {
         bundle_name = "cordis-fabric-bundle",

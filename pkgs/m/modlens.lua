@@ -9,8 +9,8 @@ package = {
     authors = {"liustack"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "vision", "skills"},
+    keywords = {"dsh", "agent-skills", "agentic-workflow", "claude-code", "claude-skills", "codex", "cordis", "glm", "harness-engineering"},
 
     dsh = {
         bundle_name = "@liustack/modlens",

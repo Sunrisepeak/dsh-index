@@ -8,8 +8,8 @@ package = {
     authors = {"lehhair"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "uncategorized"},
+    keywords = {"dsh", "diff", "viewer"},
 
     dsh = {
         bundle_name = "@dsh-external/dsh-diff-viewer",

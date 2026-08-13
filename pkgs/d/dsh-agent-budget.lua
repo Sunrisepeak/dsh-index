@@ -8,8 +8,8 @@ package = {
     authors = {"vibeinging"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "uncategorized"},
+    keywords = {"dsh", "agent", "budget"},
 
     dsh = {
         bundle_name = "@deepseek-ai/dsh-agent-budget",

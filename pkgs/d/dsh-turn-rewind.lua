@@ -9,8 +9,8 @@ package = {
     authors = {"Anionex"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "session"},
+    keywords = {"dsh", "agent-rewind", "cordis-plugin", "marisa-plugin", "restore-point", "turn-rewind", "workspace-safety"},
 
     dsh = {
         bundle_name = "@dsh-external/turn-rewind",

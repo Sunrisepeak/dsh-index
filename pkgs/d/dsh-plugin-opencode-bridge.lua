@@ -9,8 +9,8 @@ package = {
     authors = {"YYTbit"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "skills"},
+    keywords = {"dsh", "opencode"},
 
     dsh = {
         bundle_name = "dsh-plugin-opencode-bridge",

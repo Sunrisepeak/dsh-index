@@ -9,8 +9,8 @@ package = {
     authors = {"LingLambda"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "uncategorized"},
+    keywords = {"dsh", "undo"},
 
     dsh = {
         bundle_name = "dsh-undo",

@@ -9,8 +9,8 @@ package = {
     authors = {"PangYiMing"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "session", "sandbox"},
+    keywords = {"dsh", "debugging", "devtools", "port"},
 
     dsh = {
         bundle_name = "dsh-port-guard",

@@ -9,8 +9,8 @@ package = {
     authors = {"PangYiMing"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "tools"},
+    keywords = {"dsh", "browser-automation", "browser-control"},
 
     dsh = {
         bundle_name = "dsh-browser-control",

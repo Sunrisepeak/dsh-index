@@ -8,8 +8,8 @@ package = {
     authors = {"Nagi-ovo"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "web-ui", "vision"},
+    keywords = {"dsh", "visualize"},
 
     dsh = {
         bundle_name = "@dsh-external/dsh-visualize",

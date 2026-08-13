@@ -9,8 +9,8 @@ package = {
     authors = {"hellodigua"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "session"},
+    keywords = {"dsh", "share"},
 
     dsh = {
         bundle_name = "@dsh-external/dsh-share",

@@ -9,8 +9,8 @@ package = {
     authors = {"omdsh-dev"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "fun"},
+    keywords = {"dsh", "fun", "weather"},
 
     dsh = {
         bundle_name = "@deepseek-ai/dsh-fun-weather",

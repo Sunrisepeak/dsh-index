@@ -9,8 +9,8 @@ package = {
     authors = {"ccq1"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "tui", "web-ui"},
+    keywords = {"dsh", "side", "panel"},
 
     dsh = {
         bundle_name = "@dsh-external/dsh-side-panel",

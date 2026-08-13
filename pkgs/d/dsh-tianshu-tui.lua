@@ -9,8 +9,8 @@ package = {
     authors = {"huiliyi37"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "tui"},
+    keywords = {"dsh", "harness-engineering"},
 
     dsh = {
         bundle_name = "@huiliyi37/dsh-tianshu-tui",

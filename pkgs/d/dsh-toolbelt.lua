@@ -9,8 +9,8 @@ package = {
     authors = {"cking000bigdemon"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "vision", "skills"},
+    keywords = {"dsh", "ai-agent", "cordis"},
 
     dsh = {
         bundle_name = "dsh-toolbelt",

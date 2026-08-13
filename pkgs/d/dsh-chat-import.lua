@@ -9,8 +9,8 @@ package = {
     authors = {"Nwflower"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "workflow", "session"},
+    keywords = {"dsh", "agent", "ai-agents", "automation", "chatgpt", "claude-code", "codex", "cursor", "developer-tools"},
 
     dsh = {
         bundle_name = "dsh-chat-import",

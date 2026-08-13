@@ -9,8 +9,8 @@ package = {
     authors = {"titanwings"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "workflow", "tools"},
+    keywords = {"dsh", "automation", "browser", "kimi-webbridge", "tool"},
 
     dsh = {
         bundle_name = "@dsh-external/dsh-better-browser",

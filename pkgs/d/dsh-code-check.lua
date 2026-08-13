@@ -9,8 +9,8 @@ package = {
     authors = {"a179-sanae"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "sandbox"},
+    keywords = {"dsh", "code", "check"},
 
     dsh = {
         bundle_name = "@a179-sanae/dsh-code-check",

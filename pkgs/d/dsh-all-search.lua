@@ -9,8 +9,8 @@ package = {
     authors = {"RealAlexandreAI"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "tools", "provider"},
+    keywords = {"dsh", "all", "search"},
 
     dsh = {
         bundle_name = "dsh-all-search",

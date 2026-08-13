@@ -9,8 +9,8 @@ package = {
     authors = {"vibeinging"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "session"},
+    keywords = {"dsh", "observability", "telemetry", "tracing", "yitrace"},
 
     dsh = {
         bundle_name = "@deepseek-ai/dsh-trace",

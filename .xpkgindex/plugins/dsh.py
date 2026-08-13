@@ -101,10 +101,14 @@ class DshPlugin(Plugin):
             pkg.licenses = [license_id]
 
         pkg.facets["delivery"] = delivery
-        if license_id:
-            pkg.facets["license"] = license_id
-        if pkg.status:
-            pkg.facets["status"] = pkg.status
+        # License stays a fact on the package page (it is what gates mirroring)
+        # but is not a browsing axis -- nobody picks a plugin by SPDX id.
+        cats = [str(c) for c in ext["categories"] if c and c != "dsh-plugin"]
+        if cats:
+            pkg.facets["category"] = cats
+        kws = [str(k) for k in ext["keywords"] if k and k != "dsh"]
+        if kws:
+            pkg.facets["keyword"] = kws[:6]
 
         badges = pkg.extensions.setdefault("_badges", [])
         badges.append(delivery)
@@ -126,8 +130,8 @@ class DshPlugin(Plugin):
                                tone="tool"),
                 ],
             ),
-            Facet(key="license", label=_t("license", "许可证", "授權"), weight=20),
-            Facet(key="status", label=_t("status", "状态", "狀態"), weight=30),
+            Facet(key="category", label=_t("category", "分类", "分類"), weight=20),
+            Facet(key="keyword", label=_t("keyword", "关键字", "關鍵字"), weight=30),
         ]
 
     def row(self, pkg) -> RowSpec:

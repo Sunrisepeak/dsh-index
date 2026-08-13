@@ -8,8 +8,8 @@ package = {
     authors = {"dingyi222666"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "web-ui", "session"},
+    keywords = {"dsh", "focus", "chat"},
 
     dsh = {
         bundle_name = "@dingyi222666/dsh-focus-chat",

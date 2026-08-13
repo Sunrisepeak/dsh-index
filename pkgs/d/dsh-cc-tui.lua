@@ -9,8 +9,8 @@ package = {
     authors = {"ccch1mneyyy"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "tui", "web-ui"},
+    keywords = {"dsh", "claude-code", "coding-agent", "ink", "react", "terminal", "tui"},
 
     dsh = {
         bundle_name = "dsh-cc-tui",

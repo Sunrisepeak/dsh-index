@@ -9,8 +9,8 @@ package = {
     authors = {"hellodigua"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "web-ui"},
+    keywords = {"dsh", "emoji"},
 
     dsh = {
         bundle_name = "@dsh-external/dsh-emoji",

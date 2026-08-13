@@ -9,8 +9,8 @@ package = {
     authors = {"SiYue-ZO"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "uncategorized"},
+    keywords = {"dsh", "ai-translation", "translation", "translator"},
 
     dsh = {
         bundle_name = "dsh-translator",

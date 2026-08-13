@@ -9,8 +9,8 @@ package = {
     authors = {"bitterSmilezzz"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "tui", "desktop"},
+    keywords = {"dsh", "macos"},
 
     dsh = {
         bundle_name = "dsh-mac-desktop",

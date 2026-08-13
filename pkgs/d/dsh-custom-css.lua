@@ -9,8 +9,8 @@ package = {
     authors = {"AnacondaKC"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "web-ui"},
+    keywords = {"dsh", "custom", "css"},
 
     dsh = {
         bundle_name = "dsh-custom-css",

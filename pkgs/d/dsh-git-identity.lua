@@ -8,8 +8,8 @@ package = {
     authors = {"LoserFox"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "uncategorized"},
+    keywords = {"dsh", "git", "identity"},
 
     dsh = {
         bundle_name = "@loserfox/git-identity",

@@ -9,8 +9,8 @@ package = {
     authors = {"0xsline"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "web-ui"},
+    keywords = {"dsh", "spotlight"},
 
     dsh = {
         bundle_name = "@dsh-external/dsh-spotlight",

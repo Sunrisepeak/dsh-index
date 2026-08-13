@@ -9,8 +9,8 @@ package = {
     authors = {"Drifter-yh"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "tools"},
+    keywords = {"dsh", "agent", "agent-infrastructure", "tool-policy"},
 
     dsh = {
         bundle_name = "dsh-tool-policy",

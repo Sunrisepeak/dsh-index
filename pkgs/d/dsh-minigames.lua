@@ -9,8 +9,8 @@ package = {
     authors = {"lhh010"},
 
     status = "dev",
-    categories = {"dsh-plugin"},
-    keywords = {"dsh", "plugin"},
+    categories = {"dsh-plugin", "web-ui", "provider"},
+    keywords = {"dsh", "minigames"},
 
     dsh = {
         bundle_name = "@dsh-external/dsh-minigames",
