@@ -111,9 +111,19 @@ pytest -q
 ```
 
 Then install it for real, in an isolated home so your own environment is not
-touched:
+touched.
+
+> **Append the template first.** `xlings config --add-xpkg` takes the file as
+> it is on disk, and a descriptor on its own has no `type` and no `xpm` — those
+> only exist after `pkgindex-build.lua` appends `template.lua`. Register a raw
+> descriptor and the install fails with
+> `package 'local:<name>' not found, searched repos: [xim]`, which reads like a
+> broken recipe and is not one. Run the harness first, and restore `pkgs/`
+> afterwards.
 
 ```bash
+lua5.4 tests/libxpkg_sandbox_harness.lua .    # appends template.lua in place
+
 TMP_X=$(mktemp -d); TMP_D=$(mktemp -d)
 XLINGS_HOME=$TMP_X xlings update
 XLINGS_HOME=$TMP_X xlings config --add-xpkg "$PWD/pkgs/d/dsh-cc-tui.lua"
@@ -126,7 +136,18 @@ DSH_HOME=$TMP_D dsh --profile verify --dump-config | grep "^# == "
 XLINGS_HOME=$TMP_X DSH_HOME=$TMP_D DSH_PROFILE=verify \
   xlings remove local:dsh-cc-tui -y
 jq '.dependencies, .dsh.profile.bundles' "$TMP_D/profiles/verify/package.json"
+
 rm -rf "$TMP_X" "$TMP_D"
+git checkout -- pkgs/                          # undo the harness append
+```
+
+A passing run looks like this (dsh-cc-tui, measured):
+
+```
+deps:    {"dsh-cc-tui": "github:ccch1mneyyy/dsh-cc-tui#4aa91903..."}
+bundles: ["@deepseek-ai/dsh-base", "dsh-cc-tui"]
+--dump-config: # == dsh-cc-tui        <- the layer is composed
+after remove:  deps None, bundles ["@deepseek-ai/dsh-base"], layer gone
 ```
 
 Acceptance is the **`--dump-config` layer**, not the installer's exit code. A
