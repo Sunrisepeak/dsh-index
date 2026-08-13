@@ -1,0 +1,1186 @@
+{
+  "7d7d": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "omdsh-dev/7d7d",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-101": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "bill9109/dsh-101",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-agent-budget": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "vibeinging/dsh-agent-budget",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-all-search": {
+    "reasons": [
+      {
+        "detail": "REFUSED: dsh-all-search: main 'dist/index.js' missing from the tarball (a TypeScript package packed without building)",
+        "kind": "broken"
+      },
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "RealAlexandreAI/dsh-all-search",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-atuin": {
+    "reasons": [
+      {
+        "detail": "REFUSED: dsh-atuin: main 'dist/index.js' missing from the tarball (a TypeScript package packed without building)",
+        "kind": "broken"
+      },
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "RealAlexandreAI/dsh-atuin",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-auto-chess": {
+    "reasons": [
+      {
+        "detail": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1.",
+        "kind": "broken"
+      },
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "omdsh-dev/dsh-auto-chess",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-batch-regression": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "PangYiMing/dsh-batch-regression",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-bisect-debug": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "PangYiMing/dsh-bisect-debug",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-blue-whale-maid": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "yuxino/dsh-blue-whale-maid",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-book2skill": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "omdsh-dev/dsh-book2skill",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-browser-control": {
+    "reasons": [
+      {
+        "detail": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1.",
+        "kind": "broken"
+      },
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "PangYiMing/dsh-browser-control",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-cloudflare-browser-run": {
+    "reasons": [
+      {
+        "detail": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1.",
+        "kind": "broken"
+      },
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "RealAlexandreAI/dsh-cloudflare-browser-run",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-code-check": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "a179-sanae/dsh-code-check",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-computer-use": {
+    "reasons": [
+      {
+        "detail": "pnpm failed (1): Node.js v26.7.0",
+        "kind": "broken"
+      }
+    ],
+    "repo": "Anionex/dsh-computer-use",
+    "stars": 10,
+    "verified": true
+  },
+  "dsh-conversation-share": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "bill9109/dsh-conversation-share",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-custom-css": {
+    "reasons": [
+      {
+        "detail": "REFUSED: dsh-custom-css: main 'lib/index.js' missing from the tarball (a TypeScript package packed without building)",
+        "kind": "broken"
+      },
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "AnacondaKC/dsh-custom-css",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-daily-fortune": {
+    "reasons": [
+      {
+        "detail": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1.",
+        "kind": "broken"
+      },
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "omdsh-dev/dsh-daily-fortune",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-daily-progress": {
+    "reasons": [
+      {
+        "detail": "REFUSED: dsh-daily-progress: main 'lib/index.js' missing from the tarball (a TypeScript package packed without building)",
+        "kind": "broken"
+      },
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "omdsh-dev/dsh-daily-progress",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-data-agent": {
+    "reasons": [
+      {
+        "detail": "pnpm failed (1): [ERR_PNPM_NO_MATCHING_VERSION] No matching version found for @deepseek-ai",
+        "kind": "broken"
+      }
+    ],
+    "repo": "omdsh-dev/dsh-data-agent",
+    "stars": 4,
+    "verified": true
+  },
+  "dsh-deeplink": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "qyw233/dsh-deeplink",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-deepresearch": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "havingautism/dsh-deepresearch",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-deepseek-balance": {
+    "reasons": [
+      {
+        "detail": "subprocess.CalledProcessError: Command '['pnpm', 'pack', '--pack-destination', '/tmp/mirror-dsh-deepseek-balance-gw5qr7g1']' returned non-zero exit status 1.",
+        "kind": "broken"
+      },
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "lin-cheng-lab/dsh-deepseek-balance",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-diff-viewer": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "lehhair/dsh-diff-viewer",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-douyin": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "AnacondaKC/dsh-douyin",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-drag-and-drop": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "bill9109/dsh-drag-and-drop",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-ernie-image": {
+    "reasons": [
+      {
+        "detail": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1.",
+        "kind": "broken"
+      },
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "omdsh-dev/dsh-ernie-image",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-explain": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "yuezengwu/dsh-explain",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-fun-typewriter": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "omdsh-dev/dsh-fun-typewriter",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-fun-weather": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "omdsh-dev/dsh-fun-weather",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-gomoku": {
+    "reasons": [
+      {
+        "detail": "pnpm failed (1): [ERR_PNPM_NO_MATCHING_VERSION] No matching version found for @deepseek-ai",
+        "kind": "broken"
+      }
+    ],
+    "repo": "omdsh-dev/dsh-gomoku",
+    "stars": 6,
+    "verified": true
+  },
+  "dsh-hub": {
+    "reasons": [
+      {
+        "detail": "pnpm failed (1): [ERR_PNPM_FETCH_404] GET https://registry.npmjs.org/@omdsh%2Fruntime: Not",
+        "kind": "broken"
+      }
+    ],
+    "repo": "omdsh-dev/dsh-hub",
+    "stars": 2,
+    "verified": true
+  },
+  "dsh-interconnect": {
+    "reasons": [
+      {
+        "detail": "dsh-interconnect: main 'lib/index.js' missing from the tarball (a TypeScript package packe",
+        "kind": "broken"
+      }
+    ],
+    "repo": "Chinesezjc/dsh-interconnect",
+    "stars": 11,
+    "verified": true
+  },
+  "dsh-kb-sieve": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "omdsh-dev/dsh-kb-sieve",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-llm-fallbacks": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "btspoony/dsh-llm-fallbacks",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-longbridge": {
+    "reasons": [
+      {
+        "detail": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1.",
+        "kind": "broken"
+      },
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "omdsh-dev/dsh-longbridge",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-mobile": {
+    "reasons": [
+      {
+        "detail": "REFUSED: dsh-mobile: main 'lib/index.js' missing from the tarball (a TypeScript package packed without building)",
+        "kind": "broken"
+      },
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "lehhair/dsh-mobile",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-mobile-control": {
+    "reasons": [
+      {
+        "detail": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1.",
+        "kind": "broken"
+      },
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "PangYiMing/dsh-mobile-control",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-nocturne-memory": {
+    "reasons": [
+      {
+        "detail": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1.",
+        "kind": "broken"
+      },
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "RealAlexandreAI/dsh-nocturne-memory",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-notebooks": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "havingautism/dsh-notebooks",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-openmaic": {
+    "reasons": [
+      {
+        "detail": "pnpm failed (1): [ERR_PNPM_FETCH_404] GET https://registry.npmjs.org/@deepseek-ai%2Fdsh-ty",
+        "kind": "broken"
+      }
+    ],
+    "repo": "THU-MAIC/dsh-openmaic",
+    "stars": 3,
+    "verified": true
+  },
+  "dsh-openpencil": {
+    "reasons": [
+      {
+        "detail": "dsh-openpencil: main 'lib/index.js' missing from the tarball (a TypeScript package packed ",
+        "kind": "broken"
+      }
+    ],
+    "repo": "ZSeven-W/dsh-openpencil",
+    "stars": 28,
+    "verified": true
+  },
+  "dsh-paddle-ocr": {
+    "reasons": [
+      {
+        "detail": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1.",
+        "kind": "broken"
+      },
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "omdsh-dev/dsh-paddle-ocr",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-payload-capture": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "Moeblack/dsh-payload-capture",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-pet-corner": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "omdsh-dev/dsh-pet-corner",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-plugin-aigc-canvas": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "HuanLinOTO/dsh-plugin-aigc-canvas",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-plugin-anti-ads": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "HuanLinOTO/dsh-plugin-anti-ads",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-plugin-auto-blame": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "HuanLinOTO/dsh-plugin-auto-blame",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-plugin-check": {
+    "reasons": [
+      {
+        "detail": "pnpm failed (1): [ERROR] This project is configured to use npm",
+        "kind": "broken"
+      }
+    ],
+    "repo": "omdsh-dev/dsh-plugin-check",
+    "stars": 10,
+    "verified": true
+  },
+  "dsh-plugin-d399": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "HuanLinOTO/dsh-plugin-d399",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-plugin-spur": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "HuanLinOTO/dsh-plugin-spur",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-port-guard": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "PangYiMing/dsh-port-guard",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-record-replay": {
+    "reasons": [
+      {
+        "detail": "pnpm failed (1): $ npm run build",
+        "kind": "broken"
+      }
+    ],
+    "repo": "humblebanana/dsh-record-replay",
+    "stars": 2,
+    "verified": true
+  },
+  "dsh-resume-plugin": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "Demogorgon314/dsh-resume-plugin",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-revive": {
+    "reasons": [
+      {
+        "detail": "subprocess.CalledProcessError: Command '['pnpm', 'pack', '--pack-destination', '/tmp/mirror-dsh-revive-tdk6j3dy']' returned non-zero exit status 2.",
+        "kind": "broken"
+      },
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "omdsh-dev/dsh-revive",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-scout": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "omdsh-dev/dsh-scout",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-screenshot-diff": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "PangYiMing/dsh-screenshot-diff",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-security-audit": {
+    "reasons": [
+      {
+        "detail": "pnpm failed (1): [ERROR] This project is configured to use npm",
+        "kind": "broken"
+      }
+    ],
+    "repo": "omdsh-dev/dsh-security-audit",
+    "stars": 7,
+    "verified": true
+  },
+  "dsh-session-health": {
+    "reasons": [
+      {
+        "detail": "pnpm failed (1): [ERROR] This project is configured to use npm",
+        "kind": "broken"
+      }
+    ],
+    "repo": "omdsh-dev/dsh-session-health",
+    "stars": 7,
+    "verified": true
+  },
+  "dsh-session-notification": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "dingyi222666/dsh-session-notification",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-side-panel": {
+    "reasons": [
+      {
+        "detail": "pnpm failed (1): $ npm run build",
+        "kind": "broken"
+      }
+    ],
+    "repo": "ccq1/dsh-side-panel",
+    "stars": 7,
+    "verified": true
+  },
+  "dsh-sidechain": {
+    "reasons": [
+      {
+        "detail": "dsh-sidechain: main 'lib/index.js' missing from the tarball (a TypeScript package packed w",
+        "kind": "broken"
+      }
+    ],
+    "repo": "Buyi-wsgzg/dsh-sidechain",
+    "stars": 2,
+    "verified": true
+  },
+  "dsh-split-panes": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "lehhair/dsh-split-panes",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-spotlight": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "0xsline/dsh-spotlight",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-sticky-disclosure": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "Han-1413141/dsh-sticky-disclosure",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-tool-approval": {
+    "reasons": [
+      {
+        "detail": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1.",
+        "kind": "broken"
+      },
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "ilharp/dsh-tool-approval",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-tool-calculator": {
+    "reasons": [
+      {
+        "detail": "pnpm failed (1): [ERROR] This project is configured to use npm",
+        "kind": "broken"
+      }
+    ],
+    "repo": "omdsh-dev/dsh-tool-calculator",
+    "stars": 2,
+    "verified": true
+  },
+  "dsh-tool-csv": {
+    "reasons": [
+      {
+        "detail": "pnpm failed (1): [ERROR] This project is configured to use npm",
+        "kind": "broken"
+      }
+    ],
+    "repo": "omdsh-dev/dsh-tool-csv",
+    "stars": 3,
+    "verified": true
+  },
+  "dsh-tool-diff": {
+    "reasons": [
+      {
+        "detail": "pnpm failed (1): [ERROR] This project is configured to use npm",
+        "kind": "broken"
+      }
+    ],
+    "repo": "omdsh-dev/dsh-tool-diff",
+    "stars": 2,
+    "verified": true
+  },
+  "dsh-tool-encoding": {
+    "reasons": [
+      {
+        "detail": "pnpm failed (1): [ERROR] This project is configured to use npm",
+        "kind": "broken"
+      }
+    ],
+    "repo": "omdsh-dev/dsh-tool-encoding",
+    "stars": 2,
+    "verified": true
+  },
+  "dsh-tool-json": {
+    "reasons": [
+      {
+        "detail": "pnpm failed (1): [ERROR] This project is configured to use npm",
+        "kind": "broken"
+      }
+    ],
+    "repo": "omdsh-dev/dsh-tool-json",
+    "stars": 2,
+    "verified": true
+  },
+  "dsh-tool-markdown": {
+    "reasons": [
+      {
+        "detail": "pnpm failed (1): [ERROR] This project is configured to use npm",
+        "kind": "broken"
+      }
+    ],
+    "repo": "omdsh-dev/dsh-tool-markdown",
+    "stars": 2,
+    "verified": true
+  },
+  "dsh-tool-monitor": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "yoke233/dsh-tool-monitor",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-tool-policy": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "Drifter-yh/dsh-tool-policy",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-tool-regex": {
+    "reasons": [
+      {
+        "detail": "pnpm failed (1): [ERROR] This project is configured to use npm",
+        "kind": "broken"
+      }
+    ],
+    "repo": "omdsh-dev/dsh-tool-regex",
+    "stars": 2,
+    "verified": true
+  },
+  "dsh-tool-schema": {
+    "reasons": [
+      {
+        "detail": "pnpm failed (1): [ERROR] This project is configured to use npm",
+        "kind": "broken"
+      }
+    ],
+    "repo": "omdsh-dev/dsh-tool-schema",
+    "stars": 2,
+    "verified": true
+  },
+  "dsh-tool-search": {
+    "reasons": [
+      {
+        "detail": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1.",
+        "kind": "broken"
+      },
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "vibeinging/dsh-tool-search",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-tool-stat": {
+    "reasons": [
+      {
+        "detail": "pnpm failed (1): [ERROR] This project is configured to use npm",
+        "kind": "broken"
+      }
+    ],
+    "repo": "omdsh-dev/dsh-tool-stat",
+    "stars": 2,
+    "verified": true
+  },
+  "dsh-tool-time": {
+    "reasons": [
+      {
+        "detail": "pnpm failed (1): [ERROR] This project is configured to use npm",
+        "kind": "broken"
+      }
+    ],
+    "repo": "omdsh-dev/dsh-tool-time",
+    "stars": 2,
+    "verified": true
+  },
+  "dsh-toolbelt": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "cking000bigdemon/dsh-toolbelt",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-toolkit": {
+    "reasons": [
+      {
+        "detail": "pnpm failed (1): [ERROR] This project is configured to use npm",
+        "kind": "broken"
+      }
+    ],
+    "repo": "omdsh-dev/dsh-toolkit",
+    "stars": 8,
+    "verified": true
+  },
+  "dsh-tps": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "Small-tailqwq/dsh-tps",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-trace": {
+    "reasons": [
+      {
+        "detail": "pnpm failed (1): [ERR_PNPM_MINIMUM_RELEASE_AGE_VIOLATION] 1 lockfile entries failed verifi",
+        "kind": "broken"
+      }
+    ],
+    "repo": "vibeinging/dsh-trace",
+    "stars": 2,
+    "verified": true
+  },
+  "dsh-track": {
+    "reasons": [
+      {
+        "detail": "pnpm failed (1): [ERR_PNPM_FETCH_404] GET https://registry.npmjs.org/@deepseek-ai%2Fdsh-ty",
+        "kind": "broken"
+      }
+    ],
+    "repo": "fakechris/dsh-track",
+    "stars": 2,
+    "verified": true
+  },
+  "dsh-translator": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "SiYue-ZO/dsh-translator",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-turn-navigator": {
+    "reasons": [
+      {
+        "detail": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1.",
+        "kind": "broken"
+      },
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "vibeinging/dsh-turn-navigator",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-undo": {
+    "reasons": [
+      {
+        "detail": "pnpm failed (1): [ERROR] This project is configured to use yarn",
+        "kind": "broken"
+      }
+    ],
+    "repo": "LingLambda/dsh-undo",
+    "stars": 2,
+    "verified": true
+  },
+  "dsh-vision-toolkit": {
+    "reasons": [
+      {
+        "detail": "pnpm failed (1): [ERR_PNPM_NO_MATCHING_VERSION] No matching version found for @deepseek-ai",
+        "kind": "broken"
+      }
+    ],
+    "repo": "Anionex/dsh-vision-toolkit",
+    "stars": 131,
+    "verified": true
+  },
+  "dsh-voice-funasr": {
+    "reasons": [
+      {
+        "detail": "subprocess.CalledProcessError: Command '['pnpm', 'pack', '--pack-destination', '/tmp/mirror-dsh-voice-funasr-2h03a3mt']' returned non-zero exit status 1.",
+        "kind": "broken"
+      },
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "omdsh-dev/dsh-voice-funasr",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-webbridge": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "bill9109/dsh-webbridge",
+    "stars": 1,
+    "verified": false
+  },
+  "dsh-workflow": {
+    "reasons": [
+      {
+        "detail": "pnpm failed (2): $ tsc -p tsconfig.json",
+        "kind": "broken"
+      }
+    ],
+    "repo": "icetomoyo/dsh_workflow",
+    "stars": 33,
+    "verified": true
+  },
+  "ex-setting": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "omdsh-dev/ex-setting",
+    "stars": 1,
+    "verified": false
+  },
+  "jumpserver-dsh": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "jumpserver-east/jumpserver-dsh",
+    "stars": 1,
+    "verified": false
+  },
+  "matlab-modelsim-vivado-plugin": {
+    "reasons": [
+      {
+        "detail": "REFUSED: matlab-modelsim-vivado-plugin: main 'lib/index.js' missing from the tarball (a TypeScript package packed without building)",
+        "kind": "broken"
+      },
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "sjscy05/matlab-modelsim-vivado-plugin",
+    "stars": 1,
+    "verified": false
+  },
+  "omdsh-runtime": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "omdsh-dev/omdsh-runtime",
+    "stars": 1,
+    "verified": false
+  },
+  "qwen-mm-plugins": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "omdsh-dev/Qwen-MM-Plugins",
+    "stars": 1,
+    "verified": false
+  },
+  "sandbox-mxc": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "omdsh-dev/sandbox-mxc",
+    "stars": 1,
+    "verified": false
+  },
+  "sandbox-nono": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "omdsh-dev/sandbox-nono",
+    "stars": 1,
+    "verified": false
+  },
+  "session-teleport": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "omdsh-dev/session-teleport",
+    "stars": 1,
+    "verified": false
+  },
+  "web-components": {
+    "reasons": [
+      {
+        "detail": "1 star(s)",
+        "kind": "low-signal"
+      }
+    ],
+    "repo": "omdsh-dev/web-components",
+    "stars": 1,
+    "verified": false
+  },
+  "whale-girl": {
+    "reasons": [
+      {
+        "detail": "whale-girl: main 'dsh-plugin/index.mjs' missing from the tarball (a TypeScript package pac",
+        "kind": "broken"
+      }
+    ],
+    "repo": "vlln/whale-girl",
+    "stars": 19,
+    "verified": true
+  }
+}

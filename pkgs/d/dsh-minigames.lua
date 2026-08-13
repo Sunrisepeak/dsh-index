@@ -22,7 +22,14 @@ package = {
 
         needs_build = false,
 
-        -- Mirror-eligible. The `mirror` block is filled in by the
-        -- mirror pipeline once a tarball is published to xlings-res.
+        -- Published by tools/mirror.py to GitHub and GitCode, verified
+        -- three ways: local build, GLOBAL and CN all hash the same.
+        mirror = {
+            ["0.3.2"] = {
+                tarball = "dsh-minigames-0.3.2.tgz",
+                sha256  = "6bc6bc12d185bdb31bd34fc2e661f14253cd6fbc26ea292b879424dfbe62c6f8",
+                cn      = true,
+            },
+        },
     },
 }

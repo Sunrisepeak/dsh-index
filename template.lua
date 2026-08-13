@@ -88,16 +88,53 @@ import("xim.libxpkg.system")
 import("xim.libxpkg.xvm")
 import("xim.libxpkg.log")
 
--- The profile follows the current subos by default, so entering a different
--- subos gives a different plugin set -- the same axis `xvm use` switches on.
--- Explicit DSH_PROFILE always wins; "web" is the last resort because that is
--- the profile upstream's own `dsh web` boots.
+-- Which profile a plugin lands in, in one predictable rule.
+--
+-- 1. DSH_PROFILE, if set. One variable, user-facing, documented.
+-- 2. A *surface* plugin gets a profile named after itself. A surface defines a
+--    runnable app -- it overrides base rows rather than adding to them -- and
+--    upstream's own docs give it its own profile (dsh-cc-tui's README says
+--    `dsh --profile cc-tui`). Two surfaces in one profile fight over the same
+--    rows.
+-- 3. Otherwise the current subos, so a plugin set travels with the environment
+--    it was installed into -- the same axis `xlings use` switches on.
+-- 4. "web" if that cannot be determined, which is what `dsh web` boots.
+--
+-- Step 3 reads a libxpkg API, NOT an environment variable. The first attempt
+-- read `XLINGS_SUBOS`, which xlings does not set, so the branch was dead code
+-- while the docs claimed it worked. `system.subos_sysrootdir()` returns
+-- `<home>/subos/<name>`, so the name is its last component -- an answer from
+-- the toolchain rather than one inferred from whatever happens to be exported
+-- into the shell.
+--
+-- Whatever it resolves to is printed at the end of config() with the launch
+-- command, because an unpredictable profile is only a problem if the user has
+-- to guess it.
+local function is_surface()
+    for _, c in ipairs(package.categories or {}) do
+        if c == "tui" or c == "desktop" then return true end
+    end
+    return false
+end
+
+local function subos_name()
+    -- Feature-detected: it arrives as a module, and `if system.x then` is true
+    -- on every client whether or not the function exists.
+    if type(system.subos_sysrootdir) ~= "function" then return nil end
+    local ok, dir = pcall(system.subos_sysrootdir)
+    if not ok or type(dir) ~= "string" or dir == "" then return nil end
+    local name = path.filename(dir)
+    -- `current` is a symlink to the active subos; a profile named after it
+    -- would follow the symlink instead of staying with its environment.
+    if name == "" or name == "current" then return nil end
+    return name
+end
+
 local function profile()
     local p = os.getenv("DSH_PROFILE")
     if p and p ~= "" then return p end
-    p = os.getenv("XLINGS_SUBOS")
-    if p and p ~= "" then return p end
-    return "web"
+    if is_surface() then return package.name end
+    return subos_name() or "web"
 end
 
 local function dsh_home()
@@ -161,16 +198,27 @@ function config()
                .. "machine at install time, outside any agent sandbox.\n"
                .. "If you trust it, reinstall with DSH_ALLOW_BUILDS=1.")
                :format(package.name,
-                       (package.licenses and package.licenses[1]) or "none declared"))
+                       (package.licenses and package.licenses[1]) or "unknown"))
         return false
     end
 
+    -- pnpm writes straight to the terminal and its first line lands flush
+    -- against whatever xlings printed last, so the two look like one message.
+    -- One blank line is the whole fix.
+    print("")
     system.exec(("dsh plugin --profile %s add %s")
                 :format(profile(), spec(pkginfo.version())))
 
     if not installed() then
         return false
     end
+
+    -- Say where it went and how to boot it. Without this the user has to
+    -- guess the profile name, and the obvious guess -- the plugin's own name --
+    -- is always wrong: `dsh --profile <plugin>` fails with "profile does not
+    -- exist".
+    log.info(("%s is installed in profile '%s'.\n  Launch it:  dsh --profile %s")
+             :format(package.name, profile(), profile()))
 
     -- `type = "group"`: this name backs no executable. Left as the default
     -- program kind it would generate a shim that always fails
@@ -182,6 +230,7 @@ end
 
 function uninstall()
     xvm.remove(package.name)
+    print("")
     system.exec(("dsh plugin --profile %s remove %s")
                 :format(profile(), package.dsh.bundle_name))
     -- $DSH_HOME holds the user's own profiles and config layer. This recipe

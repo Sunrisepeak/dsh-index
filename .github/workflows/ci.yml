@@ -42,7 +42,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: pip install pytest
+      # xpkgindex too: the descriptor tests include the site plugin's contract
+      # with the core (facets are whitespace-joined strings), and that test
+      # imports the plugin. Skipping it when the import fails would make it a
+      # no-op in the one place it needs to run.
+      - run: pip install pytest git+https://github.com/openxlings/xpkgindex.git
       - name: Static schema and policy
         run: pytest -m static --tb=short -q
       - name: Isolation compliance

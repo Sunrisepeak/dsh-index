@@ -22,7 +22,14 @@ package = {
 
         needs_build = false,
 
-        -- Mirror-eligible. The `mirror` block is filled in by the
-        -- mirror pipeline once a tarball is published to xlings-res.
+        -- Published by tools/mirror.py to GitHub and GitCode, verified
+        -- three ways: local build, GLOBAL and CN all hash the same.
+        mirror = {
+            ["3.9.1"] = {
+                tarball = "modlens-3.9.1.tgz",
+                sha256  = "76e8845e98c55769251988c3c3147aea81e7b7021e41bb96611446fbdfe30746",
+                cn      = true,
+            },
+        },
     },
 }

@@ -22,7 +22,14 @@ package = {
 
         needs_build = false,
 
-        -- Mirror-eligible. The `mirror` block is filled in by the
-        -- mirror pipeline once a tarball is published to xlings-res.
+        -- Published by tools/mirror.py to GitHub and GitCode, verified
+        -- three ways: local build, GLOBAL and CN all hash the same.
+        mirror = {
+            ["0.2.0"] = {
+                tarball = "dsh-openai-codex-auth-0.2.0.tgz",
+                sha256  = "32c5a0e7cee7424b6169b631fb3cbf9afa7bf68d651f649b5ef1254adcf6879e",
+                cn      = true,
+            },
+        },
     },
 }

@@ -22,7 +22,14 @@ package = {
 
         needs_build = false,
 
-        -- Mirror-eligible. The `mirror` block is filled in by the
-        -- mirror pipeline once a tarball is published to xlings-res.
+        -- Published by tools/mirror.py to GitHub and GitCode, verified
+        -- three ways: local build, GLOBAL and CN all hash the same.
+        mirror = {
+            ["0.2.0"] = {
+                tarball = "dsh-stock-market-0.2.0.tgz",
+                sha256  = "ef38c2ff3cd0b62b710cd8f5838095f0b7983b1b7ea53c7983fe5307d81f4eb6",
+                cn      = true,
+            },
+        },
     },
 }

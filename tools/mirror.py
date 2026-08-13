@@ -55,8 +55,28 @@ MIRRORABLE = {"MIT", "BSD-3-Clause", "Apache-2.0", "GPL-3.0"}
 
 
 def run(cmd, cwd=None, check=True, capture=True):
-    return subprocess.run(cmd, cwd=cwd, check=check, text=True,
-                          capture_output=capture)
+    """Run a command, and when it fails say what IT said.
+
+    This used to let CalledProcessError propagate, so the batch report recorded
+    a Python traceback instead of the tool's own error. 35 of 55 refusals came
+    back as "pnpm install returned non-zero" with no cause -- a record that
+    cannot answer "why" without re-running everything is not a record.
+    """
+    r = subprocess.run(cmd, cwd=cwd, check=False, text=True,
+                       capture_output=capture)
+    if check and r.returncode != 0:
+        detail = ""
+        for stream in ((r.stderr or ""), (r.stdout or "")):
+            hit = [ln for ln in stream.splitlines()
+                   if "ERR_" in ln or "ERROR" in ln or ln.startswith("error")]
+            if hit:
+                detail = hit[0].strip()
+                break
+        if not detail:
+            tail = [ln for ln in ((r.stderr or r.stdout or "").splitlines()) if ln.strip()]
+            detail = tail[-1].strip() if tail else "no output"
+        fail(f"{cmd[0]} failed ({r.returncode}): {detail[:300]}")
+    return r
 
 
 def field(body: str, name: str):
@@ -149,8 +169,11 @@ def main() -> int:
         # DSH_ALLOW_BUILDS on their own machine. Everything this runs is
         # pinned: the plugin at a verified sha, its deps by the committed
         # lockfile.
+        # Captured, not streamed. Streaming showed live progress but left
+        # nothing to quote when it failed, so the batch report said only
+        # "pnpm failed (1): no output" -- the same blind spot one layer down.
         run(["pnpm", "install", "--config.dangerouslyAllowAllBuilds=true"],
-            cwd=src, capture=False)
+            cwd=src)
 
         print("[3/6] pnpm pack")
         out = run(["pnpm", "pack", "--pack-destination", str(work)], cwd=src).stdout
@@ -202,7 +225,7 @@ def main() -> int:
                             f"License: {d['license']} (redistributed under its terms; "
                             f"the upstream LICENSE ships inside the tarball)\n"
                             f"sha256: {digest}",
-                 str(final), str(work / f"{asset}.sha256")], capture=False)
+                 str(final), str(work / f"{asset}.sha256")])
 
             cn_ok = False
             if GTC.is_file():
@@ -218,7 +241,7 @@ def main() -> int:
                      "--tag", tag, "--name", tag, "--body-file", str(notes),
                      "--target", "main",
                      "--asset", str(final),
-                     "--asset", str(work / f"{asset}.sha256")], capture=False)
+                     "--asset", str(work / f"{asset}.sha256")])
                 cn_ok = True
             else:
                 print(f"[6/8] gtc not found at {GTC}; GitHub only, no CN")

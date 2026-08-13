@@ -1,0 +1,1039 @@
+[
+  {
+    "pkg": "7d7d",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "deepseek-manners",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "distill",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-101",
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-acp-for-bitfun",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-ads",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-advisor",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-agent-budget",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-agent-teams",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-all-search",
+    "status": "refused",
+    "license": "MIT",
+    "why": "REFUSED: dsh-all-search: main 'dist/index.js' missing from the tarball (a TypeScript package packed without building)"
+  },
+  {
+    "pkg": "dsh-annotation",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-at-file",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-atuin",
+    "status": "refused",
+    "license": "MIT",
+    "why": "REFUSED: dsh-atuin: main 'dist/index.js' missing from the tarball (a TypeScript package packed without building)"
+  },
+  {
+    "pkg": "dsh-auto-chess",
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-automation",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-batch-regression",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-better-browser",
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-bisect-debug",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-blue-whale-maid",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-book2skill",
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-browser-control",
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-cc-tui",
+    "status": "already-mirrored",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-chat-import",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-cloudflare-browser-run",
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-code-check",
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-computer-use",
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'pack', '--pack-destination', '/tmp/mirror-dsh-computer-use-5okkln1c']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-context-doctor",
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-conversation-share",
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-custom-css",
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "REFUSED: dsh-custom-css: main 'lib/index.js' missing from the tarball (a TypeScript package packed without building)"
+  },
+  {
+    "pkg": "dsh-custom-tool",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-daily-fortune",
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-daily-progress",
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "REFUSED: dsh-daily-progress: main 'lib/index.js' missing from the tarball (a TypeScript package packed without building)"
+  },
+  {
+    "pkg": "dsh-data-agent",
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-deep-research",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-deeplink",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-deepresearch",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-deepseek-balance",
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'pack', '--pack-destination', '/tmp/mirror-dsh-deepseek-balance-gw5qr7g1']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-diff-viewer",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-douyin",
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-drag-and-drop",
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-emoji",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-ernie-image",
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-evolve",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-explain",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-focus-chat",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-fun-typewriter",
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-fun-weather",
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-genui",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-git-identity",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-gomoku",
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-hub",
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-humanize",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-inspect",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-interconnect",
+    "status": "refused",
+    "license": "MIT",
+    "why": "REFUSED: dsh-interconnect: main 'lib/index.js' missing from the tarball (a TypeScript package packed without building)"
+  },
+  {
+    "pkg": "dsh-kb-sieve",
+    "status": "published",
+    "license": "Apache-2.0",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-llm-fallbacks",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-local-filetree",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-longbridge",
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-loop",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-mac-desktop",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-message-edit",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-minigames",
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-mnemon",
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "REFUSED: dsh-mnemon: upstream license is now 'MIT', descriptor says 'BSD-3-Clause' -- a mirror decision is not valid forever"
+  },
+  {
+    "pkg": "dsh-mobile-control",
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-mobile",
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "REFUSED: dsh-mobile: main 'lib/index.js' missing from the tarball (a TypeScript package packed without building)"
+  },
+  {
+    "pkg": "dsh-navbar",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-nocturne-memory",
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-notebooks",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-notification",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-open-in-vscode",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-openai-codex-auth",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-openapi",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-openmaic",
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-openpencil",
+    "status": "refused",
+    "license": "MIT",
+    "why": "REFUSED: dsh-openpencil: main 'lib/index.js' missing from the tarball (a TypeScript package packed without building)"
+  },
+  {
+    "pkg": "dsh-paddle-ocr",
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-payload-capture",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-pet-corner",
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-plannotator",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-plugin-aigc-canvas",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-plugin-anti-ads",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-plugin-auto-blame",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-plugin-better-sidebar-plugin-office",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-plugin-check",
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-plugin-claude-bridge",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-plugin-codex-bridge",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-plugin-d399",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-plugin-interpreters",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-plugin-mineru",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-plugin-opencode-bridge",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-plugin-pi-bridge",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-plugin-sleep",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-plugin-spur",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-plugin-ya-workspace-sidebar",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-plugin-yet-another-subagent",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-port-guard",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-prompt-studio",
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-record-replay",
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'pack', '--pack-destination', '/tmp/mirror-dsh-record-replay-xfemnyzp']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-resume-plugin",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-revive",
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'pack', '--pack-destination', '/tmp/mirror-dsh-revive-tdk6j3dy']' returned non-zero exit status 2."
+  },
+  {
+    "pkg": "dsh-scholar",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-scout",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-screenshot-diff",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-security-audit",
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-sentinel",
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "subprocess.CalledProcessError: Command '['/home/speak/.xlings/data/xpkgs/xim-x-python/3.13.12/bin/python3', '/home/speak/workspace/github/xim-pkgindex/tools/gtc', 'release', 'publish', 'xlings-res/dsh"
+  },
+  {
+    "pkg": "dsh-session-health",
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-session-notification",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-share",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-side-panel",
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-sidechain",
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "REFUSED: dsh-sidechain: main 'lib/index.js' missing from the tarball (a TypeScript package packed without building)"
+  },
+  {
+    "pkg": "dsh-split-panes",
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-spotlight",
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-stickers",
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-sticky-disclosure",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-stock-market",
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-super-injector",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-task-status",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-tianshu-tui",
+    "status": "published",
+    "license": "Apache-2.0",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-tool-approval",
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-tool-calculator",
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-tool-csv",
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-tool-diff",
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-tool-encoding",
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-tool-json",
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-tool-markdown",
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-tool-monitor",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-tool-policy",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-tool-regex",
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-tool-schema",
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-tool-search",
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-tool-stat",
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-tool-time",
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-toolbelt",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-toolkit",
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-tps",
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-trace",
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-track",
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-translator",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-tui",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-turn-navigator",
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-turn-rewind",
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-undo",
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-vision-proxy",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-vision-toolkit",
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'install', '--config.dangerouslyAllowAllBuilds=true']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-visualize",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-voice-funasr",
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'pack', '--pack-destination', '/tmp/mirror-dsh-voice-funasr-2h03a3mt']' returned non-zero exit status 1."
+  },
+  {
+    "pkg": "dsh-web-archive",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-web-ui-notify",
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "subprocess.CalledProcessError: Command '['git', 'checkout', '--quiet', 'bd8eeb5c1a69df190fa10de253948e36e9679c44']' returned non-zero exit status 128."
+  },
+  {
+    "pkg": "dsh-webbridge",
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "dsh-workflow",
+    "status": "refused",
+    "license": "MIT",
+    "why": "subprocess.CalledProcessError: Command '['pnpm', 'pack', '--pack-destination', '/tmp/mirror-dsh-workflow-b04erdh_']' returned non-zero exit status 2."
+  },
+  {
+    "pkg": "ex-setting",
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "fabric",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "jumpserver-dsh",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "matlab-modelsim-vivado-plugin",
+    "status": "refused",
+    "license": "MIT",
+    "why": "REFUSED: matlab-modelsim-vivado-plugin: main 'lib/index.js' missing from the tarball (a TypeScript package packed without building)"
+  },
+  {
+    "pkg": "modlens",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "nowledge-mem-deepseek-harness",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "oh-dsh-desktop",
+    "status": "refused",
+    "license": "BSD-3-Clause",
+    "why": "REFUSED: oh-dsh-desktop: bundle patch 'dist/cordis.patch.yml' is not in the tarball -- the layer would be unresolvable"
+  },
+  {
+    "pkg": "omdsh-runtime",
+    "status": "published",
+    "license": "MIT",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "openflowframes",
+    "status": "published",
+    "license": "GPL-3.0",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "plugin-template",
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "qwen-mm-plugins",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "sandbox-micro",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "sandbox-mxc",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "sandbox-nono",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "session-teleport",
+    "status": "published",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": true
+  },
+  {
+    "pkg": "telegram",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "ui-status-label",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "web-components",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "whale-girl",
+    "status": "refused",
+    "license": "MIT",
+    "why": "REFUSED: whale-girl: main 'dsh-plugin/index.mjs' missing from the tarball (a TypeScript package packed without building)"
+  }
+]

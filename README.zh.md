@@ -7,14 +7,92 @@
 
 ## 安装
 
+**通过 xlings 安装**（推荐）
+
 ```bash
-xlings install dsh pnpm -y
+xlings install dsh -y
 xlings config --index-repo dsh:https://github.com/Sunrisepeak/dsh-index.git
 xlings install dsh:dsh-cc-tui -y
 ```
 
-`pnpm` 是必须的：`dsh plugin` 本身就是一个 pnpm 转发器，上游也明确写了
-profile 安装需要 PATH 上有 pnpm。
+<details>
+<summary>还没装 xlings？点开看安装命令</summary>
+
+**Linux / macOS**
+```bash
+curl -fsSL https://d2learn.org/xlings-install.sh | bash
+```
+
+**Windows — PowerShell**
+```powershell
+irm https://d2learn.org/xlings-install.ps1.txt | iex
+```
+
+> 了解 xlings → [xlings.d2learn.org](https://xlings.d2learn.org)
+
+</details>
+
+<details>
+<summary>常用命令 —— 安装、切换、卸载</summary>
+
+```bash
+# 添加本索引（命名空间：dsh）
+xlings config --index-repo dsh:https://github.com/Sunrisepeak/dsh-index.git
+
+# 搜索与查看
+xlings search dsh:tui
+xlings list dsh:dsh-cc-tui
+
+# 安装
+xlings install dsh:dsh-cc-tui -y            # 最新
+xlings install dsh:dsh-cc-tui@0.1.6 -y      # 指定版本
+
+# 指定装进哪个 profile
+DSH_PROFILE=work xlings install dsh:dsh-at-file -y
+
+# 带构建脚本、又没进镜像的插件需要这个 ——
+# 因为安装它等于在你机器上执行上游代码
+DSH_ALLOW_BUILDS=1 xlings install dsh:<plugin> -y
+
+# 按 subos 切版本
+xlings use dsh-cc-tui 0.1.6
+
+# 卸载 —— 会同时从 profile 里移除
+xlings remove dsh:dsh-cc-tui -y
+```
+
+</details>
+
+<details>
+<summary>插件装到哪去了？怎么启动？</summary>
+
+安装完会打印答案，规则是：
+
+| 插件类型 | profile | 启动 |
+| --- | --- | --- |
+| surface（`tui` / `desktop`） | 以插件名命名 | `dsh --profile <plugin>` |
+| 叠加型（tool / skill 等） | 当前 subos | `dsh --profile <subos>` |
+| 设了 `DSH_PROFILE` | 该值 | `dsh --profile <value>` |
+
+surface 定义一个可运行的应用、会覆盖 base 行，两个 surface 放同一个 profile 会
+抢同样的行，所以各占一个；叠加型则共用，一个组合里可以装多个。
+
+```bash
+# 实际装了什么、层按什么顺序叠
+cat ~/.dsh/profiles/<profile>/package.json
+dsh --profile <profile> --dump-config | grep '^# == '
+```
+
+</details>
+
+`dsh-cc-tui` 是 *surface* 类插件（一个 TUI），会落在独立 profile 里，安装时会打印启动方式：
+
+```bash
+dsh --profile dsh-cc-tui
+```
+
+pnpm 由 `dsh` 的依赖带入 —— `dsh plugin` 本身就是 pnpm 转发器，上游要求 PATH 上有
+pnpm，所以它该待在需要它的那个包的依赖里，而不是出现在每条安装命令上。
 
 完整列表：**<https://sunrisepeak.github.io/dsh-index>**
 

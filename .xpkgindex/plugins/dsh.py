@@ -32,6 +32,22 @@ def _t(en: str, zh: str, hant: str) -> Dict[str, str]:
 # Licenses that grant redistribution, i.e. that make a package mirror-eligible.
 MIRRORABLE = {"MIT", "BSD-3-Clause", "Apache-2.0", "GPL-3.0"}
 
+def _facet_value(values, limit: int = 0) -> str:
+    """Render a multi-valued facet the way the core reads it: one string, split
+    on whitespace. A value that itself contains whitespace cannot survive that
+    round trip, so it is dropped rather than silently becoming two facets."""
+    out = []
+    for v in values:
+        v = str(v).strip()
+        if not v or any(ch.isspace() for ch in v):
+            continue
+        if v not in out:
+            out.append(v)
+        if limit and len(out) >= limit:
+            break
+    return " ".join(out)
+
+
 DELIVERY_TONES = {
     "mirrored": "module",   # brand blue -- the reproducible path
     "direct": "tool",
@@ -59,8 +75,13 @@ class DshPlugin(Plugin):
         # The license is the standard xpkg field, not a dsh-private copy.
         # Absent means upstream declares none -- which is exactly what makes a
         # package un-mirrorable, so the badge and the gate read the same fact.
+        # Same convention GitHub uses: a license it cannot identify is simply
+        # unknown, not a special sentinel. `NONE` and `NOASSERTION` are what
+        # the API hands back for "no LICENSE file" and "cannot classify"; both
+        # mean the same thing to a reader and to the mirror gate -- no
+        # redistribution right was granted.
         licenses = raw.get("licenses") or []
-        license_id = str(licenses[0]) if licenses else "NONE"
+        license_id = str(licenses[0]) if licenses else "unknown"
         repo_url = str(raw.get("repo") or "")
         origin = repo_url.split("github.com/", 1)[-1].rstrip("/") if "github.com/" in repo_url else ""
 
@@ -108,12 +129,16 @@ class DshPlugin(Plugin):
         pkg.facets["delivery"] = delivery
         # License stays a fact on the package page (it is what gates mirroring)
         # but is not a browsing axis -- nobody picks a plugin by SPDX id.
-        cats = [str(c) for c in ext["categories"] if c and c != "dsh-plugin"]
-        if cats:
-            pkg.facets["category"] = cats
-        kws = [str(k) for k in ext["keywords"] if k and k != "dsh"]
-        if kws:
-            pkg.facets["keyword"] = kws[:6]
+        # pkg.facets is Dict[str, str] and the core splits multi-valued facets
+        # on whitespace (`str(...).split()` in build.py). Assigning a list here
+        # made every value render as its Python repr -- "['web-ui'," and
+        # "'session']" showed up as separate facet buttons. So: join with
+        # spaces, and drop any value containing whitespace, which would
+        # otherwise silently split into two facets.
+        pkg.facets["category"] = _facet_value(
+            c for c in ext["categories"] if c and c != "dsh-plugin")
+        pkg.facets["keyword"] = _facet_value(
+            (k for k in ext["keywords"] if k and k != "dsh"), limit=6)
 
         badges = pkg.extensions.setdefault("_badges", [])
         badges.append(delivery)
@@ -185,10 +210,10 @@ class DshPlugin(Plugin):
                 )
             else:
                 why = _t(
-                    f"Upstream declares no redistributable license ({lic}), so "
-                    f"this index has no right to mirror it.",
-                    f"上游没有可再分发的许可证（{lic}），本索引无权镜像。",
-                    f"上游沒有可再分發的授權（{lic}），本索引無權鏡像。",
+                    "Its license is unknown -- upstream declares none that can "
+                    "be identified -- so this index has no right to mirror it.",
+                    "它的许可证未知 —— 上游没有声明可识别的许可证 —— 本索引无权镜像。",
+                    "它的授權未知 —— 上游沒有宣告可識別的授權 —— 本索引無權鏡像。",
                 )
             note = {
                 k: (
