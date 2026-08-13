@@ -220,3 +220,62 @@ class TestTemplate:
         t = (ROOT / "template.lua").read_text(encoding="utf-8")
         for imp in re.findall(r'import\("([^"]+)"\)', t):
             assert imp.startswith("xim.libxpkg."), f"disallowed import: {imp}"
+
+
+class TestSitePlugin:
+    """The site plugin is the only place descriptors become user-visible, so
+    its contract with the core is worth pinning down here."""
+
+    @pytest.mark.static
+    def test_facets_are_whitespace_joined_strings(self):
+        """pkg.facets is Dict[str, str] and the core splits on whitespace.
+
+        Assigning a list made every value render as its Python repr, so
+        "['web-ui'," and "'session']" appeared as separate facet buttons on the
+        home page. The plugin must join, and must drop values containing
+        whitespace rather than let them split into two facets.
+        """
+        import importlib.util
+        spec = importlib.util.spec_from_file_location(
+            "dshplug", ROOT / ".xpkgindex" / "plugins" / "dsh.py")
+        mod = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(mod)
+
+        assert mod._facet_value(["a", "b", "a"]) == "a b", "join and dedupe"
+        assert mod._facet_value(["ok", "not ok"]) == "ok", "drop spaced values"
+        assert mod._facet_value(["a", "b", "c"], limit=2) == "a b"
+        assert mod._facet_value([]) == ""
+        for v in mod._facet_value(["x", "y"]).split():
+            assert "[" not in v and "'" not in v, "no python repr leakage"
+
+
+class TestProfileResolution:
+    """The profile a plugin lands in is the one fact a user must not have to
+    guess -- and the resolution chain reads environment variables, which is
+    exactly where an unverified name turns into dead code."""
+
+    @pytest.mark.static
+    def test_reads_a_variable_xlings_actually_exports(self):
+        """An earlier version read `XLINGS_SUBOS`, which xlings does not set.
+
+        The branch never fired, so every install silently landed in "web"
+        while the docs claimed it followed the subos. The variables xlings
+        exports are XLINGS_SUBOS_LIB, XLINGS_BIN, XLINGS_HOME, XLINGS_SHIM_DEPTH.
+        """
+        t = (ROOT / "template.lua").read_text(encoding="utf-8")
+        assert 'os.getenv("XLINGS_SUBOS")' not in t, \
+            "XLINGS_SUBOS does not exist; derive the name from XLINGS_SUBOS_LIB"
+        assert 'os.getenv("XLINGS_SUBOS_LIB")' in t
+
+    @pytest.mark.static
+    def test_current_symlink_is_not_used_as_a_profile_name(self):
+        """`subos/current` is a symlink to the active subos, so a profile named
+        after it would follow the symlink instead of staying put."""
+        t = (ROOT / "template.lua").read_text(encoding="utf-8")
+        assert '"current"' in t
+
+    @pytest.mark.static
+    def test_install_reports_the_profile(self):
+        """`dsh --profile <plugin-name>` is the natural guess and always fails."""
+        t = (ROOT / "template.lua").read_text(encoding="utf-8")
+        assert "dsh --profile" in t and "log.info" in t

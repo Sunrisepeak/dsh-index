@@ -1,0 +1,848 @@
+[
+  {
+    "pkg": "7d7d",
+    "status": "dry-run",
+    "license": "MIT",
+    "patched": true,
+    "cn": false
+  },
+  {
+    "pkg": "deepseek-manners",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "distill",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-101",
+    "status": "dry-run",
+    "license": "BSD-3-Clause",
+    "patched": true,
+    "cn": false
+  },
+  {
+    "pkg": "dsh-acp-for-bitfun",
+    "status": "dry-run",
+    "license": "MIT",
+    "patched": true,
+    "cn": false
+  },
+  {
+    "pkg": "dsh-ads",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-advisor",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-agent-budget",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-agent-teams",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-all-search",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-annotation",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-at-file",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-atuin",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-auto-chess",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-automation",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-batch-regression",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-better-browser",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-bisect-debug",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-blue-whale-maid",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-book2skill",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-browser-control",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-cc-tui",
+    "status": "already-mirrored",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-chat-import",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-cloudflare-browser-run",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-code-check",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-computer-use",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-context-doctor",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-conversation-share",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-custom-css",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-custom-tool",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-daily-fortune",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-daily-progress",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-data-agent",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-deep-research",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-deeplink",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-deepresearch",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-deepseek-balance",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-diff-viewer",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-douyin",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-drag-and-drop",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-emoji",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-ernie-image",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-evolve",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-explain",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-focus-chat",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-fun-typewriter",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-fun-weather",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-genui",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-git-identity",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-gomoku",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-hub",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-humanize",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-inspect",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-interconnect",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-kb-sieve",
+    "status": "skipped-limit",
+    "license": "Apache-2.0"
+  },
+  {
+    "pkg": "dsh-llm-fallbacks",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-local-filetree",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-longbridge",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-loop",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-mac-desktop",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-message-edit",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-minigames",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-mnemon",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-mobile-control",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-mobile",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-navbar",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-nocturne-memory",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-notebooks",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-notification",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-open-in-vscode",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-openai-codex-auth",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-openapi",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-openmaic",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-openpencil",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-paddle-ocr",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-payload-capture",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-pet-corner",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-plannotator",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-plugin-aigc-canvas",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-plugin-anti-ads",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-plugin-auto-blame",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-plugin-better-sidebar-plugin-office",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-plugin-check",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-plugin-claude-bridge",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-plugin-codex-bridge",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-plugin-d399",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-plugin-interpreters",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-plugin-mineru",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-plugin-opencode-bridge",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-plugin-pi-bridge",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-plugin-sleep",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-plugin-spur",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-plugin-ya-workspace-sidebar",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-plugin-yet-another-subagent",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-port-guard",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-prompt-studio",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-record-replay",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-resume-plugin",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-revive",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-scholar",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-scout",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-screenshot-diff",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-security-audit",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-sentinel",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-session-health",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-session-notification",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-share",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-side-panel",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-sidechain",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-split-panes",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-spotlight",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-stickers",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-sticky-disclosure",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-stock-market",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-super-injector",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-task-status",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-tianshu-tui",
+    "status": "skipped-limit",
+    "license": "Apache-2.0"
+  },
+  {
+    "pkg": "dsh-tool-approval",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-tool-calculator",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-tool-csv",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-tool-diff",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-tool-encoding",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-tool-json",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-tool-markdown",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-tool-monitor",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-tool-policy",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-tool-regex",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-tool-schema",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-tool-search",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-tool-stat",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-tool-time",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-toolbelt",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-toolkit",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-tps",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-trace",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-track",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-translator",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-tui",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-turn-navigator",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-turn-rewind",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-undo",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-vision-proxy",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-vision-toolkit",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-visualize",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-voice-funasr",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "dsh-web-archive",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "dsh-web-ui-notify",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-webbridge",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "dsh-workflow",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "ex-setting",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "fabric",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "jumpserver-dsh",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "matlab-modelsim-vivado-plugin",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "modlens",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "nowledge-mem-deepseek-harness",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "oh-dsh-desktop",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "omdsh-runtime",
+    "status": "skipped-limit",
+    "license": "MIT"
+  },
+  {
+    "pkg": "openflowframes",
+    "status": "skipped-limit",
+    "license": "GPL-3.0"
+  },
+  {
+    "pkg": "plugin-template",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "qwen-mm-plugins",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "sandbox-micro",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "sandbox-mxc",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "sandbox-nono",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "session-teleport",
+    "status": "skipped-limit",
+    "license": "BSD-3-Clause"
+  },
+  {
+    "pkg": "telegram",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "ui-status-label",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "web-components",
+    "status": "not-mirrorable",
+    "license": "NONE"
+  },
+  {
+    "pkg": "whale-girl",
+    "status": "skipped-limit",
+    "license": "MIT"
+  }
+]

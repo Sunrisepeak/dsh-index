@@ -22,7 +22,12 @@ package = {
 
         needs_build = false,
 
-        -- Mirror-eligible. The `mirror` block is filled in by the
-        -- mirror pipeline once a tarball is published to xlings-res.
+        mirror = {
+            ["0.1.0"] = {
+                tarball = "dsh-deep-research-0.1.0.tgz",
+                sha256  = "24a6676292b0020b3f408538bc1f271c4351ada050a8070a4e0c42e79f333b19",
+                cn      = true,
+            },
+        },
     },
 }

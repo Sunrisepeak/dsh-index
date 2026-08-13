@@ -32,6 +32,22 @@ def _t(en: str, zh: str, hant: str) -> Dict[str, str]:
 # Licenses that grant redistribution, i.e. that make a package mirror-eligible.
 MIRRORABLE = {"MIT", "BSD-3-Clause", "Apache-2.0", "GPL-3.0"}
 
+def _facet_value(values, limit: int = 0) -> str:
+    """Render a multi-valued facet the way the core reads it: one string, split
+    on whitespace. A value that itself contains whitespace cannot survive that
+    round trip, so it is dropped rather than silently becoming two facets."""
+    out = []
+    for v in values:
+        v = str(v).strip()
+        if not v or any(ch.isspace() for ch in v):
+            continue
+        if v not in out:
+            out.append(v)
+        if limit and len(out) >= limit:
+            break
+    return " ".join(out)
+
+
 DELIVERY_TONES = {
     "mirrored": "module",   # brand blue -- the reproducible path
     "direct": "tool",
@@ -108,12 +124,16 @@ class DshPlugin(Plugin):
         pkg.facets["delivery"] = delivery
         # License stays a fact on the package page (it is what gates mirroring)
         # but is not a browsing axis -- nobody picks a plugin by SPDX id.
-        cats = [str(c) for c in ext["categories"] if c and c != "dsh-plugin"]
-        if cats:
-            pkg.facets["category"] = cats
-        kws = [str(k) for k in ext["keywords"] if k and k != "dsh"]
-        if kws:
-            pkg.facets["keyword"] = kws[:6]
+        # pkg.facets is Dict[str, str] and the core splits multi-valued facets
+        # on whitespace (`str(...).split()` in build.py). Assigning a list here
+        # made every value render as its Python repr -- "['web-ui'," and
+        # "'session']" showed up as separate facet buttons. So: join with
+        # spaces, and drop any value containing whitespace, which would
+        # otherwise silently split into two facets.
+        pkg.facets["category"] = _facet_value(
+            c for c in ext["categories"] if c and c != "dsh-plugin")
+        pkg.facets["keyword"] = _facet_value(
+            (k for k in ext["keywords"] if k and k != "dsh"), limit=6)
 
         badges = pkg.extensions.setdefault("_badges", [])
         badges.append(delivery)
