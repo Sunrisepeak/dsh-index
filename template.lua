@@ -302,18 +302,28 @@ function install()
         -- store is content-addressed and shared, so warming it at the pinned
         -- commit makes the later `dsh plugin add` resolve locally.
         --
-        -- `store add` fetches; it does not run a `prepare` script -- the
-        -- tarball comes straight from codeload. So nothing here executes
-        -- upstream code, and the index no longer needs a gate of its own:
-        -- pnpm's allowBuilds already guards the place where execution
-        -- actually happens, which is the compose command this recipe prints.
-        -- An opt-in we owned would have been a second, weaker copy of it.
+        -- `store add` on a GIT spec DOES try to run `prepare`, which the
+        -- comment here used to deny. Measured: pnpm answers
+        -- ERR_PNPM_GIT_DEP_PREPARE_NOT_ALLOWED ("needs to execute build
+        -- scripts but is not in the allowBuilds allowlist") and the whole
+        -- install fails -- so `xlings install dsh:<pkg>` was broken outright
+        -- for every un-mirrored package with a build script. Six of them
+        -- failed that way on PR #18.
+        --
+        -- The refusal itself is right; its position was wrong. Nothing has
+        -- been composed yet, and pnpm's allowBuilds gate belongs at the
+        -- compose command this recipe prints -- which is where config_plugin
+        -- already warns about it. So warm the store only when doing so cannot
+        -- execute anything: the warm-up is an optimisation, and skipping it
+        -- costs a later fetch rather than correctness.
         os.tryrm(pkginfo.install_dir())
         os.mkdir(pkginfo.install_dir())
         local spec = "github:" .. origin() .. "#"
                      .. package.dsh.versions[pkginfo.version()].commit
         print("")
-        system.exec(("pnpm store add %s"):format(spec))
+        if not package.dsh.needs_build then
+            system.exec(("pnpm store add %s"):format(spec))
+        end
         local f = io.open(path.join(pkginfo.install_dir(), "spec.txt"), "w")
         if not f then return false end
         f:write(spec .. "\n")
