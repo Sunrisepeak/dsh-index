@@ -1,5 +1,13 @@
 # Descriptor contract + the index-build regression gate.
 #
+# The boot gate is scoped to the change. It used to install both Agents on
+# every push, which was wrong twice over: a PR adding one plugin spent 3m43s
+# booting seven packages it had not touched, and never booted the package it
+# HAD touched -- which is every PR `discover` opens. `scope` derives the units
+# from the diff (tools/affected.py), `boot` runs one per unit, and `boot-gate`
+# is what branch protection hangs on, because a matrix job's name varies and a
+# skipped job never reports success.
+#
 # The sandbox job is the important one. xlings >= 0.4.52 runs
 # pkgindex-build.lua in libxpkg's MINIMAL plain-Lua sandbox, not xmake. An
 # xmake-only construct (cprintf / try / raise / os.getwinsize) is nil there,
@@ -12,8 +20,69 @@ on:
   push:
     branches: ['**']
   pull_request:
+  # The floor under the scoping below. A PR only boots what it touched; this
+  # is what keeps the repo -- as opposed to any one change -- covered.
+  schedule:
+    - cron: '43 18 * * *'
+  workflow_dispatch:
 
 jobs:
+  # Which units does this change need booted? Everything else here runs whole:
+  # the three cheap jobs check invariants that only exist ACROSS packages
+  # (member pins reconcile, every tier is represented, one page per
+  # descriptor), so sharding them by package would turn them into no-ops for
+  # 59 seconds of savings.
+  scope:
+    name: affected units
+    runs-on: ubuntu-latest
+    outputs:
+      units: ${{ steps.calc.outputs.units }}
+      any: ${{ steps.calc.outputs.any }}
+      reason: ${{ steps.calc.outputs.reason }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0     # the default depth of 1 has no merge base
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - id: calc
+        env:
+          GH_TOKEN: ${{ github.token }}
+          # main and the nightly are never scoped: a change is allowed to skip
+          # what it cannot affect, the repo is not.
+          FULL: ${{ github.ref == 'refs/heads/main'
+                 || github.event_name == 'schedule'
+                 || github.event_name == 'workflow_dispatch'
+                 || contains(github.event.pull_request.labels.*.name, 'ci:full') }}
+        run: |
+          if [ "${{ github.event_name }}" = pull_request ]; then
+            # The API rather than a diff: it is exact about renames and needs
+            # no reasoning about which side of a merge commit to compare.
+            gh api "repos/${{ github.repository }}/pulls/${{ github.event.number }}/files" \
+              --paginate --jq '.[].filename' > /tmp/changed.txt
+          elif [ "${{ github.event_name }}" = push ] \
+            && git rev-parse --verify -q "${{ github.event.before }}^{commit}" >/dev/null; then
+            git diff --name-only "${{ github.event.before }}" "${{ github.sha }}" > /tmp/changed.txt
+          else
+            : > /tmp/changed.txt          # first push of a branch: no base
+            FULL=true
+          fi
+          [ "$FULL" = true ] && FLAG=--full || FLAG=
+          python3 tools/affected.py --files /tmp/changed.txt $FLAG --github-output
+      - name: Say so in the summary
+        env:
+          REASON: ${{ steps.calc.outputs.reason }}
+          UNITS: ${{ steps.calc.outputs.units }}
+        run: |
+          {
+            echo "### Boot scope"
+            echo "$REASON"
+            echo '```json'
+            echo "$UNITS"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
   sandbox:
     name: index-build sandbox
     runs-on: ubuntu-latest
@@ -60,13 +129,32 @@ jobs:
         run: python3 tools/add_kind.py --check
 
   boot:
-    name: composites boot
+    name: boot ${{ matrix.unit.name }}
+    needs: scope
+    if: needs.scope.outputs.any == 'true'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      # One broken package must not hide the others -- the whole point of
+      # splitting the gate is that each unit answers for itself.
+      fail-fast: false
+      max-parallel: 4
+      matrix:
+        unit: ${{ fromJSON(needs.scope.outputs.units) }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      # Content-addressed, so restoring it can only save a download. The
+      # toolchain itself is deliberately NOT cached: pinning the result of a
+      # `curl | bash` install indefinitely costs more to debug than the 40
+      # seconds it saves.
+      - uses: actions/cache@v4
+        with:
+          path: ~/.xlings/data/xpkgs
+          key: xpkgs-${{ hashFiles('pkgs/**/*.lua') }}
+          restore-keys: xpkgs-
       # The gate that `--dump-config` only looked like. A dump composes the
       # layers without importing any of them, so an Agent whose plugin cannot
       # be imported dumps a correct tree and then dies on boot -- which is
@@ -81,16 +169,49 @@ jobs:
         env:
           XLINGS_NON_INTERACTIVE: "1"
         run: curl -fsSL https://d2learn.org/xlings-install.sh | bash
-      - name: Boot every member of every composite
+      - name: Boot ${{ matrix.unit.name }}
+        # Through the environment, not interpolated into the script: a matrix
+        # value that reaches `run:` textually is a shell injection waiting for
+        # the first package name with a metacharacter in it.
+        env:
+          UNIT_NAME: ${{ matrix.unit.name }}
+          UNIT_INSTALL: ${{ matrix.unit.install }}
+          UNIT_COMPOSITE: ${{ matrix.unit.composite }}
         run: |
           # Shims live in the subos bin; $HOME/.xlings/bin holds xlings itself.
           export PATH="$HOME/.xlings/bin:$HOME/.xlings/subos/default/bin:$PATH"
           xlings config --index-repo "dsh:$PWD"
           xlings update
-          for a in $(grep -l 'kind = "profile"' pkgs/*/*.lua | xargs -n1 basename | sed 's/.lua//'); do
-            xlings install "dsh:$a" -y
-            python3 tools/bootcheck.py --composite "$a"
+          # $UNIT_INSTALL carries the surface first when the surface is itself
+          # a package here, so a lone TUI plugin has something to attach to.
+          for p in $UNIT_INSTALL; do
+            xlings install "dsh:$p" -y
           done
+          if [ "$UNIT_COMPOSITE" = true ]; then
+            python3 tools/bootcheck.py --composite "$UNIT_NAME"
+          else
+            python3 tools/bootcheck.py "$UNIT_NAME"
+          fi
+
+  # Branch protection hangs here, not on `boot`. A matrix job's name varies
+  # with the matrix, and a job skipped by `if` reports `skipped` rather than
+  # `success` -- so a documentation PR would otherwise wait forever on a
+  # required check that is never going to report.
+  boot-gate:
+    name: boot gate
+    needs: [scope, boot]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          echo "scope: ${{ needs.scope.result }} (${{ needs.scope.outputs.reason }})"
+          echo "boot:  ${{ needs.boot.result }}"
+          [ "${{ needs.scope.result }}" = success ] || {
+            echo "::error::could not work out what to boot"; exit 1; }
+          case "${{ needs.boot.result }}" in
+            success|skipped) echo "boot gate: pass" ;;
+            *) echo "::error::a unit failed to boot"; exit 1 ;;
+          esac
 
   site:
     name: site builds

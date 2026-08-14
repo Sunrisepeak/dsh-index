@@ -659,3 +659,83 @@ class TestProfileResolution:
         assert "log.info" in t
 
 
+
+class TestAffected:
+    """The script that decides whether the boot gate runs at all.
+
+    It is the one piece of CI that can turn the gate off, so it gets tested
+    like a gate rather than like a helper: every case below is a way the boot
+    could be skipped on a change that needed it.
+    """
+
+    def _known(self):
+        sys.path.insert(0, str(ROOT / "tools"))
+        import affected
+        return affected, affected.descriptors(ROOT)
+
+    @pytest.mark.static
+    def test_a_changed_member_boots_its_composites(self):
+        """Composites pin each member's version AND commit. Touching a member
+        can invalidate the composition, and only a boot proves those bytes
+        still start together."""
+        affected, known = self._known()
+        member = next(m for d in known.values() for m in d["members"])
+        got = {u["name"] for u in
+               affected.affected([f"pkgs/x/{member}.lua"], known)["units"]}
+        owners = {n for n, d in known.items() if member in d["members"]}
+        assert member in got, "the changed plugin must boot itself"
+        assert owners <= got, f"{owners - got} name {member} but were not booted"
+
+    @pytest.mark.static
+    def test_infrastructure_forces_a_full_run(self):
+        """template.lua is appended to every descriptor at index-build time;
+        pkgindex-build.lua decides whether an index builds at all."""
+        affected, known = self._known()
+        for path in ("template.lua", "pkgindex-build.lua", "tools/bootcheck.py",
+                     "tests/test_descriptors.py", ".github/workflows/ci.yml"):
+            r = affected.affected([path], known)
+            assert r["full"], f"{path} must force a full run"
+            assert r["any"]
+
+    @pytest.mark.static
+    def test_an_unclassified_path_fails_open(self):
+        """Being slow is recoverable. Silently skipping the gate on a change
+        nobody thought to classify is not."""
+        affected, known = self._known()
+        assert affected.affected(["Makefile"], known)["full"]
+        assert affected.affected(["some/new/thing.toml"], known)["full"]
+
+    @pytest.mark.static
+    def test_documentation_boots_nothing(self):
+        affected, known = self._known()
+        r = affected.affected(
+            ["README.md", ".agents/docs/x.md", "site/index.html", "LICENSE"],
+            known)
+        assert not r["any"] and not r["full"], r
+
+    @pytest.mark.static
+    def test_a_full_run_covers_every_composite(self):
+        """The floor is what the gate booted before this change existed."""
+        affected, known = self._known()
+        got = {u["name"] for u in affected.affected([], known, full=True)["units"]}
+        want = {n for n, d in known.items() if d["kind"] in ("group", "profile")}
+        assert got == want
+
+    @pytest.mark.static
+    def test_a_deleted_descriptor_does_not_crash(self):
+        affected, known = self._known()
+        assert affected.affected(["pkgs/z/never-existed.lua"], known)["units"] == []
+
+    @pytest.mark.static
+    def test_every_plugin_has_a_bootable_surface(self):
+        """A plugin whose declared profile has no surface mapping cannot be
+        booted alone -- and bootcheck refuses rather than reporting a working
+        package as broken. Catch that here, where the fix is one table entry,
+        not in a boot job three minutes in."""
+        affected, known = self._known()
+        for name, d in known.items():
+            if d["kind"] != "plugin":
+                continue
+            assert d["profile"] in affected.SURFACE_FOR_PROFILE, (
+                f"{name} declares profile={d['profile']!r}, which has no entry "
+                f"in SURFACE_FOR_PROFILE")

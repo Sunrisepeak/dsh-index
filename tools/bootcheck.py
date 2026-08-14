@@ -14,6 +14,14 @@ So this boots for real. A boot that stays alive is a pass: the surfaces here
 are servers and TUIs that never exit on their own, while a failure to import
 is immediate and prints its reason.
 
+A lone plugin is booted on the surface its own descriptor documents, not on a
+bare dsh-base. 64 of 70 descriptors declare `profile = "web"` -- they are
+capabilities that stack onto a UI, and starting them with no UI present asks a
+question this index never promised an answer to. The mapping lives in
+tools/affected.py, which is also what decides that this plugin needs booting at
+all; a profile with no mapping is a hard failure, because "we do not know how
+to boot this" is an authoring gap, not an environment one.
+
 Usage: tools/bootcheck.py <name>...        # names of mirrored plugins
        tools/bootcheck.py --composite <name>   # every member of a group/Agent
 """
@@ -34,6 +42,9 @@ import sys
 import tempfile
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
+
+sys.path.insert(0, str(ROOT / "tools"))
+from affected import SURFACE_FOR_PROFILE, SURFACE_PACKAGE  # noqa: E402
 
 
 def dsh_bin() -> str:
@@ -80,6 +91,37 @@ def members_of(name: str) -> list:
 def surface_of(name: str) -> str:
     m = re.search(r'surface = "([^"]+)"', descriptor(name))
     return m.group(1) if m else ""
+
+
+def latest_of(name: str) -> str:
+    return re.search(r'latest = "([^"]+)"', descriptor(name)).group(1)
+
+
+def profile_of(name: str) -> str:
+    m = re.search(r'profile = "([^"]+)"', descriptor(name))
+    return m.group(1) if m else ""
+
+
+def standalone(name: str) -> tuple:
+    """(members, surface) for booting one plugin the way its README says to.
+
+    When the surface is itself a package in this index -- the TUI ones -- it
+    goes in as the first member, so the plugin has something to attach to by
+    the time it loads. `@deepseek-ai/dsh-web-app` needs no such entry: it ships
+    inside dsh and only has to be named in the profile manifest.
+    """
+    prof = profile_of(name)
+    if prof not in SURFACE_FOR_PROFILE:
+        raise SystemExit(
+            f"{name}: profile \"{prof}\" has no surface mapping. Add one to "
+            f"SURFACE_FOR_PROFILE in tools/affected.py -- booting it on a bare "
+            f"dsh-base would report a working package as broken.")
+    surface = SURFACE_FOR_PROFILE[prof]
+    members = [(name, latest_of(name))]
+    pkg = SURFACE_PACKAGE.get(surface)
+    if pkg and pkg != name:
+        members.insert(0, (pkg, latest_of(pkg)))
+    return members, surface
 
 
 def declare_surface(manifest: str, surface: str) -> None:
@@ -231,8 +273,8 @@ def main() -> int:
         if args.composite:
             jobs.append((n, members_of(n), surface_of(n)))
         else:
-            v = re.search(r'latest = "([^"]+)"', descriptor(n)).group(1)
-            jobs.append((n, [(n, v)], ""))
+            members, surface = standalone(n)
+            jobs.append((n, members, surface))
 
     home = tempfile.mkdtemp(prefix="bootcheck-dsh-")
     bad, skipped = [], []
