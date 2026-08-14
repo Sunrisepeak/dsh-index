@@ -909,3 +909,41 @@ class TestAffectedOnRealAutomationDiffs:
         for path in ("tools/check_npm.py", "tools/add_kind.py",
                      "tools/gen_agents.py", "tools/sync.py"):
             assert affected.affected([path], known)["full"], path
+
+class TestBootcheckSpec:
+    """Booting an un-mirrored version is the normal case, not a fallback.
+
+    `mirror` blocks are written by tools/mirror.py only after a licence check,
+    so every descriptor `discover` proposes -- and every version it bumps to --
+    arrives un-mirrored by design. Requiring a store tarball left the gate
+    hollow for exactly those PRs: on PR #18 all 22 bumped packages failed with
+    "no installed tarball" while the three composites, which pin mirrored
+    versions, passed.
+    """
+
+    def _mod(self, monkeypatch):
+        sys.path.insert(0, str(ROOT / "tools"))
+        import bootcheck
+        monkeypatch.setattr(bootcheck.glob, "glob", lambda *a, **k: [])
+        return bootcheck
+
+    @pytest.mark.static
+    def test_an_unmirrored_version_installs_from_its_pin(self, monkeypatch):
+        bc = self._mod(monkeypatch)
+        for path in PKGS:
+            body = path.read_text(encoding="utf-8")
+            if _kind(body) != "plugin":
+                continue
+            latest = _field(_dsh_block(body), "latest")
+            got = bc.spec(path.stem, latest)
+            assert got.startswith("github:"), got
+            assert re.fullmatch(r"github:[^/]+/[^#]+#[0-9a-f]{40}", got), got
+
+    @pytest.mark.static
+    def test_a_version_with_no_pin_is_refused(self, monkeypatch):
+        """Better a named failure than a spec that installs the wrong bytes."""
+        bc = self._mod(monkeypatch)
+        name = next(p.stem for p in PKGS if _kind(p.read_text()) == "plugin")
+        with pytest.raises(SystemExit) as e:
+            bc.spec(name, "0.0.0-not-a-declared-version")
+        assert "not mirrored" in str(e.value)
