@@ -12,6 +12,10 @@ package = {
     keywords = {"dsh", "plugin", "better", "sidebar", "plugin", "office"},
 
     dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "web",
+
         bundle_name = "@huanlin/dsh-plugin-better-sidebar-plugin-office",
 
         versions = {

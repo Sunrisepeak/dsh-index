@@ -12,6 +12,10 @@ package = {
     keywords = {"dsh", "git", "identity"},
 
     dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "web",
+
         bundle_name = "@loserfox/git-identity",
 
         versions = {

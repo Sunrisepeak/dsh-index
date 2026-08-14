@@ -12,6 +12,10 @@ package = {
     keywords = {"dsh", "status", "label"},
 
     dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "web",
+
         bundle_name = "dsh-ui-status-label",
 
         versions = {

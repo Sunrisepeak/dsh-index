@@ -12,6 +12,10 @@ package = {
     keywords = {"dsh", "humanize"},
 
     dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "web",
+
         bundle_name = "@humanize/dsh-humanize",
 
         versions = {
@@ -19,6 +23,10 @@ package = {
         },
         latest = "1.18.0",
 
+        -- Base rows this bundle replaces. Another bundle patching
+        -- any of these in the same profile silently wins or loses,
+        -- depending on install order.
+        overrides = {"skill-filesystem"},
         needs_build = true,
 
         -- Upstream ships no redistributable license, so this index has

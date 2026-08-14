@@ -12,6 +12,10 @@ package = {
     keywords = {"dsh", "plugin", "workspace", "sidebar"},
 
     dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "web",
+
         bundle_name = "@huanlin/dsh-plugin-ya-workspace-sidebar",
 
         versions = {

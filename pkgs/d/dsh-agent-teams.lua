@@ -12,6 +12,10 @@ package = {
     keywords = {"dsh", "agentteams", "deepseekharness", "dsh-agent-teams"},
 
     dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "web",
+
         bundle_name = "dsh-agent-teams",
 
         versions = {

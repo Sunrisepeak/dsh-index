@@ -12,6 +12,10 @@ package = {
     keywords = {"dsh", "knowledge-graph", "mcp", "memory", "nowledge-mem", "ontology"},
 
     dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "web",
+
         bundle_name = "nowledge-mem-deepseek-harness",
 
         versions = {

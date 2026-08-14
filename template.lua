@@ -9,8 +9,23 @@
 -- of those (98%) even use the same `./cordis.patch.yml` patch path. Writing
 -- 169 copies of these hooks would be 169 copies that rot independently.
 --
--- Two architectures share this one file. The branch is a single condition --
--- whether `package.dsh.mirror` exists:
+-- THREE KINDS share this file, declared as `dsh.kind`:
+--
+--   plugin   an atom: one upstream bundle. Fetches bytes (mirrored or direct)
+--            and adds itself to the profile its own README documents.
+--   group    a reusable set of plugins. No bytes of its own; `deps` pull the
+--            members in, and the members land where they document.
+--   profile  a complete Agent: harness + a member set + this Agent's own
+--            opinion. Creates its profile, composes every member into it, and
+--            writes its patch layer. `dsh --profile <name>` then boots it.
+--
+-- `kind` lives under `dsh.*` rather than in xpkg's `type` because `type` is a
+-- closed enum: libxpkg's parse_type() returns PackageType::Package for any
+-- unknown string, so `type = "dsh-agent"` would not fail -- it would vanish.
+-- See .agents/docs/2026-08-14-agent-distribution-design.md section 2.3.
+--
+-- Within `plugin`, two delivery architectures share one branch -- whether
+-- `package.dsh.mirror` exists:
 --
 --   mirror present  (C)  index-mirrored tarball: a real xpm resource with a
 --                        sha256, works offline, survives upstream deletion,
@@ -25,10 +40,12 @@
 -- is redistribution. See .agents/docs/2026-08-13-dsh-plugin-index-design.md.
 -- ─────────────────────────────────────────────────────────────────────────────
 
-package.type = "config"      -- a plugin contributes a config layer, not a program
+package.type = "config"      -- neither a plugin nor an Agent is a program
 package.archs = {"x86_64"}   -- bounded by xim:pnpm, which ships x86_64 only
 
+local KIND     = package.dsh.kind or "plugin"
 local MIRROR   = package.dsh.mirror
+local MEMBERS  = package.dsh.members or {}
 local RES_REPO = "dsh-plugins"   -- one xlings-res repo, tagged <plugin>-<version>
 
 -- `origin` is not a field: it is `package.repo` with the host stripped. Two
@@ -38,22 +55,33 @@ local function origin()
     return (package.repo:gsub("^https?://[^/]+/", ""):gsub("%.git$", ""))
 end
 
--- xvm is registered even though a plugin has no executable. `xvm use` is not
--- about executables -- glibc.lua registers `libc.so` as `type = "lib"`, musl.lua
--- registers a `type = "group"` root that names no artifact at all. What xvm
--- provides here is the VIEW layer: on this machine 54 names already hold
--- different active versions across subos simultaneously (claude has 4, codex 3,
--- mcpp 5). pnpm's content-addressed store is the BYTE layer -- it makes
--- switching cheap (measured: switching back to a previously installed version
--- is `downloaded 0, reused 2`) but its "active" is a property of one directory,
--- so it cannot express "this shell, that version".
+-- xvm is registered even though neither kind has an executable. `xvm use` is
+-- not about executables -- glibc.lua registers `libc.so` as `type = "lib"`,
+-- musl.lua registers a `type = "group"` root that names no artifact at all.
+-- What xvm provides here is the VIEW layer: on this machine 54 names already
+-- hold different active versions across subos simultaneously (claude has 4,
+-- codex 3, mcpp 5). pnpm's content-addressed store is the BYTE layer -- it
+-- makes switching cheap (measured: switching back to a previously installed
+-- version is `downloaded 0, reused 2`) but its "active" is a property of one
+-- directory, so it cannot express "this shell, that version".
 package.xvm_enable = true
 
 do
     local xpm = {}
+    -- A group or an Agent needs its members present before it can compose
+    -- them, and `deps` is how xpkg already says that: it resolves the closure,
+    -- installs depth-first, and `dep_install_dir` hands back where each one
+    -- landed. No new composition field -- see design section 2.2.
+    local deps = {"xim:dsh", "xim:pnpm"}
+    for _, m in ipairs(MEMBERS) do
+        -- Pinned: a floating member would make this package name a
+        -- different set of bytes on different days.
+        deps[#deps + 1] = "dsh:" .. m.name .. "@" .. m.version
+    end
+
     for _, plat in ipairs({"linux", "macosx", "windows"}) do
         local t = {
-            deps = {"xim:dsh", "xim:pnpm"},
+            deps = deps,
             ["latest"] = { ref = package.dsh.latest },
         }
         for ver, _ in pairs(package.dsh.versions) do
@@ -75,7 +103,11 @@ do
                 end
                 t[ver] = { url = urls, sha256 = m.sha256 }
             else
-                t[ver] = {}   -- architecture A: nothing to download; pnpm fetches
+                -- Architecture A, and every group and Agent: nothing to
+                -- download. pnpm fetches for A; a group and an Agent have no
+                -- bytes of their own at all -- they are a few hundred bytes of
+                -- manifest, and their members carry the payload (design 2.4).
+                t[ver] = {}
             end
         end
         xpm[plat] = t
@@ -88,53 +120,47 @@ import("xim.libxpkg.system")
 import("xim.libxpkg.xvm")
 import("xim.libxpkg.log")
 
--- Which profile a plugin lands in, in one predictable rule.
+-- Which profile this package acts on -- upstream's rule, not one of ours.
 --
--- 1. DSH_PROFILE, if set. One variable, user-facing, documented.
--- 2. A *surface* plugin gets a profile named after itself. A surface defines a
---    runnable app -- it overrides base rows rather than adding to them -- and
---    upstream's own docs give it its own profile (dsh-cc-tui's README says
---    `dsh --profile cc-tui`). Two surfaces in one profile fight over the same
---    rows.
--- 3. Otherwise the current subos, so a plugin set travels with the environment
---    it was installed into -- the same axis `xlings use` switches on.
--- 4. "web" if that cannot be determined, which is what `dsh web` boots.
+-- In upstream's model the profile name is the USER's: `dsh plugin --profile
+-- <name> add <pkg>` creates whatever name you pass, and their docs pick
+-- `demo`, `cc-tui`, anything. Nothing about a plugin says what its profile
+-- should be called.
 --
--- Step 3 reads a libxpkg API, NOT an environment variable. The first attempt
--- read `XLINGS_SUBOS`, which xlings does not set, so the branch was dead code
--- while the docs claimed it worked. `system.subos_sysrootdir()` returns
--- `<home>/subos/<name>`, so the name is its last component -- an answer from
--- the toolchain rather than one inferred from whatever happens to be exported
--- into the shell.
+-- So this index does not invent names. Where one comes from, by kind:
 --
--- Whatever it resolves to is printed at the end of config() with the launch
--- command, because an unpredictable profile is only a problem if the user has
--- to guess it.
-local function is_surface()
-    for _, c in ipairs(package.categories or {}) do
-        if c == "tui" or c == "desktop" then return true end
-    end
-    return false
-end
-
-local function subos_name()
-    -- Feature-detected: it arrives as a module, and `if system.x then` is true
-    -- on every client whether or not the function exists.
-    if type(system.subos_sysrootdir) ~= "function" then return nil end
-    local ok, dir = pcall(system.subos_sysrootdir)
-    if not ok or type(dir) ~= "string" or dir == "" then return nil end
-    local name = path.filename(dir)
-    -- `current` is a symlink to the active subos; a profile named after it
-    -- would follow the symlink instead of staying with its environment.
-    if name == "" or name == "current" then return nil end
-    return name
-end
-
+--   plugin   its own README, when that README tells readers a name to type
+--            (tools/mine_profiles.py reads it, skipping placeholders like
+--            `your-profile`); measured today, 65 say `web`, 2 say `tui`, 1
+--            says `cc-tui`. Installing puts the plugin where its own
+--            documentation says it will be.
+--   Agent    `dsh.profile`, declared by the Agent package -- because the
+--            Agent IS that profile, so the name is part of what it is
+--            rather than something the index derived.
+--
+-- Everything else falls back to `web` -- the profile upstream's own `dsh web`
+-- boots and its quick start creates. `XIM_DSH_PROFILE` overrides either.
+--
+-- The override is deliberately NOT called `DSH_PROFILE`: dsh reads no such
+-- variable (its whole tree reads only DSH_HOME, DSH_WEB_URL and
+-- DSH_TELEMETRY_DISABLED), so shipping that name would impersonate an
+-- upstream variable that does not exist and would stop working the moment
+-- upstream defined it to mean something else.
+--
+-- Two earlier rules were removed for the same reason: deriving a profile from
+-- the current subos, and giving a "surface" plugin a profile named after
+-- itself. Both were defensible defaults and both made every example in
+-- upstream's documentation wrong under this index -- a user following
+-- dsh-cc-tui's README typed `dsh --profile cc-tui` and got "profile does not
+-- exist", because we had silently named it something else. Composing two
+-- surfaces into one profile can conflict, but that is the user's composition
+-- to manage, exactly as it is when they use `dsh plugin` directly.
 local function profile()
-    local p = os.getenv("DSH_PROFILE")
+    local p = os.getenv("XIM_DSH_PROFILE")
     if p and p ~= "" then return p end
-    if is_surface() then return package.name end
-    return subos_name() or "web"
+    p = package.dsh.profile
+    if p and p ~= "" then return p end
+    return "web"
 end
 
 local function dsh_home()
@@ -143,8 +169,27 @@ local function dsh_home()
     return path.join(os.getenv("HOME") or os.getenv("USERPROFILE") or ".", ".dsh")
 end
 
+local function profile_dir()
+    return path.join(dsh_home(), "profiles", profile())
+end
+
 local function profile_manifest()
-    return path.join(dsh_home(), "profiles", profile(), "package.json")
+    return path.join(profile_dir(), "package.json")
+end
+
+local function manifest_body()
+    local f = io.open(profile_manifest(), "r")
+    if not f then return nil end
+    local body = f:read("*a")
+    f:close()
+    return body
+end
+
+-- `dsh web` is upstream's own spelling for the web profile; anything else is
+-- `--profile <name>`. Print what the user should actually type.
+local function launch_cmd()
+    local p = profile()
+    return (p == "web") and "dsh web" or ("dsh --profile " .. p)
 end
 
 -- The argument handed to pnpm. Under C it is a local tarball inside our own
@@ -160,19 +205,110 @@ local function spec(version)
     return "github:" .. origin() .. "#" .. package.dsh.versions[version].commit
 end
 
--- Truth lives in the profile manifest, not in xim's own installed marker: the
--- user can run `dsh plugin remove` behind our back at any time.
+-- A member's spec, from the directory xpkg already installed it into.
+--
+-- Members are required to be mirrored (tests/test_descriptors.py enforces it),
+-- so this is always a real tarball on disk: a group or an Agent is the
+-- reproducible unit of this index, and one whose members fetch from upstream
+-- at boot would inherit every failure mode -- no CN mirror, no checksum, and
+-- gone if the repo is deleted -- while presenting itself as a curated set.
+-- The tarball name is derived, not globbed and not copied. `os.files` does not
+-- exist in the libxpkg hook runtime -- an install that reached here died with
+-- `attempt to call a nil value (field 'files')` after every member had already
+-- been composed, so the failure looked like the Agent and was the glob.
+--
+-- Nothing needs to be looked up: xpkg installs a dependency into
+-- `<store>/dsh-x-<name>/<version>`, and tools/mirror.py names every tarball
+-- `<name>-<version>.tgz`. So the version is the last path component and the
+-- filename follows from it, which also means this cannot drift out of sync
+-- with the member's own descriptor the way a copied filename would.
+local function member_spec(name)
+    local dir = pkginfo.dep_install_dir("dsh:" .. name)
+    if not dir then return nil end
+    local ver = dir:match("[/\\]([^/\\]+)[/\\]?$")
+    if not ver then return nil end
+    local tgz = path.join(dir, name .. "-" .. ver .. ".tgz")
+    if not os.isfile(tgz) then return nil end
+    return tgz
+end
+
+-- A plugin's truth is its own payload, because installing a plugin no longer
+-- touches a profile. Registering it is the composing step, and that belongs to
+-- whoever composes -- an Agent, a group, or the user typing the command this
+-- recipe prints. A plugin that registered itself put its bundle into a profile
+-- that an Agent had not chosen, so installing an Agent left its five members
+-- in `web` as well as in the Agent's own profile.
+--
+-- A group owns no profile entry either, so its truth is its members: it is
+-- installed exactly when every member is. Asking each member is what makes
+-- `xlings install` idempotent for a group without inventing a marker that
+-- could disagree with reality.
 function installed()
-    local f = io.open(profile_manifest(), "r")
-    if not f then return false end
-    local body = f:read("*a")
-    f:close()
-    return body:find(package.dsh.bundle_name, 1, true) ~= nil
+    if KIND == "group" then
+        for _, m in ipairs(MEMBERS) do
+            if not member_spec(m.name) then return false end
+        end
+        return #MEMBERS > 0
+    end
+
+    if KIND == "plugin" then
+        if MIRROR then
+            local m = MIRROR[pkginfo.version()]
+            return m ~= nil
+               and os.isfile(path.join(pkginfo.install_dir(), m.tarball))
+        end
+        -- Architecture A keeps no tarball of its own; what `install()` produced
+        -- is a warmed pnpm store plus this note of the spec it warmed.
+        return os.isfile(path.join(pkginfo.install_dir(), "spec.txt"))
+    end
+
+    local body = manifest_body()
+    if not body then return false end
+
+    if KIND == "profile" then
+        -- Match on the bundle name, which is what the manifest records. The
+        -- descriptor name is often different (`dsh-annotation` is
+        -- `@omdsh-dev/dsh-annotation` there), so checking that would report a
+        -- correctly composed profile as incomplete.
+        for _, m in ipairs(MEMBERS) do
+            if not body:find(m.bundle, 1, true) then return false end
+        end
+        return #MEMBERS > 0
+    end
+
+    return false
 end
 
 function install()
+    if KIND ~= "plugin" then
+        -- A group and an Agent have no payload at all: they are manifests, and
+        -- their members carry the bytes.
+        return true
+    end
+
     if not MIRROR then
-        return true   -- architecture A: no payload; pnpm fetches in config()
+        -- Architecture A has no tarball this index may redistribute, but the
+        -- bytes can still be fetched now rather than at compose time: pnpm's
+        -- store is content-addressed and shared, so warming it at the pinned
+        -- commit makes the later `dsh plugin add` resolve locally.
+        --
+        -- `store add` fetches; it does not run a `prepare` script -- the
+        -- tarball comes straight from codeload. So nothing here executes
+        -- upstream code, and the index no longer needs a gate of its own:
+        -- pnpm's allowBuilds already guards the place where execution
+        -- actually happens, which is the compose command this recipe prints.
+        -- An opt-in we owned would have been a second, weaker copy of it.
+        os.tryrm(pkginfo.install_dir())
+        os.mkdir(pkginfo.install_dir())
+        local spec = "github:" .. origin() .. "#"
+                     .. package.dsh.versions[pkginfo.version()].commit
+        print("")
+        system.exec(("pnpm store add %s"):format(spec))
+        local f = io.open(path.join(pkginfo.install_dir(), "spec.txt"), "w")
+        if not f then return false end
+        f:write(spec .. "\n")
+        f:close()
+        return true
     end
 
     local tgz = MIRROR[pkginfo.version()].tarball
@@ -185,43 +321,174 @@ function install()
     return os.isfile(path.join(pkginfo.install_dir(), tgz))
 end
 
-function config()
+-- Warn when this package replaces a base row another bundle already patches.
+--
+-- Two bundles patching the same row do not merge -- a patch replaces the row's
+-- whole config, so the later layer wins and the earlier one silently stops
+-- doing what its author intended. xpkg has no `conflicts` field and one would
+-- not fit: what collides is a ROW, not a package. So the check reads the
+-- composed tree, which already records who patched what, and says so rather
+-- than letting the user discover it as odd behaviour.
+--
+-- A warning, not a refusal: upstream does not prevent this either, and the
+-- composition is the user's to arrange. Inside a group or an Agent the same
+-- fact is a hard CI gate instead (design section 3) -- there the index is the
+-- one choosing the combination, so shipping a broken one is our bug, not a
+-- situation to warn about.
+local function warn_row_conflicts(rows, self_bundle)
+    if not rows or #rows == 0 then return end
+
+    -- pcall, not xmake's `try {}`: pkgindex-build.lua is evaluated in
+    -- libxpkg's minimal plain-Lua sandbox where `try` is nil, and a nil call
+    -- there kills the build with the error swallowed -- the index silently
+    -- loses every xpm section. pcall is standard Lua and exists in both.
+    local ok, dumped = pcall(os.iorun,
+        ("dsh --profile %s --dump-config"):format(profile()))
+    if not ok or type(dumped) ~= "string" then return end
+
+    for _, row in ipairs(rows) do
+        -- `# == <bundle>, patched by <other>` is how the dump marks an
+        -- overridden row, so an existing patcher is readable by name.
+        local other = dumped:match("patched by ([%w%-%._@/]+)[^\n]*\n%s*%- id: " .. row)
+        if other and other ~= self_bundle then
+            log.warn(("%s replaces row '%s', which %s already patches in "
+                   .. "profile '%s'. The later one wins; put them in separate "
+                   .. "profiles with XIM_DSH_PROFILE if both matter.")
+                   :format(package.name, row, other, profile()))
+        end
+    end
+end
+
+local function config_plugin()
+    -- A plugin does NOT register itself into a profile. Composing is a
+    -- separate act with a separate owner: an Agent composes its members, a
+    -- group's members are composed by whatever Agent uses them, and a user
+    -- composing by hand owns the choice of profile. When the atom registered
+    -- itself, installing one Agent put its five members into `web` as well,
+    -- because each member had already decided where it belonged before the
+    -- Agent ever ran.
+    --
+    -- What this leaves is what only this index can do: the bytes are here,
+    -- pinned and (where the licence allows) checksummed and CN-mirrored. The
+    -- composing command is one line, and it is printed exactly, so the step
+    -- that remains is a paste rather than a lookup.
+    local p = profile()
+    local cmd = ("dsh plugin --profile %s add %s")
+                :format(p, spec(pkginfo.version()))
+
     -- Only an un-mirrored package with a `prepare` script executes upstream
-    -- code on the user's machine at install time. pnpm >=10 refuses it until
-    -- allowlisted, and that allowance is exactly what it sounds like. Mirrored
-    -- packages were built in this index's CI, so they never reach this branch.
-    if (not MIRROR) and package.dsh.needs_build
-       and os.getenv("DSH_ALLOW_BUILDS") ~= "1" then
-        log.error(("%s is not mirrored (license: %s), so it installs straight "
-               .. "from git -- and it ships a `prepare` build script.\n"
-               .. "Running it means executing this package's code on your "
-               .. "machine at install time, outside any agent sandbox.\n"
-               .. "If you trust it, reinstall with DSH_ALLOW_BUILDS=1.")
+    -- code, and that now happens in the command above rather than here --
+    -- pnpm's `store add` only fetches. Saying so before the user runs it is
+    -- the point at which the warning is still useful.
+    if (not MIRROR) and package.dsh.needs_build then
+        log.warn(("%s ships a `prepare` build script and is not mirrored "
+               .. "(licence: %s), so composing it runs upstream code on your "
+               .. "machine, outside any agent sandbox. pnpm blocks that until "
+               .. "you allow it in %s.")
                :format(package.name,
-                       (package.licenses and package.licenses[1]) or "unknown"))
-        return false
+                       (package.licenses and package.licenses[1]) or "unknown",
+                       path.join(profile_dir(), "pnpm-workspace.yaml")))
     end
 
-    -- pnpm writes straight to the terminal and its first line lands flush
-    -- against whatever xlings printed last, so the two look like one message.
-    -- One blank line is the whole fix.
+    warn_row_conflicts(package.dsh.overrides, package.dsh.bundle_name)
+
+    local launch = (p == "web") and "dsh web" or ("dsh --profile " .. p)
+    log.info(("%s is downloaded and pinned. It is not in any profile yet.\n"
+           .. "  Add it:     %s\n"
+           .. "  Launch it:  %s\n"
+           .. "  '%s' is the profile this plugin's own README documents; any "
+           .. "name works.")
+           :format(package.name, cmd, launch, p))
+    return true
+end
+
+local function config_group()
+    -- A group installs nothing itself: `deps` already brought every member in,
+    -- and each member landed in the profile its own README documents. What is
+    -- left is to say what the user now has, because `xlings install` printing
+    -- only the group's name would leave the actual contents invisible.
+    local names = {}
+    for _, m in ipairs(MEMBERS) do names[#names + 1] = "  - " .. m.name end
+    log.info(("%s brought in %d plugins:\n%s")
+             :format(package.name, #MEMBERS, table.concat(names, "\n")))
+    return true
+end
+
+local function config_agent()
+    -- An Agent is a manifest, so this is the whole of it: create the profile
+    -- and compose every member into it. `dsh plugin --profile <name>`
+    -- initialises the profile on first use, so there is nothing to create
+    -- first -- upstream's own command is the constructor.
     print("")
-    system.exec(("dsh plugin --profile %s add %s")
-                :format(profile(), spec(pkginfo.version())))
+    for _, m in ipairs(MEMBERS) do
+        local s = member_spec(m.name)
+        if not s then
+            log.error(("%s: member '%s' has no installed tarball. Members must "
+                    .. "be mirrored packages; this one resolved to nothing.")
+                    :format(package.name, m.name))
+            return false
+        end
+        system.exec(("dsh plugin --profile %s add %s"):format(profile(), s))
+    end
 
     if not installed() then
+        log.error(("%s: profile '%s' does not list every member after install.")
+                  :format(package.name, profile()))
         return false
     end
 
-    -- Say where it went and how to boot it. Without this the user has to
-    -- guess the profile name, and the obvious guess -- the plugin's own name --
-    -- is always wrong: `dsh --profile <plugin>` fails with "profile does not
-    -- exist".
-    log.info(("%s is installed in profile '%s'.\n  Launch it:  dsh --profile %s")
-             :format(package.name, profile(), profile()))
+    -- The Agent's own opinion. Of dsh's four patch layers only the profile's
+    -- own cordis.patch.yml is both persistent and per-profile -- the bundle
+    -- layer belongs to each plugin's author, $DSH_HOME/cordis.patch.yml is
+    -- machine-wide, and `--patch` does not persist. So an Agent that wants to
+    -- say "in this set, that row looks like this" has exactly one place to
+    -- write it. See design section 2.5.
+    if package.dsh.patch and package.dsh.patch ~= "" then
+        local f = io.open(path.join(profile_dir(), "cordis.patch.yml"), "w")
+        if not f then
+            log.error(("%s: cannot write the patch layer into profile '%s'.")
+                      :format(package.name, profile()))
+            return false
+        end
+        f:write(package.dsh.patch)
+        f:close()
+    end
 
-    -- `type = "group"`: this name backs no executable. Left as the default
-    -- program kind it would generate a shim that always fails
+    log.info(("%s is ready as profile '%s' (%d plugins).\n  Launch it:  %s")
+             :format(package.name, profile(), #MEMBERS, launch_cmd()))
+    return true
+end
+
+function config()
+    local ok
+    if KIND == "group" then
+        ok = config_group()
+    elseif KIND == "profile" then
+        ok = config_agent()
+    else
+        ok = config_plugin()
+    end
+    if not ok then return false end
+
+    if KIND == "profile" then
+        -- An Agent gets a real command, named after the package: install
+        -- `agent-web-coding` and you run `agent-web-coding`. The shim is an
+        -- alias onto `dsh --profile <name>`, the same shape mcpp-short-cmd
+        -- uses (`xvm.add(short, { alias = "mcpp " .. sub })`) -- the first
+        -- token is another xvm-managed name, not a path, so this needs no
+        -- knowledge of where dsh's launcher lives.
+        --
+        -- The name is xvm's, which means it is versioned and per-subos for
+        -- free: two versions of an Agent can be installed at once and
+        -- `xlings use <agent> <version>` switches which one the name resolves
+        -- to, in this subos only.
+        xvm.add(package.name, { alias = "dsh --profile " .. profile() })
+        log.info(("Run it as a command:  %s"):format(package.name))
+        return true
+    end
+
+    -- `type = "group"`: a plugin and a group back no executable. Left as the
+    -- default program kind each would generate a shim that always fails
     -- (subos/*/bin/<name> -> bin/xlings) and `self doctor` reports it as an
     -- orphan (openxlings/xlings#452).
     xvm.add(package.name, { type = "group" })
@@ -230,10 +497,34 @@ end
 
 function uninstall()
     xvm.remove(package.name)
-    print("")
-    system.exec(("dsh plugin --profile %s remove %s")
-                :format(profile(), package.dsh.bundle_name))
-    -- $DSH_HOME holds the user's own profiles and config layer. This recipe
-    -- never created it and must not remove it.
+
+    if KIND == "group" then
+        -- Members are packages in their own right and may be shared with
+        -- another group or Agent, or have been installed directly. xpkg's dep
+        -- graph decides their fate; removing them here would take them out
+        -- from under whoever else is using them.
+        return true
+    end
+
+    if KIND == "profile" then
+        print("")
+        -- Remove by bundle name: that is what the profile manifest records
+        -- and what pnpm matches on. Passing the descriptor name failed with
+        -- ERR_PNPM_CANNOT_REMOVE_MISSING_DEPS partway through, leaving the
+        -- profile half dismantled.
+        for _, m in ipairs(MEMBERS) do
+            system.exec(("dsh plugin --profile %s remove %s")
+                        :format(profile(), m.bundle))
+        end
+        -- The profile directory itself stays. The user may have added their
+        -- own plugins to it or edited its patch layer, and this recipe cannot
+        -- tell those apart from what it put there.
+        return true
+    end
+
+    -- A plugin put itself into no profile, so there is none to take it out
+    -- of. Whoever composed it -- an Agent, or the user -- owns that removal,
+    -- and guessing at it here would take the bundle out from under a profile
+    -- this recipe never touched.
     return true
 end

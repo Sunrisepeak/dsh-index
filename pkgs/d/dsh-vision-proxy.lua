@@ -13,6 +13,10 @@ package = {
     keywords = {"dsh", "ocr", "vision", "vlm"},
 
     dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "web",
+
         bundle_name = "dsh-vision-proxy",
 
         versions = {

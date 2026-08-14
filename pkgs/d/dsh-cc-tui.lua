@@ -13,6 +13,10 @@ package = {
     keywords = {"dsh", "claude-code", "coding-agent", "ink", "react", "terminal", "tui"},
 
     dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "cc-tui",
+
         bundle_name = "dsh-cc-tui",
 
         versions = {
@@ -20,6 +24,10 @@ package = {
         },
         latest = "0.1.6",
 
+        -- Base rows this bundle replaces. Another bundle patching
+        -- any of these in the same profile silently wins or loses,
+        -- depending on install order.
+        overrides = {"agent-loop", "approval", "compaction-basic", "llm-deepseek", "sandbox-policy", "session-persistence-jsonl", "system-prompt", "tool-subagent", "tool-subagent-fork"},
         needs_build = false,
 
         -- Published by tools/mirror.py to GitHub and GitCode, verified

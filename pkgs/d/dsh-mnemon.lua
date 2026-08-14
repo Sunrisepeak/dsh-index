@@ -13,6 +13,10 @@ package = {
     keywords = {"dsh", "agent-memory", "ai-agent", "cordis", "external-memory", "knowledge-graph", "llm-agent", "llm-memory", "llm-supervised"},
 
     dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "web",
+
         bundle_name = "dsh-mnemon",
 
         versions = {

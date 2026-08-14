@@ -13,6 +13,10 @@ package = {
     keywords = {"dsh", "agent-rewind", "cordis-plugin", "marisa-plugin", "restore-point", "turn-rewind", "workspace-safety"},
 
     dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "web",
+
         bundle_name = "@dsh-external/turn-rewind",
 
         versions = {

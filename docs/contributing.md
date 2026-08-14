@@ -48,6 +48,9 @@ package = {
     keywords = {"dsh", "plugin", "tui", "terminal"},
 
     dsh = {
+        kind = "plugin",                -- plugin | group | profile
+        profile = "cc-tui",             -- what this plugin's own README
+                                        -- tells its readers to type
         bundle_name = "dsh-cc-tui",     -- upstream package.json#name
 
         versions = {
@@ -72,6 +75,53 @@ package = {
 | `needs_build` is explicit | It gates arbitrary code execution on the user's machine. |
 | `licenses` is the standard xpkg field | It is the mirror gate. Absent means upstream declares none, so the gate is fail-closed by construction — no `dsh.license` copy to drift. |
 | No hooks / `xpm` / `type` in a descriptor | `template.lua` supplies them; a local copy would be silently overridden. |
+| `kind` is declared, and lives in `dsh.*` | xpkg's `type` is a closed enum — libxpkg's `parse_type()` maps any unknown string to `Package`, so `type = "dsh-agent"` would not fail, it would evaporate. |
+| `profile` is recorded, not derived | The name belongs to upstream. Every attempt to infer one (from the subos, from the plugin's own name) made upstream's own examples wrong under this index. |
+
+## 2b. Adding a group or an Agent
+
+These are **generated**. Edit `tools/agents.json` and run the generator; do not
+hand-edit the descriptor, because CI re-runs the expansion and a hand edit
+shows up as drift.
+
+```jsonc
+// tools/agents.json
+"groups": [
+  { "name": "group-web-essentials", "version": "0.1.0",
+    "description": { "en": "…", "zh": "…" },
+    "members": ["dsh-at-file", "dsh-annotation"] }
+],
+"agents": [
+  { "name": "agent-web-coding", "version": "0.1.0",
+    "profile": "coding",                       // the profile it creates
+    "description": { "en": "…", "zh": "…" },
+    "groups": ["group-web-essentials"],        // expanded into members
+    "extra": [] }                              // plus these plugins
+]
+```
+
+```bash
+tools/gen_agents.py            # write the descriptors
+tools/gen_agents.py --check    # what CI runs
+```
+
+Two rules are refusals, not warnings:
+
+| Rule | Why |
+|---|---|
+| Every member must be **mirrored** | A group or an Agent is this index's reproducible unit. One whose members fetch from upstream at boot inherits every failure mode the mirror exists to remove — no CN mirror, no checksum, gone if the repo is deleted — while presenting itself as curated. |
+| No two members may replace the **same `dsh-base` row** | A patch replaces the targeted row's whole config rather than merging, so the later member silently wins and the earlier author's intent disappears. At install time that can only be a warning — the user arranged it. Here the index arranged it, so it must not ship. |
+
+Row data comes from `tools/mine_overrides.py`, which intersects each bundle's
+own `cordis.patch.yml` with `@deepseek-ai/dsh-base`'s row ids. It is measured,
+not hand-marked. Today 5 of 68 bundles touch a base row at all, and exactly two
+pairs collide.
+
+An Agent may also carry `patch`: the contents of the `cordis.patch.yml` written
+into its profile. Of dsh's four patch layers this is the only one that is both
+persistent and per-profile — the bundle layer belongs to each plugin's author,
+`$DSH_HOME/cordis.patch.yml` is machine-wide, and `--patch` does not persist —
+so it is the one place an Agent can state an opinion about its own set.
 
 ## 3. Mirroring (optional, license-gated)
 
@@ -124,13 +174,13 @@ lua5.4 tests/libxpkg_sandbox_harness.lua .    # appends template.lua in place
 TMP_X=$(mktemp -d); TMP_D=$(mktemp -d)
 XLINGS_HOME=$TMP_X xlings update
 XLINGS_HOME=$TMP_X xlings config --add-xpkg "$PWD/pkgs/d/dsh-cc-tui.lua"
-XLINGS_HOME=$TMP_X DSH_HOME=$TMP_D DSH_PROFILE=verify \
+XLINGS_HOME=$TMP_X DSH_HOME=$TMP_D XIM_DSH_PROFILE=verify \
   xlings install local:dsh-cc-tui -y
 
 jq '.dependencies, .dsh.profile.bundles' "$TMP_D/profiles/verify/package.json"
 DSH_HOME=$TMP_D dsh --profile verify --dump-config | grep "^# == "
 
-XLINGS_HOME=$TMP_X DSH_HOME=$TMP_D DSH_PROFILE=verify \
+XLINGS_HOME=$TMP_X DSH_HOME=$TMP_D XIM_DSH_PROFILE=verify \
   xlings remove local:dsh-cc-tui -y
 jq '.dependencies, .dsh.profile.bundles' "$TMP_D/profiles/verify/package.json"
 
@@ -156,9 +206,11 @@ namespace — clear both before testing:
 rm -rf ~/.xlings/data/xpkgs/{dsh,local}-x-<name>/<version>
 ```
 
-For a `needs_build = true` package, verify **both** paths: without
-`DSH_ALLOW_BUILDS` it must fail, with `DSH_ALLOW_BUILDS=1` it must install.
-"It installed without authorisation" is a security defect, not a convenience.
+For a `needs_build = true` package, check that installing **warns** and does
+not build. Nothing this recipe runs executes upstream code — `pnpm store add`
+only fetches — so the gate is pnpm's own `allowBuilds`, and it applies when
+the user composes the plugin into a profile. An index-owned opt-in here would
+have been a second, weaker copy of the gate that actually stops the script.
 
 ## 5. PR
 

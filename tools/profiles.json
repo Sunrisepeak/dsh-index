@@ -1,0 +1,342 @@
+[
+  {
+    "pkg": "deepseek-manners",
+    "repo": "Moeblack/deepseek-manners",
+    "profile": "web"
+  },
+  {
+    "pkg": "distill",
+    "repo": "LoserFox/distill",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-acp-for-bitfun",
+    "repo": "bobleer/dsh-acp-for-bitfun",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-ads",
+    "repo": "Nagi-ovo/dsh-ads",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-advisor",
+    "repo": "btspoony/dsh-advisor",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-agent-teams",
+    "repo": "NanmiCoder/dsh-agent-teams",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-annotation",
+    "repo": "omdsh-dev/dsh-annotation",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-at-file",
+    "repo": "omdsh-dev/dsh-at-file",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-automation",
+    "repo": "titanwings/dsh-automation",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-better-browser",
+    "repo": "titanwings/dsh-better-browser",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-cc-tui",
+    "repo": "ccch1mneyyy/dsh-cc-tui",
+    "profile": "cc-tui"
+  },
+  {
+    "pkg": "dsh-chat-import",
+    "repo": "Nwflower/dsh-chat-import",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-context-doctor",
+    "repo": "Zhenyu98/dsh-context-doctor",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-custom-tool",
+    "repo": "omdsh-dev/dsh-custom-tool",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-deep-research",
+    "repo": "omdsh-dev/dsh-deep-research",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-emoji",
+    "repo": "hellodigua/dsh-emoji",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-evolve",
+    "repo": "william-jin-cmu/dsh-evolve",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-focus-chat",
+    "repo": "dingyi222666/dsh-focus-chat",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-genui",
+    "repo": "omdsh-dev/dsh-genui",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-git-identity",
+    "repo": "LoserFox/dsh-git-identity",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-humanize",
+    "repo": "zevorn/dsh-humanize",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-inspect",
+    "repo": "omdsh-dev/dsh-inspect",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-local-filetree",
+    "repo": "Mongfayi/dsh-local-filetree",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-loop",
+    "repo": "vlln/dsh-loop",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-mac-desktop",
+    "repo": "bitterSmilezzz/dsh-mac-desktop",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-message-edit",
+    "repo": "Moeblack/dsh-message-edit",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-minigames",
+    "repo": "lhh010/dsh-minigames",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-mnemon",
+    "repo": "omdsh-dev/dsh-mnemon",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-navbar",
+    "repo": "vlln/dsh-navbar",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-notification",
+    "repo": "omdsh-dev/dsh-notification",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-open-in-vscode",
+    "repo": "omdsh-dev/dsh-open-in-vscode",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-openai-codex-auth",
+    "repo": "yoke233/dsh-openai-codex-auth",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-openapi",
+    "repo": "Degurechaff57/dsh-openapi",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-plannotator",
+    "repo": "titanwings/dsh-plannotator",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-plugin-better-sidebar-plugin-office",
+    "repo": "HuanLinOTO/dsh-plugin-better-sidebar-plugin-office",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-plugin-claude-bridge",
+    "repo": "YYTbit/dsh-plugin-claude-bridge",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-plugin-codex-bridge",
+    "repo": "YYTbit/dsh-plugin-codex-bridge",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-plugin-interpreters",
+    "repo": "HuanLinOTO/dsh-plugin-interpreters",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-plugin-mineru",
+    "repo": "HuanLinOTO/dsh-plugin-mineru",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-plugin-opencode-bridge",
+    "repo": "YYTbit/dsh-plugin-opencode-bridge",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-plugin-pi-bridge",
+    "repo": "YYTbit/dsh-plugin-pi-bridge",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-plugin-sleep",
+    "repo": "HuanLinOTO/dsh-plugin-sleep",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-plugin-ya-workspace-sidebar",
+    "repo": "HuanLinOTO/dsh-plugin-ya-workspace-sidebar",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-plugin-yet-another-subagent",
+    "repo": "HuanLinOTO/dsh-plugin-yet-another-subagent",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-prompt-studio",
+    "repo": "Moeblack/dsh-prompt-studio",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-scholar",
+    "repo": "lzszq/dsh-scholar",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-sentinel",
+    "repo": "fuhefei/dsh-sentinel",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-share",
+    "repo": "hellodigua/dsh-share",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-stickers",
+    "repo": "william-jin-cmu/dsh-stickers",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-stock-market",
+    "repo": "AnacondaKC/dsh-stock-market",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-super-injector",
+    "repo": "yjh051108/dsh-super-injector",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-task-status",
+    "repo": "vlln/dsh-task-status",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-tianshu-tui",
+    "repo": "huiliyi37/dsh-tianshu-tui",
+    "profile": "tui"
+  },
+  {
+    "pkg": "dsh-tui",
+    "repo": "orriduck/dsh-tui",
+    "profile": "tui"
+  },
+  {
+    "pkg": "dsh-turn-rewind",
+    "repo": "Anionex/dsh-turn-rewind",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-vision-proxy",
+    "repo": "Flyvhidbwo/dsh-vision-proxy",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-visualize",
+    "repo": "Nagi-ovo/dsh-visualize",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-web-archive",
+    "repo": "renat3u/dsh-web-archive",
+    "profile": "web"
+  },
+  {
+    "pkg": "dsh-web-ui-notify",
+    "repo": "bill9109/dsh-web-ui-notify",
+    "profile": "web"
+  },
+  {
+    "pkg": "fabric",
+    "repo": "omdsh-dev/fabric",
+    "profile": "web"
+  },
+  {
+    "pkg": "modlens",
+    "repo": "liustack/modlens",
+    "profile": "web"
+  },
+  {
+    "pkg": "nowledge-mem-deepseek-harness",
+    "repo": "nowledge-co/nowledge-mem-deepseek-harness",
+    "profile": "web"
+  },
+  {
+    "pkg": "oh-dsh-desktop",
+    "repo": "hust-open-atom-club/oh-dsh-desktop",
+    "profile": "web"
+  },
+  {
+    "pkg": "openflowframes",
+    "repo": "ZeroHackz/OpenFlowFrames",
+    "profile": "web"
+  },
+  {
+    "pkg": "plugin-template",
+    "repo": "omdsh-dev/plugin-template",
+    "profile": "web"
+  },
+  {
+    "pkg": "sandbox-micro",
+    "repo": "omdsh-dev/sandbox-micro",
+    "profile": "web"
+  },
+  {
+    "pkg": "telegram",
+    "repo": "LoserFox/telegram",
+    "profile": "web"
+  },
+  {
+    "pkg": "ui-status-label",
+    "repo": "alingalingling/ui-status-label",
+    "profile": "web"
+  }
+]

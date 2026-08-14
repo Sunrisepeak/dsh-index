@@ -13,6 +13,10 @@ package = {
     keywords = {"dsh", "sentinel"},
 
     dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "web",
+
         bundle_name = "@dsh-external/dsh-sentinel",
 
         versions = {

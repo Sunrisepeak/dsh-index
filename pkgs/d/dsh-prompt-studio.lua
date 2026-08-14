@@ -13,6 +13,10 @@ package = {
     keywords = {"dsh", "prompt", "studio"},
 
     dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "web",
+
         bundle_name = "dsh-prompt-studio",
 
         versions = {

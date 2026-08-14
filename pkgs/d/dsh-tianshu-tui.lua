@@ -13,6 +13,10 @@ package = {
     keywords = {"dsh", "harness-engineering"},
 
     dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "tui",
+
         bundle_name = "@huiliyi37/dsh-tianshu-tui",
 
         versions = {

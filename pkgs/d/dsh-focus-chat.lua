@@ -12,6 +12,10 @@ package = {
     keywords = {"dsh", "focus", "chat"},
 
     dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "web",
+
         bundle_name = "@dingyi222666/dsh-focus-chat",
 
         versions = {

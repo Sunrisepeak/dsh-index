@@ -13,6 +13,10 @@ package = {
     keywords = {"dsh", "claude-code", "memory"},
 
     dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "web",
+
         bundle_name = "dsh-plugin-claude-bridge",
 
         versions = {

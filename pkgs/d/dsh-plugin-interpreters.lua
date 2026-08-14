@@ -12,6 +12,10 @@ package = {
     keywords = {"dsh", "plugin", "interpreters"},
 
     dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "web",
+
         bundle_name = "@huanlin/dsh-plugin-interpreters",
 
         versions = {
