@@ -79,7 +79,7 @@ def file_at(repo: str, ref: str, rel: str):
 
 
 def carried() -> dict:
-    """name -> {repo, commit, version} for every descriptor we already have."""
+    """name -> {repo, bundle, commit, version} for every descriptor we have."""
     out = {}
     for path in sorted(PKGS.rglob("*.lua")):
         body = path.read_text(encoding="utf-8")
@@ -91,10 +91,12 @@ def carried() -> dict:
         latest = re.search(r'latest = "([^"]+)"', block)
         if not (repo and latest):
             continue
+        bundle = re.search(r'bundle_name = "([^"]+)"', block)
         vblock = re.search(rf'\["{re.escape(latest.group(1))}"\]\s*=\s*'
                            r'\{[^}]*commit = "([0-9a-f]{40})"', block)
         out[path.stem] = {
             "repo": repo.group(1).rstrip("/"),
+            "bundle": bundle.group(1) if bundle else "",
             "version": latest.group(1),
             "commit": vblock.group(1) if vblock else "",
         }
@@ -107,8 +109,15 @@ def excluded() -> dict:
 
 
 def mode_new(limit: int) -> list:
-    have_repos = {v["repo"].lower() for v in carried().values()}
+    have = carried()
+    have_repos = {v["repo"].lower() for v in have.values()}
     have_repos |= {e["repo"].lower() for e in excluded().values() if e.get("repo")}
+    # Renames are why the repo name alone is not enough. `ccch1mneyyy/dsh-cc-tui`
+    # became `ccch1mneyyy/DSH-TUI`; GitHub redirects, so the descriptor keeps
+    # working, but a scan matching only on repo reports the package as new
+    # every single day. The bundle name is what actually identifies it.
+    have_bundles = {v["bundle"].lower() for v in have.values() if v["bundle"]}
+    have_names = set(have)
 
     found, seen = [], set()
     for topic in TOPICS:
@@ -123,10 +132,19 @@ def mode_new(limit: int) -> list:
                 continue
             if (r.get("stargazers_count") or 0) < MIN_STARS:
                 continue
+            # Pin first, then read AT the pin. Taking the version from one
+            # snapshot and the sha from another is how 19 of 169 descriptors
+            # once ended up with a version key that did not describe the bytes
+            # at their own commit; resolving in this order makes that
+            # unrepresentable rather than merely unlikely.
+            head = gh_json(f"repos/{full}/commits/{r.get('default_branch') or 'HEAD'}")
+            commit = (head or {}).get("sha") or ""
+            if not re.fullmatch(r"[0-9a-f]{40}", commit):
+                continue
             # A dsh plugin is a profile bundle, and that is a declaration in
             # package.json -- not something the topic alone establishes. 169 of
             # the 281 repos carrying the topic actually declared it.
-            pj = file_at(full, r.get("default_branch") or "HEAD", "package.json")
+            pj = file_at(full, commit, "package.json")
             if not pj:
                 continue
             try:
@@ -135,11 +153,27 @@ def mode_new(limit: int) -> list:
                 continue
             if not ((meta.get("dsh") or {}).get("bundle")):
                 continue
+            bundle = meta.get("name") or ""
+            if bundle.lower() in have_bundles:
+                print(f"  renamed upstream, already carried: {full} ({bundle})",
+                      file=sys.stderr)
+                continue
+            name = full.split("/")[-1].lower().replace("_", "-")
+            # Two different repos can normalise to the same descriptor name.
+            # sync.py refuses to overwrite, which is the safe half; saying so
+            # here is the other half, because a silent skip reads as "nothing
+            # was found" rather than "a real package needs a different name".
+            if name in have_names:
+                print(f"  NAME COLLISION: {full} would be '{name}', already "
+                      f"taken by {have[name]['repo']} -- needs a distinct name",
+                      file=sys.stderr)
+                continue
             found.append({
                 "repo": full,
-                "name": full.split("/")[-1].lower().replace("_", "-"),
-                "bundle_name": meta.get("name") or "",
+                "name": name,
+                "bundle_name": bundle,
                 "version": meta.get("version") or "",
+                "commit": commit,
                 "stars": r.get("stargazers_count") or 0,
                 "license": ((r.get("license") or {}).get("spdx_id") or "unknown"),
                 "default_branch": r.get("default_branch") or "",
