@@ -32,6 +32,7 @@ import pathlib
 import re
 import subprocess
 import sys
+import time
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 PKGS = ROOT / "pkgs"
@@ -44,14 +45,79 @@ TOPICS = ["dsh-plugin", "dsh-tool"]
 MIN_STARS = 2
 
 
-def gh_json(path: str):
+class GhError(RuntimeError):
+    """gh could not answer. Never the same thing as "the answer is no"."""
+
+
+# What "genuinely not there" looks like on the wire. A deleted or
+# renamed-away repository answers 404; a sha that no longer exists inside a
+# repository that does answers **422** ("No commit found for SHA"), and that
+# is the shape most --audit hits take. Measured against this repo on
+# 2026-08-15 -- a fix that trusted 404 alone would have turned every real
+# missing pin into a crash instead of a report.
+MISSING = {404, 422}
+
+
+def gh_call(path: str) -> tuple:
+    """(parsed body or None, HTTP status; 0 when gh never got one).
+
+    `gh api` writes the error body to stdout and exits non-zero, so the exit
+    code is checked before the body is parsed.
+    """
     r = subprocess.run(["gh", "api", path], capture_output=True, text=True)
-    if r.returncode != 0:
+    if r.returncode == 0:
+        try:
+            return json.loads(r.stdout), 200
+        except json.JSONDecodeError:
+            return None, 0
+    m = re.search(r"\(HTTP (\d{3})\)", r.stderr)
+    return None, int(m.group(1)) if m else 0
+
+
+def gh_json(path: str):
+    """The body, or None when the resource genuinely does not exist.
+
+    Everything else raises, and that distinction is the entire point of this
+    function. `--audit` reads a None as "this pinned commit is GONE" and fails
+    the run -- the loudest thing this repository can say, and per the workflow
+    it means a force push, a rewritten history or a deleted repo.
+
+    The previous version returned None for a 403 rate limit, a 5xx and a
+    dropped connection as well. One exhausted budget would have reported all
+    70 upstreams as force-pushed at once, unattended, at 04:17 -- and the
+    budget is not far off: a full scan already costs about 760 calls against a
+    1,000/hour ceiling on the fallback token.
+    """
+    data, status = gh_call(path)
+    if status in MISSING:
         return None
-    try:
-        return json.loads(r.stdout)
-    except json.JSONDecodeError:
-        return None
+    if data is None:
+        raise GhError(f"{path}: HTTP {status or 'no response from gh'}")
+    return data
+
+
+def rate_check(need: int, what: str) -> None:
+    """Refuse to start a scan that cannot finish.
+
+    Running out halfway is not a partial answer, it is two wrong ones: `--new`
+    reports "nothing found" and `--audit` reports "the pin is gone". Reading
+    the limit is itself free.
+    """
+    data, status = gh_call("rate_limit")
+    if data is None:
+        raise GhError(f"cannot read the rate limit: HTTP {status or 'no response'}")
+    core = data["resources"]["core"]
+    if core["remaining"] >= need:
+        print(f"  budget: {core['remaining']}/{core['limit']} REST calls left, "
+              f"{what} needs about {need}", file=sys.stderr)
+        return
+    wait = max(0, core["reset"] - int(time.time()))
+    raise GhError(
+        f"{core['remaining']} REST calls left of {core['limit']} and {what} "
+        f"needs about {need}. Resets in {wait // 60}m{wait % 60:02d}s. "
+        f"Refusing to start: a scan that runs out halfway reports 'nothing "
+        f"found' and 'every pin is gone', and both are wrong. A PAT in "
+        f"DISCOVER_TOKEN raises this ceiling from 1,000 to 5,000.")
 
 
 def gh_search(topic: str, limit: int) -> list:
@@ -123,6 +189,12 @@ def mode_new(limit: int) -> list:
     for topic in TOPICS:
         hits = gh_search(topic, limit)
         print(f"  topic:{topic} -> {len(hits)} repos", file=sys.stderr)
+        # Two calls per candidate: pin the head, then read package.json AT the
+        # pin. Already-carried repos are dropped below without touching the
+        # API, so they are not part of the estimate.
+        rate_check(2 * len([h for h in hits
+                            if h["full_name"].lower() not in have_repos]),
+                   f"topic:{topic}")
         for r in hits:
             full = r["full_name"]
             if full.lower() in have_repos or full in seen:
@@ -223,7 +295,9 @@ def newer(new: str, old: str):
 
 def mode_bump() -> list:
     out = []
-    for name, cur in sorted(carried().items()):
+    have = carried()
+    rate_check(2 * len(have), "--bump")
+    for name, cur in sorted(have.items()):
         head = gh_json(f"repos/{cur['repo']}/commits?per_page=1")
         if not head:
             continue
@@ -259,7 +333,9 @@ def mode_bump() -> list:
 
 def mode_audit() -> list:
     gone = []
-    for name, cur in sorted(carried().items()):
+    have = carried()
+    rate_check(len(have), "--audit")
+    for name, cur in sorted(have.items()):
         if not cur["commit"]:
             continue
         if gh_json(f"repos/{cur['repo']}/commits/{cur['commit']}") is None:
@@ -278,12 +354,22 @@ def main() -> int:
     ap.add_argument("--limit", type=int, default=800)
     args = ap.parse_args()
 
-    if args.new:
-        rows, label = mode_new(args.limit), "new plugin(s)"
-    elif args.bump:
-        rows, label = mode_bump(), "version update(s)"
-    else:
-        rows, label = mode_audit(), "MISSING pinned commit(s)"
+    # A scan that could not complete must not write a result file. The
+    # workflow reads its absence as "the audit could not run" rather than as
+    # "nothing was found", which is the difference between a quiet night and a
+    # false alarm that says 70 upstreams rewrote their history.
+    try:
+        if args.new:
+            rows, label = mode_new(args.limit), "new plugin(s)"
+        elif args.bump:
+            rows, label = mode_bump(), "version update(s)"
+        else:
+            rows, label = mode_audit(), "MISSING pinned commit(s)"
+    except GhError as e:
+        print(f"\nSCAN DID NOT COMPLETE: {e}", file=sys.stderr)
+        print("Nothing was written. This is NOT a report that anything is "
+              "missing or that nothing was found.", file=sys.stderr)
+        return 2
 
     if args.json:
         pathlib.Path(args.json).write_text(
