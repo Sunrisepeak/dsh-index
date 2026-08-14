@@ -215,8 +215,12 @@ class DshPlugin(Plugin):
         # "'session']" showed up as separate facet buttons. So: join with
         # spaces, and drop any value containing whitespace, which would
         # otherwise silently split into two facets.
+        # `dsh-plugin` / `dsh-group` / `dsh-agent` name the tier, which already
+        # has its own axis. Leaving them here would put the same distinction on
+        # two facets, where filtering by one silently narrows the other.
         pkg.facets["category"] = _facet_value(
-            c for c in ext["categories"] if c and c != "dsh-plugin")
+            c for c in ext["categories"]
+            if c and c not in ("dsh-plugin", "dsh-group", "dsh-agent"))
         pkg.facets["keyword"] = _facet_value(
             (k for k in ext["keywords"] if k and k != "dsh"), limit=6)
 
