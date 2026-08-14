@@ -1,0 +1,48 @@
+# TEMPORARY. Verifies DISCOVER_TOKEN end to end, then gets deleted along with
+# the ci/token-check branch. Three questions the secret's mere existence
+# cannot answer: is it a PAT or did the fallback to GITHUB_TOKEN happen, does
+# it carry the two permissions discover needs, and -- the whole reason it
+# exists -- does a PR it opens actually trigger ci.yml.
+name: token-check
+
+on:
+  push:
+    branches: ['ci/token-check']
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Identity and ceiling
+        env:
+          GH_TOKEN: ${{ secrets.DISCOVER_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "::error::DISCOVER_TOKEN is empty in this context"; exit 1
+          fi
+          # 5000 => a PAT. 1000 => this is GITHUB_TOKEN and the fallback fired.
+          echo "core rate limit : $(gh api rate_limit --jq .rate.limit)"
+          echo "search limit    : $(gh api rate_limit --jq .resources.search.limit)"
+          echo "acting as       : $(gh api user --jq .login 2>&1 | tail -1)"
+          echo "repo perms      : $(gh api repos/${{ github.repository }} --jq '.permissions | tostring')"
+
+      - name: Can it open a pull request
+        env:
+          GH_TOKEN: ${{ secrets.DISCOVER_TOKEN }}
+        run: |
+          cat > /tmp/body.md <<'EOF'
+          Temporary check that `DISCOVER_TOKEN` can open a PR **and** that the PR
+          triggers `ci.yml` — the property `GITHUB_TOKEN` does not have, and the
+          reason the token exists at all.
+
+          Close and delete the branch once `ci` has reported here.
+          EOF
+          gh pr create --base main --head ci/token-check \
+            --title "test: DISCOVER_TOKEN end-to-end check (close me)" \
+            --body-file /tmp/body.md
