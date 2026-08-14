@@ -183,6 +183,44 @@ def mode_new(limit: int) -> list:
     return sorted(found, key=lambda f: -f["stars"])
 
 
+def _parts(v: str):
+    """A version as (core numbers, prerelease). None when it cannot be read."""
+    core, _, pre = v.partition("-")
+    bits = core.split(".")
+    if not all(b.isdigit() for b in bits) or not bits:
+        return None
+    return ([int(b) for b in bits], pre)
+
+
+def newer(new: str, old: str):
+    """Is `new` strictly after `old`? None when the two cannot be compared.
+
+    Equality is not the only thing worth skipping: upstream package.json
+    versions go BACKWARDS. `oh-dsh-desktop` sat at 0.1.2 here while its head
+    declared 0.1.1, and a bump that only checked inequality proposed the
+    downgrade -- with a fresh pin, so the index would have started serving
+    older bytes under a lower version number as if it were an update.
+    """
+    a, b = _parts(new), _parts(old)
+    if a is None or b is None:
+        return None
+    if a[0] != b[0]:
+        # Pad so 1.2 and 1.2.0 compare as equal rather than as a downgrade.
+        n = max(len(a[0]), len(b[0]))
+        av = a[0] + [0] * (n - len(a[0]))
+        bv = b[0] + [0] * (n - len(b[0]))
+        return av > bv
+    # Same numbers: a release supersedes its own prereleases, and two
+    # prereleases only compare to each other as text.
+    if a[1] == b[1]:
+        return False
+    if not a[1]:
+        return True
+    if not b[1]:
+        return False
+    return a[1] > b[1]
+
+
 def mode_bump() -> list:
     out = []
     for name, cur in sorted(carried().items()):
@@ -202,7 +240,17 @@ def mode_bump() -> list:
         # A moved head with the same version is upstream iterating, not a
         # release. Following it would repin bytes under an unchanged version
         # number, which is the one thing a version key must never mean.
-        if version and version == cur["version"]:
+        if not version or version == cur["version"]:
+            continue
+        ahead = newer(version, cur["version"])
+        if ahead is False:
+            print(f"  behind, not following: {name} {cur['version']} -> "
+                  f"{version} ({cur['repo']})", file=sys.stderr)
+            continue
+        if ahead is None:
+            print(f"  UNCOMPARABLE versions, needs a human: {name} "
+                  f"{cur['version']} vs {version} ({cur['repo']})",
+                  file=sys.stderr)
             continue
         out.append({"name": name, "repo": cur["repo"], "from": cur["version"],
                     "to": version, "commit": sha, "was": cur["commit"]})
