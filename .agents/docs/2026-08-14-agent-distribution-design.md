@@ -92,6 +92,32 @@ return PackageType::Package;      // ← "dsh-plugin" 会落到这里，字符�
 
 写 `type = "dsh-plugin"` 不报错也不生效，索引产物里存的是 `0`。这是"声明了、蒸发了"的形态，与本索引一贯的 fail-closed 原则相悖。所以 `kind` 放在 `dsh.kind`，`type` 取 5 个合法值里语义最近的 `config`。
 
+### 2.4 Agent 包是清单，不是 payload —— 以及为什么它非存在不可
+
+profile 目录里被"创作"的部分只有清单。实测：把 `tui` profile 的 `package.json`（**222 字节**）单独拷到空目录跑 `pnpm install`，`resolved 92, reused 92, downloaded 0`，还原出完整的 36M `node_modules`。代码从来不"在" profile 里，它是被解析出来的。
+
+所以 Agent 包本体也是几百字节的清单，没有 payload。它的成员 spec 可以**混用**，同一个 Agent 里三种并存不影响用户：
+
+```json
+"dependencies": {
+  "dsh-cc-tui":  "0.1.8",                                   // npm
+  "dsh-at-file": "github:omdsh-dev/dsh-at-file#<40 hex>",   // git pin
+  "dsh-ads":     "file:/…/xpkgs/dsh-x-dsh-ads/…/dsh-ads-0.1.0.tgz"  // 本仓镜像
+}
+```
+
+这正好承接 §5 的 C/A 混合：可镜像的成员指向本地 tarball（可复现 + CN 加速），不可镜像的指向 pin 死的 commit。
+
+**那能不能干脆只分发一个 yml？** 不能。`--patch` 与 `cordis.patch.yml` 只有配置行、**没有依赖声明**，而 dsh 的 boot 路径不碰包管理器（`pnpm` 只出现在 `dsh plugin` 子命令里）。实测 patch 引用一个 npm 上确实存在（`dsh-tui@0.2.0`）但未安装的 bundle：
+
+```
+Error: dsh: plugin tree failed to load: failed to apply loader entry include
+```
+
+profile 的 `package.json` 未被写入任何内容 —— 它不尝试安装，找不到就崩。
+
+**这是 Agent 包存在的根据**：dsh 差的正是"把清单变成已装好的树"这一步，而 `deps` 闭包安装是 xpkg 的本职。反过来，`--patch` 在本模型里的位置是**用户侧临时覆盖** —— 装完一个 Agent 后想临时改一行不必动 profile。这个能力写进 Agent 包文档，索引不接管。
+
 ---
 
 ## 3. 冲突：发布前的门，不是安装时的告警
