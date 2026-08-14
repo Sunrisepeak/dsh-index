@@ -5,6 +5,7 @@ come from template.lua, appended at index-build time. So these tests check the
 data contract, and tests/libxpkg_sandbox_harness.lua checks that the append
 still works under the runtime that actually performs it.
 """
+import json
 import pathlib
 import re
 import sys
@@ -739,3 +740,74 @@ class TestAffected:
             assert d["profile"] in affected.SURFACE_FOR_PROFILE, (
                 f"{name} declares profile={d['profile']!r}, which has no entry "
                 f"in SURFACE_FOR_PROFILE")
+
+class TestDiscoverErrorSemantics:
+    """"Not there" and "could not ask" must never be the same answer.
+
+    `--audit` reads a None from gh_json as "this pinned commit is GONE" and
+    fails the run, which per discover.py's own docstring means a force push, a
+    rewritten history or a deleted repo. The version before this suite returned
+    None for a rate limit, a 5xx and a dropped connection too, so one exhausted
+    budget would have reported every upstream in the index as force-pushed at
+    once, unattended, on the nightly schedule.
+    """
+
+    def _discover(self, monkeypatch, rc, stdout="", stderr=""):
+        sys.path.insert(0, str(ROOT / "tools"))
+        import discover
+
+        class R:
+            returncode, stdout, stderr = rc, "", ""
+        R.stdout, R.stderr = stdout, stderr
+        monkeypatch.setattr(discover.subprocess, "run",
+                            lambda *a, **k: R())
+        return discover
+
+    @pytest.mark.static
+    def test_a_vanished_commit_reads_as_missing(self, monkeypatch):
+        """422, not 404. A sha that no longer exists in a repo that does
+        answers `No commit found for SHA` with 422 -- measured against this
+        repo. Trusting 404 alone turns every real audit hit into a crash."""
+        d = self._discover(monkeypatch, 1, stderr=
+                           "gh: No commit found for SHA: dead (HTTP 422)")
+        assert d.gh_json("repos/x/y/commits/dead") is None
+
+    @pytest.mark.static
+    def test_a_deleted_repo_reads_as_missing(self, monkeypatch):
+        d = self._discover(monkeypatch, 1, stderr="gh: Not Found (HTTP 404)")
+        assert d.gh_json("repos/x/gone") is None
+
+    @pytest.mark.static
+    def test_a_rate_limit_is_not_a_missing_pin(self, monkeypatch):
+        d = self._discover(monkeypatch, 1, stderr=
+                           "gh: API rate limit exceeded (HTTP 403)")
+        with pytest.raises(Exception) as e:
+            d.gh_json("repos/x/y/commits/abc")
+        assert "403" in str(e.value)
+
+    @pytest.mark.static
+    def test_a_server_fault_is_not_a_missing_pin(self, monkeypatch):
+        d = self._discover(monkeypatch, 1, stderr="gh: Bad gateway (HTTP 502)")
+        with pytest.raises(Exception):
+            d.gh_json("repos/x/y")
+
+    @pytest.mark.static
+    def test_gh_failing_to_run_is_not_a_missing_pin(self, monkeypatch):
+        """No status at all -- gh absent, DNS gone, connection refused."""
+        d = self._discover(monkeypatch, 1, stderr="dial tcp: no such host")
+        with pytest.raises(Exception):
+            d.gh_json("repos/x/y")
+
+    @pytest.mark.static
+    def test_a_good_answer_is_parsed(self, monkeypatch):
+        d = self._discover(monkeypatch, 0, stdout='{"sha": "abc"}')
+        assert d.gh_json("repos/x/y")["sha"] == "abc"
+
+    @pytest.mark.static
+    def test_an_exhausted_budget_refuses_to_start(self, monkeypatch):
+        d = self._discover(monkeypatch, 0, stdout=json.dumps(
+            {"resources": {"core": {"limit": 1000, "remaining": 3,
+                                    "reset": 0, "used": 997}}}))
+        with pytest.raises(Exception) as e:
+            d.rate_check(500, "--audit")
+        assert "Refusing to start" in str(e.value)
