@@ -20,9 +20,10 @@ package = {
         bundle_name = "dsh-mnemon",
 
         versions = {
+            ["0.1.3"] = { commit = "6d958686b9fce1d9f1e783a03dada530ad20174a" },
             ["0.1.0"] = { commit = "f5d0e48af121b3ba3911540380b8fa1f19679b7f" },
         },
-        latest = "0.1.0",
+        latest = "0.1.3",
 
         needs_build = false,
 

@@ -20,9 +20,10 @@ package = {
         bundle_name = "@oh-dsh/desktop",
 
         versions = {
+            ["0.1.4"] = { commit = "399b6524d7d152c63f1b152a6e082593b526eb88" },
             ["0.1.2"] = { commit = "f20581ca3b944f792d8ab7e2b49053c3cb2f68c1" },
         },
-        latest = "0.1.2",
+        latest = "0.1.4",
 
         needs_build = false,
 

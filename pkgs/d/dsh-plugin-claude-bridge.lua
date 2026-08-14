@@ -20,9 +20,10 @@ package = {
         bundle_name = "dsh-plugin-claude-bridge",
 
         versions = {
+            ["0.1.1"] = { commit = "895431fa8d2b1635334bb71efe1387ba0122df1b" },
             ["0.1.0"] = { commit = "ba9bc23b9210984e035559e6da1980698c07cc28" },
         },
-        latest = "0.1.0",
+        latest = "0.1.1",
 
         needs_build = true,
 
