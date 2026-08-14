@@ -47,7 +47,7 @@ dsh（harness 框架）  +  一组插件（能力）  =  一个可运行的 Agen
 |---|---|---|---|---|
 | **plugin** | 原子能力 | 镜像 tarball + sha256 | 无 | **只负责获取和校验字节** |
 | **group** | 可复用插件组 | 空 | 一组 plugin | 声明"这几个互不冲突"，可被多个 Agent 复用 |
-| **profile** | **一个完整的 Agent** | 空 | 一组 plugin / group | 建 profile，把各 dep 装进去，可直接启动 |
+| **profile** | **一个完整的 Agent** | 空 | 一组 plugin / group | 建 profile，把各 dep 装进去，写下自己的配置主张（§2.5），可直接启动 |
 
 ### 2.1 职责切分是这次重构的核心
 
@@ -118,11 +118,56 @@ profile 的 `package.json` 未被写入任何内容 —— 它不尝试安装，
 
 **这是 Agent 包存在的根据**：dsh 差的正是"把清单变成已装好的树"这一步，而 `deps` 闭包安装是 xpkg 的本职。反过来，`--patch` 在本模型里的位置是**用户侧临时覆盖** —— 装完一个 Agent 后想临时改一行不必动 profile。这个能力写进 Agent 包文档，索引不接管。
 
+### 2.5 配置层是 Agent 主张的载体
+
+上一节说清了 yml 不能带代码。这一节说清它**是**什么 —— 因为 Agent 包的价值有一半在这里。
+
+**dsh 的应用本身就是一棵配置树。** cordis loader 里每个能力是一行（row），有 `id` 有 `config`。yml 是对这棵树的声明式覆盖层，profile 模板注释写死了它的三种操作：
+
+> id-targeted config overrides, disables, and insert lists; `!!js` expressions allowed
+
+所以一个 bundle "改变 harness 行为"的方式不是改代码，而是声明它对共享行树的覆盖：
+
+```yaml
+- id: system-prompt
+  config:
+    persona: !!js process.env.CC_TUI_PERSONA ?? 'You are a coding agent.'
+```
+
+三个由此而来的事实，都直接影响本设计：
+
+**① 覆盖是整行替换，不是合并 —— 这是设计不是缺陷。** `dsh-cc-tui` 自己的 patch 注释：「A patch replaces the targeted row's whole `config`, so each row below restates every key it owns」。§3 的行冲突就是这条规则的必然结果，因此冲突检查必须按 row 做，且必须前置到发布期。
+
+**② 支持 `!!js`，所以 yml 是小配置程序而非静态数据。** 参数化从这里进（`CC_TUI_PERSONA`），这解释了为什么 dsh 全树只读 3 个自有环境变量（§4）——**参数化不走 env，走 patch**。索引不该再发明环境变量去表达配置。
+
+**③ 重配不需要 fork。** 想换 persona 不必 fork `dsh-cc-tui`。这是分层的根本目的。
+
+#### 四层 = 四个作者尺度
+
+| 层 | 属于谁 | 持久 | 随什么走 |
+|---|---|---|---|
+| bundle 自带 patch | 插件作者 | ✅ | 随包分发 |
+| **`<profile>/cordis.patch.yml`** | **这个 Agent** | ✅ | **随 profile** |
+| `$DSH_HOME/cordis.patch.yml` | 这台机器 / 这个 subos | ✅ | 随 subos（§4 的隔离让它自动变成 per-subos 偏好） |
+| `--patch <path>` | 本次启动 | ❌ | 不留痕迹 |
+
+`--dump-default-config` 的存在是这个意图的直接证据 —— 它专门打印「去掉用户层和 `--patch` 的树」，就是为了让人对比"插件给我的"和"我自己改的"。
+
+#### 由此定下 Agent 包的构成
+
+```
+Agent 包 = deps（成员代码） + profile 的 cordis.patch.yml（这个 Agent 的主张）
+```
+
+第 2 层是**唯一**既持久又 per-profile 的层：第 1 层属于插件作者，第 3 层是机器级，第 4 层不持久。一个 Agent 要表达"我这套里 persona 该长这样、某行该关掉"，只能写在这儿。
+
+这也补齐了三层模型的语义：**plugin 出字节，group 出组合，Agent 出主张。** 之前 `dsh.patch` 字段一直没说清的就是这个位置。
+
 ---
 
 ## 3. 冲突：发布前的门，不是安装时的告警
 
-两个 bundle patch 同一个 row id 时不会合并 —— patch 替换整行 config，后装的静默覆盖前者。**冲突单位是 row，不是 package**，所以 xpkg 即使有 `conflicts` 字段也套不上（而它没有：规范、150+ 配方、xlings 源码里都没有）。
+两个 bundle patch 同一个 row id 时不会合并 —— 按 §2.5① 的规则，patch 替换整行 config，后装的静默覆盖前者。**冲突单位是 row，不是 package**，所以 xpkg 即使有 `conflicts` 字段也套不上（而它没有：规范、150+ 配方、xlings 源码里都没有）。
 
 实测全生态的冲突面很小：
 
