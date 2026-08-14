@@ -12,6 +12,10 @@ package = {
     keywords = {"dsh", "plugin", "sleep"},
 
     dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "web",
+
         bundle_name = "@huanlin/dsh-plugin-sleep",
 
         versions = {

@@ -13,6 +13,10 @@ package = {
     keywords = {"dsh", "context", "tool", "ui"},
 
     dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "web",
+
         bundle_name = "dsh-context-doctor",
 
         versions = {

@@ -12,6 +12,10 @@ package = {
     keywords = {"dsh", "sandbox"},
 
     dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "web",
+
         bundle_name = "@deepseek-ai/dsh-sandbox-microsandbox",
 
         versions = {

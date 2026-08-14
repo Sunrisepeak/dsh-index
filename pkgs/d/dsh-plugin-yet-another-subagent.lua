@@ -12,6 +12,10 @@ package = {
     keywords = {"dsh", "plugin", "yet", "another", "subagent"},
 
     dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "web",
+
         bundle_name = "@huanlin/dsh-plugin-yet-another-subagent",
 
         versions = {
@@ -19,6 +23,10 @@ package = {
         },
         latest = "0.1.1",
 
+        -- Base rows this bundle replaces. Another bundle patching
+        -- any of these in the same profile silently wins or loses,
+        -- depending on install order.
+        overrides = {"tool-subagent"},
         needs_build = false,
 
         -- Upstream ships no redistributable license, so this index has

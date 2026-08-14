@@ -12,6 +12,10 @@ package = {
     keywords = {"dsh", "super", "injector"},
 
     dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "web",
+
         bundle_name = "@dsh-external/dsh-super-injector",
 
         versions = {

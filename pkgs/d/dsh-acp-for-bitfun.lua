@@ -13,6 +13,10 @@ package = {
     keywords = {"dsh", "bitfun"},
 
     dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "web",
+
         bundle_name = "dsh-acp-for-bitfun",
 
         versions = {

@@ -51,6 +51,13 @@ jobs:
         run: pytest -m static --tb=short -q
       - name: Isolation compliance
         run: pytest -m isolation --tb=short -q
+      # Generated descriptors are re-derived rather than diffed: editing the
+      # generated file instead of tools/agents.json is exactly how the two
+      # drift, and a diff review will not catch it.
+      - name: Composites match their source
+        run: python3 tools/gen_agents.py --check
+      - name: Every plugin declares kind and profile
+        run: python3 tools/add_kind.py --check
 
   site:
     name: site builds

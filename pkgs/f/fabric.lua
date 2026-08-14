@@ -12,6 +12,10 @@ package = {
     keywords = {"dsh", "fabric"},
 
     dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "web",
+
         bundle_name = "cordis-fabric-bundle",
 
         versions = {

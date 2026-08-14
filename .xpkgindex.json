@@ -1,14 +1,14 @@
 {
   "site": {
     "title": {
-      "en": "dsh plugin index",
-      "zh": "dsh 插件索引",
-      "zh-Hant": "dsh 外掛索引"
+      "en": "dsh index — plugins and Agents",
+      "zh": "dsh index — 插件与 Agent",
+      "zh-Hant": "dsh index — 外掛與 Agent"
     },
     "description": {
-      "en": "xlings package index for the DeepSeek Harness plugin ecosystem",
-      "zh": "DeepSeek Harness 插件生态的 xlings 包索引",
-      "zh-Hant": "DeepSeek Harness 外掛生態的 xlings 套件索引"
+      "en": "Browse the DeepSeek Harness plugin ecosystem, and install ready-to-run Agents: a harness plus a composed set of plugins. Install with dsh directly, or through xlings for mirror acceleration.",
+      "zh": "浏览 DeepSeek Harness 插件生态，并安装开箱即用的 Agent —— harness 加一组已组合的插件。可直接用 dsh 安装，也可经 xlings 走镜像加速。",
+      "zh-Hant": "瀏覽 DeepSeek Harness 外掛生態，並安裝開箱即用的 Agent —— harness 加一組已組合的外掛。可直接用 dsh 安裝，也可經 xlings 走鏡像加速。"
     },
     "logo": "dsh index"
   },
@@ -33,9 +33,9 @@
     "project_name": "xlings",
     "project_url": "https://github.com/openxlings/xlings",
     "description": {
-      "en": "Every plugin here is a DeepSeek Harness profile bundle, installed through xlings and composed by dsh itself",
-      "zh": "这里的每个插件都是 DeepSeek Harness 的 profile bundle，由 xlings 安装、由 dsh 自己组合",
-      "zh-Hant": "這裡的每個外掛都是 DeepSeek Harness 的 profile bundle，由 xlings 安裝、由 dsh 自己組合"
+      "en": "dsh plus a set of plugins is an Agent. This index carries all three tiers — plugins as atoms, groups as reusable sets, and Agents as complete profiles you can boot — and each is one xpkg descriptor, so xlings resolves the dependencies and writes the profile for you.",
+      "zh": "dsh + 一组插件 = 一个 Agent。本索引收录三层：插件是原子，插件组是可复用组合，Agent 是可直接启动的完整 profile —— 每一层都是一个 xpkg 描述文件，xlings 会替你解析依赖并写好 profile。",
+      "zh-Hant": "dsh + 一組外掛 = 一個 Agent。本索引收錄三層：外掛是原子，外掛組是可重用組合，Agent 是可直接啟動的完整 profile —— 每一層都是一個 xpkg 描述檔，xlings 會替你解析相依並寫好 profile。"
     },
     "maintainers": [
       "Sunrisepeak"
@@ -64,6 +64,35 @@
   "pkgs_dir": "pkgs",
   "list": {
     "variant": "card"
+  },
+  "growth": {
+    "total_label": {
+      "en": "everything",
+      "zh": "全部",
+      "zh-Hant": "全部"
+    },
+    "series": [
+      {
+        "facet": "tier",
+        "value": "agent",
+        "label": {
+          "en": "Agents",
+          "zh": "Agent",
+          "zh-Hant": "Agent"
+        },
+        "tone": "header"
+      },
+      {
+        "facet": "delivery",
+        "value": "mirrored",
+        "label": {
+          "en": "mirrored",
+          "zh": "已镜像",
+          "zh-Hant": "已鏡像"
+        },
+        "tone": "tool"
+      }
+    ]
   },
   "base_url": "https://sunrisepeak.github.io/dsh-index",
   "languages": [
@@ -139,14 +168,15 @@
         "zh-Hant": "快速開始"
       },
       "description": {
-        "en": "Install dsh, add this index, then install your first plugin.",
-        "zh": "装好 dsh，添加这个索引，然后装第一个插件。",
-        "zh-Hant": "裝好 dsh，加入這個索引，然後裝第一個外掛。"
+        "en": "Install dsh, add this index, then install a complete Agent and boot it.",
+        "zh": "装好 dsh，添加这个索引，然后装一个完整 Agent 并启动它。",
+        "zh-Hant": "裝好 dsh，加入這個索引，然後裝一個完整 Agent 並啟動它。"
       },
       "lines": [
         "xlings install dsh -y",
         "xlings config --index-repo dsh:https://github.com/Sunrisepeak/dsh-index.git",
-        "xlings install dsh:dsh-cc-tui -y"
+        "xlings install dsh:agent-web-coding -y",
+        "dsh --profile coding"
       ],
       "action": {
         "en": "Read the guide",

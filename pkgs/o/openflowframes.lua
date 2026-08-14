@@ -13,6 +13,10 @@ package = {
     keywords = {"dsh", "openflowframes"},
 
     dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "web",
+
         bundle_name = "@zerohackz/dsh-openflowframes",
 
         versions = {

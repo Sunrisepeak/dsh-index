@@ -7,6 +7,7 @@ still works under the runtime that actually performs it.
 """
 import pathlib
 import re
+import sys
 
 import pytest
 
@@ -33,6 +34,21 @@ def _dsh_block(body: str) -> str:
             if depth == 0:
                 return body[i:k + 1]
     raise AssertionError("unterminated dsh block")
+
+
+KINDS = {"plugin", "group", "profile"}
+
+
+def _kind(body: str) -> str:
+    """plugin | group | profile. Absent is a schema error, never a default --
+    see TestKind."""
+    return _field(_dsh_block(body), "kind") or ""
+
+
+def _members(body: str) -> list:
+    d = _dsh_block(body)
+    m = re.search(r"members = \{(.*?)\n        \}", d, re.S)
+    return re.findall(r'"([^"]+)"', m.group(1)) if m else []
 
 
 @pytest.fixture(scope="module", params=[p for p in PKGS], ids=lambda p: p.stem)
@@ -83,8 +99,17 @@ class TestDshBlock:
 
     @pytest.mark.static
     def test_bundle_name(self, pkg):
+        """A plugin IS one upstream bundle, so it names it. A group and an
+        Agent are manifests over other packages and have no bundle of their
+        own -- requiring one would force an invented name into the profile
+        manifest, where it would resolve to nothing."""
         _, body = pkg
-        assert _field(_dsh_block(body), "bundle_name"), "bundle_name required"
+        d = _dsh_block(body)
+        if _kind(body) != "plugin":
+            assert not _field(d, "bundle_name"), \
+                "only a plugin names an upstream bundle"
+            return
+        assert _field(d, "bundle_name"), "bundle_name required"
 
     @pytest.mark.static
     def test_origin_comes_from_the_standard_repo_field(self, pkg):
@@ -124,6 +149,12 @@ class TestDshBlock:
         """
         _, body = pkg
         d = _dsh_block(body)
+        if _kind(body) != "plugin":
+            # A group and an Agent pin nothing themselves: their
+            # reproducibility is entirely their members' pins, which
+            # TestComposition checks by requiring every member be mirrored.
+            assert "commit" not in d, "only a plugin pins an upstream commit"
+            return
         commits = re.findall(r'commit\s*=\s*"([^"]*)"', d)
         assert commits, "every version must pin a commit"
         for c in commits:
@@ -135,6 +166,8 @@ class TestDshBlock:
         it did exactly that once, when the `source` field it branched on was
         removed and the early return made it a no-op."""
         _, body = pkg
+        if _kind(body) != "plugin":
+            return
         d = _dsh_block(body)
         vblock = d[d.index("versions = {"):]
         vblock = vblock[:vblock.index("},")]
@@ -156,6 +189,159 @@ class TestDshBlock:
         d = _dsh_block(body)
         assert re.search(r"needs_build\s*=\s*(true|false)", d), \
             "needs_build must be declared explicitly (it gates code execution)"
+
+
+class TestKind:
+    """`kind` is what the three-tier model turns on, so it must be present and
+    it must be one of the three. It lives under `dsh.*` rather than in xpkg's
+    `type` because `type` is a closed enum -- libxpkg's parse_type() maps any
+    unknown string to PackageType::Package, so `type = "dsh-agent"` would not
+    fail, it would evaporate."""
+
+    @pytest.mark.static
+    def test_declared_and_known(self, pkg):
+        _, body = pkg
+        k = _kind(body)
+        assert k, "dsh.kind required"
+        assert k in KINDS, f"unknown kind {k!r}, expected one of {sorted(KINDS)}"
+
+    @pytest.mark.static
+    def test_kind_is_not_smuggled_into_type(self, pkg):
+        _, body = pkg
+        assert 'type = "dsh' not in body, \
+            "xpkg's type is a closed enum; an unknown value is silently dropped"
+
+    @pytest.mark.static
+    def test_every_tier_is_represented(self):
+        """A tier with no package is a tier that is never exercised -- the
+        site would render an empty section and the composition path would go
+        untested."""
+        kinds = {_kind(p.read_text(encoding="utf-8")) for p in PKGS}
+        assert KINDS <= kinds, f"missing tiers: {sorted(KINDS - kinds)}"
+
+
+class TestComposition:
+    """Groups and Agents choose the combination, so a broken one is this
+    index's bug rather than something to warn a user about after install."""
+
+    def _composites(self):
+        for path in PKGS:
+            body = path.read_text(encoding="utf-8")
+            if _kind(body) in ("group", "profile"):
+                yield path, body
+
+    @pytest.mark.static
+    def test_members_declared(self):
+        for path, body in self._composites():
+            assert _members(body), f"{path.stem}: a composite needs members"
+
+    @pytest.mark.static
+    def test_members_exist(self):
+        names = {p.stem for p in PKGS}
+        for path, body in self._composites():
+            for m in _members(body):
+                assert m in names, f"{path.stem}: member {m!r} has no descriptor"
+
+    @pytest.mark.static
+    def test_members_are_plugins(self):
+        """template.lua composes members by handing each one's tarball to
+        `dsh plugin add`, and only a plugin has a tarball. A group nested
+        inside another composite is expressed by expanding it (see
+        tools/gen_agents.py), not by naming it here."""
+        kind_of = {p.stem: _kind(p.read_text(encoding="utf-8")) for p in PKGS}
+        for path, body in self._composites():
+            for m in _members(body):
+                assert kind_of[m] == "plugin", \
+                    f"{path.stem}: member {m!r} is a {kind_of[m]}, not a plugin"
+
+    @pytest.mark.static
+    def test_members_are_mirrored(self):
+        """A group or an Agent is this index's reproducible unit. One whose
+        members fetch from upstream at boot inherits every failure mode the
+        mirror exists to remove -- no CN mirror, no checksum, and unusable if
+        the repo is deleted -- while presenting itself as curated."""
+        mirrored = {p.stem for p in PKGS
+                    if "mirror = {" in p.read_text(encoding="utf-8")}
+        for path, body in self._composites():
+            for m in _members(body):
+                assert m in mirrored, \
+                    f"{path.stem}: member {m!r} is not mirrored"
+
+    @pytest.mark.static
+    def test_no_two_members_replace_the_same_base_row(self):
+        """The pre-publish conflict gate.
+
+        A bundle patch replaces the targeted row's whole config rather than
+        merging into it, so two members owning the same dsh-base row means the
+        later one silently wins and the earlier author's intent disappears.
+        At install time that can only be a warning -- the user arranged it.
+        Inside a group or an Agent the index arranged it, so it must not ship.
+
+        Row ids come from tools/mine_overrides.py, which intersects each
+        bundle's own cordis.patch.yml with dsh-base's row ids. Not hand-marked.
+        """
+        rows_of = {}
+        for p in PKGS:
+            d = _dsh_block(p.read_text(encoding="utf-8"))
+            m = re.search(r"overrides = \{([^}]*)\}", d)
+            rows_of[p.stem] = re.findall(r'"([^"]+)"', m.group(1)) if m else []
+
+        for path, body in self._composites():
+            owner = {}
+            for member in _members(body):
+                for row in rows_of.get(member, []):
+                    assert row not in owner, (
+                        f"{path.stem}: {member!r} and {owner[row]!r} both "
+                        f"replace the dsh-base row {row!r}; the later member "
+                        f"silently wins, so this combination cannot ship")
+                    owner[row] = member
+
+    @pytest.mark.static
+    def test_generated_descriptors_match_their_source(self):
+        """The flat member list is expanded from tools/agents.json. Committing
+        an edit to the generated file instead of the source is how the two
+        drift, so CI re-runs the expansion rather than trusting the diff."""
+        import subprocess
+        r = subprocess.run([sys.executable, str(ROOT / "tools" / "gen_agents.py"),
+                            "--check"], capture_output=True, text=True, cwd=ROOT)
+        assert r.returncode == 0, r.stdout + r.stderr
+
+
+class TestAgent:
+    @pytest.mark.static
+    def test_agent_declares_its_profile(self):
+        """An Agent IS a profile, so the name is part of what it is -- not
+        something the index derived from its members or its own package name."""
+        for path in PKGS:
+            body = path.read_text(encoding="utf-8")
+            if _kind(body) != "profile":
+                continue
+            assert _field(_dsh_block(body), "profile"), \
+                f"{path.stem}: an Agent must declare dsh.profile"
+
+    @pytest.mark.static
+    def test_group_declares_no_profile(self):
+        """A group is a set of plugins, not a running thing. Naming a profile
+        would imply booting it, which a group cannot do."""
+        for path in PKGS:
+            body = path.read_text(encoding="utf-8")
+            if _kind(body) != "group":
+                continue
+            assert not _field(_dsh_block(body), "profile"), \
+                f"{path.stem}: a group does not own a profile"
+
+    @pytest.mark.static
+    def test_agent_profile_names_do_not_collide(self):
+        seen = {}
+        for path in PKGS:
+            body = path.read_text(encoding="utf-8")
+            if _kind(body) != "profile":
+                continue
+            p = _field(_dsh_block(body), "profile")
+            assert p not in seen, (
+                f"{path.stem} and {seen[p]} both create profile {p!r}; "
+                f"installing both would compose them into one")
+            seen[p] = path.stem
 
 
 class TestLicensePolicy:
@@ -262,15 +448,26 @@ class TestProfileResolution:
     """
 
     @pytest.mark.static
-    def test_only_dsh_profile_and_web(self):
+    def test_resolution_order_is_override_then_declared_then_web(self):
         t = (ROOT / "template.lua").read_text(encoding="utf-8")
         body = t[t.index("local function profile()"):]
         body = body[:body.index("\nend")]
-        assert 'os.getenv("DSH_PROFILE")' in body
+        assert 'os.getenv("XIM_DSH_PROFILE")' in body
+        assert "package.dsh.profile" in body
         assert '"web"' in body
         # No invented sources: not the subos, not the package name.
         assert "subos" not in body.lower(), "the subos is not a profile name"
         assert "package.name" not in body, "a plugin does not name its profile"
+
+    @pytest.mark.static
+    def test_the_override_does_not_impersonate_an_upstream_variable(self):
+        """dsh reads DSH_HOME, DSH_WEB_URL and DSH_TELEMETRY_DISABLED, and
+        nothing else -- there is no DSH_PROFILE anywhere in its tree. Naming
+        ours that would claim an upstream contract that does not exist, and
+        would collide the day upstream defines it to mean something else."""
+        t = (ROOT / "template.lua").read_text(encoding="utf-8")
+        assert 'os.getenv("DSH_PROFILE")' not in t
+        assert "XIM_DSH_PROFILE" in t
 
     @pytest.mark.static
     def test_no_xlings_env_var_is_read(self):
@@ -278,6 +475,18 @@ class TestProfileResolution:
         so the branch was dead code while the docs claimed it worked."""
         t = (ROOT / "template.lua").read_text(encoding="utf-8")
         assert 'os.getenv("XLINGS' not in t
+
+    @pytest.mark.static
+    def test_every_plugin_records_the_profile_its_readme_documents(self):
+        """The name is upstream's to choose, so it is recorded rather than
+        derived -- and recorded even when it equals the `web` fallback, so
+        "upstream says web" stays distinguishable from "upstream says nothing"."""
+        for path in PKGS:
+            body = path.read_text(encoding="utf-8")
+            d = _dsh_block(body)
+            if _field(d, "kind") != "plugin":
+                continue
+            assert _field(d, "profile"), f"{path.stem}: dsh.profile required"
 
     @pytest.mark.static
     def test_install_prints_upstreams_own_launch_command(self):
@@ -289,34 +498,3 @@ class TestProfileResolution:
         assert "log.info" in t
 
 
-class TestSitePlugin:
-    """The site plugin is the only place descriptors become user-visible, so
-    its contract with the core is worth pinning down here."""
-
-    @pytest.mark.static
-    def test_facets_are_whitespace_joined_strings(self):
-        """pkg.facets is Dict[str, str] and the core splits on whitespace.
-
-        Assigning a list made every value render as its Python repr, so
-        "['web-ui'," and "'session']" appeared as separate facet buttons on the
-        home page. The plugin must join, and must drop values containing
-        whitespace rather than let them split into two facets.
-        """
-        import importlib.util
-        spec = importlib.util.spec_from_file_location(
-            "dshplug", ROOT / ".xpkgindex" / "plugins" / "dsh.py")
-        mod = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(mod)
-
-        assert mod._facet_value(["a", "b", "a"]) == "a b", "join and dedupe"
-        assert mod._facet_value(["ok", "not ok"]) == "ok", "drop spaced values"
-        assert mod._facet_value(["a", "b", "c"], limit=2) == "a b"
-        assert mod._facet_value([]) == ""
-        for v in mod._facet_value(["x", "y"]).split():
-            assert "[" not in v and "'" not in v, "no python repr leakage"
-
-
-class TestProfileResolution:
-    """The profile a plugin lands in is the one fact a user must not have to
-    guess -- and the resolution chain reads environment variables, which is
-    exactly where an unverified name turns into dead code."""

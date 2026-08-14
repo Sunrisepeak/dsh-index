@@ -13,6 +13,10 @@ package = {
     keywords = {"dsh", "coding-agent", "tui"},
 
     dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "tui",
+
         bundle_name = "dsh-tui",
 
         versions = {
@@ -20,6 +24,10 @@ package = {
         },
         latest = "0.2.1",
 
+        -- Base rows this bundle replaces. Another bundle patching
+        -- any of these in the same profile silently wins or loses,
+        -- depending on install order.
+        overrides = {"hmr", "system-prompt", "tools"},
         needs_build = false,
 
         -- Published by tools/mirror.py to GitHub and GitCode, verified

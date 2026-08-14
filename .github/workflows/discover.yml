@@ -1,0 +1,133 @@
+# Track the ecosystem: find new plugins, follow releases, and alarm when a
+# pinned commit disappears.
+#
+# Three jobs rather than one, because they need different amounts of human
+# attention and must not share a PR. A reviewer reading "14 new plugins"
+# should not also be reviewing a repin of something already published, and an
+# audit hit is not a change to review at all -- it is a promise that broke.
+name: discover
+
+on:
+  schedule:
+    # Daily, off the hour: GitHub queues scheduled runs at :00 heavily enough
+    # that a search-API job there competes with everyone else's cron.
+    - cron: '17 4 * * *'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: which scan to run
+        type: choice
+        options: [all, new, bump, audit]
+        default: all
+
+permissions:
+  contents: write
+  pull-requests: write
+
+env:
+  # Falls back to the run's own token, which can read public repos and open a
+  # PR. A PAT in DISCOVER_TOKEN raises the search-API rate limit and lets the
+  # opened PR trigger CI, which GITHUB_TOKEN-authored PRs deliberately do not.
+  GH_TOKEN: ${{ secrets.DISCOVER_TOKEN || secrets.GITHUB_TOKEN }}
+
+jobs:
+  audit:
+    name: pinned commits still exist
+    if: github.event_name == 'schedule' || inputs.mode == 'all' || inputs.mode == 'audit'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      # No PR, and no auto-fix. A pin that vanished means a force push, a
+      # rewritten history or a deleted repo; following the new head silently
+      # would turn "this index pins exactly these bytes" into a promise that
+      # quietly stopped holding. The run fails and a human decides.
+      - name: Every pinned commit must still resolve
+        run: python3 tools/discover.py --audit --json /tmp/gone.json
+      - if: failure()
+        run: |
+          echo "### Pinned commits missing upstream" >> "$GITHUB_STEP_SUMMARY"
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          cat /tmp/gone.json >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+  new:
+    name: new plugins
+    if: github.event_name == 'schedule' || inputs.mode == 'all' || inputs.mode == 'new'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Scan the topics
+        run: python3 tools/discover.py --new --json /tmp/new.json
+      - name: Write descriptors
+        run: |
+          python3 tools/sync.py --new /tmp/new.json | tee /tmp/new.log
+          python3 tools/add_kind.py
+      - name: Open a PR if anything changed
+        run: |
+          git config user.name  "dsh-index bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add pkgs/ tools/profiles.json 2>/dev/null || true
+          git diff --cached --quiet && { echo "nothing new"; exit 0; }
+          BR="chore/discover-$(date +%Y%m%d)"
+          git checkout -b "$BR"
+          git commit -q -m "chore(index): add plugins found in the dsh-plugin topic
+
+          $(cat /tmp/new.log)"
+          git push -q -u origin "$BR"
+          gh pr create --base main --title "chore(index): new plugins from the dsh-plugin topic" \
+            --body "Found by \`tools/discover.py --new\`. Each entry declares \`dsh.bundle\` in its
+          package.json at the scanned commit, is not archived, and has at least 2 stars.
+
+          Descriptors arrive **un-mirrored** — that is the fail-closed state. \`tools/mirror.py\`
+          adds a \`mirror\` block only after publishing a verified tarball under a licence that
+          permits redistribution.
+
+          \`\`\`
+          $(cat /tmp/new.log)
+          \`\`\`"
+
+  bump:
+    name: version updates
+    if: github.event_name == 'schedule' || inputs.mode == 'all' || inputs.mode == 'bump'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Look for releases past our pins
+        run: python3 tools/discover.py --bump --json /tmp/bump.json
+      - name: Add the new versions
+        # The old version stays: somebody may be pinned to it, and its mirror
+        # tarball is already published under that tag.
+        run: python3 tools/sync.py --bump /tmp/bump.json | tee /tmp/bump.log
+      - name: Refresh the npm resolution the site renders from
+        run: python3 tools/check_npm.py || true
+      - name: Open a PR if anything changed
+        run: |
+          git config user.name  "dsh-index bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add pkgs/ tools/npm.json
+          git diff --cached --quiet && { echo "nothing to bump"; exit 0; }
+          BR="chore/bump-$(date +%Y%m%d)"
+          git checkout -b "$BR"
+          git commit -q -m "chore(index): follow upstream releases
+
+          $(cat /tmp/bump.log)"
+          git push -q -u origin "$BR"
+          gh pr create --base main --title "chore(index): follow upstream releases" \
+            --body "Found by \`tools/discover.py --bump\`. A moved head whose package.json version
+          is unchanged is skipped — repinning bytes under the same version number is the one thing
+          a version key must never mean.
+
+          \`\`\`
+          $(cat /tmp/bump.log)
+          \`\`\`
+
+          Note: a newly added version is **not mirrored** until \`tools/mirror.py\` publishes it."

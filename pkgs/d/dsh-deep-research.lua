@@ -13,6 +13,10 @@ package = {
     keywords = {"dsh", "deep", "research"},
 
     dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "web",
+
         bundle_name = "@dsh-external/dsh-deep-research",
 
         versions = {

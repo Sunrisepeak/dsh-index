@@ -2,17 +2,32 @@
 
 [English](README.md) | 中文
 
-**DeepSeek Harness** 插件生态的 [xlings](https://github.com/openxlings/xlings)
-包索引。命名空间：`dsh`。
+**dsh + 一组插件 = 一个 Agent。** 本索引同时浏览与分发这两者 ——
+[DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 生态的插件，
+以及由它们组装成的完整 Agent。
 
-## 安装
+站点：**<https://sunrisepeak.github.io/dsh-index>**
 
-**通过 xlings 安装**（推荐）
+## 这个项目是什么
+
+**1 · 生态浏览站。** 收录值得装的 dsh 插件，可搜索，标明它做什么、字节从哪来，
+以及生态随时间的增长曲线。
+
+**2 · 一条命令安装，两条路可选。** dsh 自己就能装插件，所以每个插件页**先给出它的
+原生命令**；本索引的命令排在下面，补上 dsh 给不了的东西：sha256 校验与 CN 镜像。
+
+**3 · Agent 的分发渠道。** 一个 Agent 就是 harness 加一组已组合的插件 ——
+在 dsh 自己的模型里就是一个 *profile*。这里每个 Agent 是一个 xpkg 描述文件，
+`xlings install` 会解析成员、装齐、写好 profile，然后你直接启动。
+
+## 快速开始
 
 ```bash
 xlings install dsh -y
 xlings config --index-repo dsh:https://github.com/Sunrisepeak/dsh-index.git
-xlings install dsh:dsh-cc-tui -y
+
+xlings install dsh:agent-web-coding -y   # 一个完整 Agent
+dsh --profile coding                     # 启动它
 ```
 
 <details>
@@ -32,11 +47,60 @@ irm https://d2learn.org/xlings-install.ps1.txt | iex
 
 </details>
 
+## 三层
+
+| 层 | 是什么 | 安装它会做什么 |
+| --- | --- | --- |
+| **插件** | 一个上游 bundle —— 原子 | 装进它自己 README 所写的 profile |
+| **插件组** | 可干净共存的可复用组合 | 装齐全部成员 |
+| **Agent** | harness + 成员 + 这个 Agent 自己的配置层 | 建它的 profile，把成员全部组合进去 |
+
+插件组和 Agent **没有自己的字节**，它们是几百字节的清单，载荷在成员身上。
+成员必须是已镜像的包 —— 一个内容要在启动时回上游拉的"精选集"，
+会把镜像本来要消除的失败模式全部继承回来。
+
 <details>
-<summary>常用命令 —— 安装、切换、卸载</summary>
+<summary>为什么 Agent 必须是一个包，而不能只是一个 YAML</summary>
+
+dsh 的 profile 由四层 patch 组合而成，启动时还能再叠一层：
 
 ```bash
-# 添加本索引（命名空间：dsh）
+dsh --profile coding --patch ./extra.yml
+```
+
+但 patch **只有配置、没有依赖声明**，而 dsh 的启动路径根本不碰包管理器。
+让它引用一个你没装的插件，直接退出：
+
+```
+Error: dsh: plugin tree failed to load: failed to apply loader entry include
+```
+
+带依赖的是 profile 的 `package.json`，那才是 `pnpm install` 读的东西。
+所以分发一个 Agent 需要"能执行安装"的东西 —— 而这正是 xpkg 的 `deps` 闭包。
+
+</details>
+
+## 安装
+
+每个插件页都给出两条命令，它们**不等价**：
+
+```bash
+# dsh 原生 —— 装了 dsh 就能用，直连源头
+dsh plugin --profile web add dsh-cc-tui@0.1.6
+
+# 本索引 —— sha256 校验，许可证允许时还有 CN 镜像
+xlings install dsh:dsh-cc-tui -y
+```
+
+原生命令的 spec 逐包不同，在**站点构建时实测决定**，绝不靠猜：npm 确实按我们
+pin 的版本提供的走名字，其余走 pin 死的 commit。今天是 17 个走名字、51 个走
+commit —— 裸 `bundle_name` 只是包自己 `package.json` 的 name，不代表已发布。
+
+<details>
+<summary>你需要的全部命令 —— 安装、切换、卸载</summary>
+
+```bash
+# 添加本索引（namespace: dsh）
 xlings config --index-repo dsh:https://github.com/Sunrisepeak/dsh-index.git
 
 # 搜索与查看
@@ -44,144 +108,138 @@ xlings search dsh:tui
 xlings list dsh:dsh-cc-tui
 
 # 安装
-xlings install dsh:dsh-cc-tui -y            # 最新
+xlings install dsh:agent-web-coding -y      # 一个 Agent
+xlings install dsh:group-web-essentials -y  # 一个插件组
+xlings install dsh:dsh-cc-tui -y            # 单个插件
 xlings install dsh:dsh-cc-tui@0.1.6 -y      # 指定版本
 
-# 指定装进哪个 profile
-DSH_PROFILE=work xlings install dsh:dsh-at-file -y
+# 指定插件落到哪个 profile
+XIM_DSH_PROFILE=work xlings install dsh:dsh-at-file -y
 
-# 带构建脚本、又没进镜像的插件需要这个 ——
+# 未镜像且带构建脚本的插件需要显式授权，
 # 因为安装它等于在你机器上执行上游代码
 DSH_ALLOW_BUILDS=1 xlings install dsh:<plugin> -y
 
-# 按 subos 切版本
+# 按 subos 切换版本
 xlings use dsh-cc-tui 0.1.6
 
-# 卸载 —— 会同时从 profile 里移除
+# 卸载 —— 同时从 profile 里移除
 xlings remove dsh:dsh-cc-tui -y
 ```
+
+`XIM_DSH_PROFILE` 是本索引的变量，**故意不叫 `DSH_PROFILE`**：dsh 根本不读这个
+变量（它只读 `DSH_HOME`、`DSH_WEB_URL`、`DSH_TELEMETRY_DISABLED`），
+用那个名字等于宣称一个并不存在的上游约定。
 
 </details>
 
 <details>
 <summary>插件装到哪去了？怎么启动？</summary>
 
-安装完会打印答案，规则是：
+安装时会打印答案，规则是：
 
-| 怎么装的 | profile | 启动 |
+| 你装的是 | profile | 启动 |
 | --- | --- | --- |
-| `xlings install dsh:<plugin>` | `web` | `dsh web` |
-| `DSH_PROFILE=<name> xlings install …` | `<name>` | `dsh --profile <name>` |
+| 一个 Agent | 它自己声明的 | `dsh --profile <name>` |
+| `xlings install dsh:<plugin>` | 它自己 README 所写的 | `dsh web`，或 `dsh --profile <name>` |
+| `XIM_DSH_PROFILE=<name> xlings install …` | `<name>` | `dsh --profile <name>` |
 
-本索引不替你给 profile 起名 —— 上游模型里这个名字就是你的，`DSH_PROFILE` 和
-`dsh plugin --profile` 给你的是同一个选择。两个都覆盖 base 行的插件放一起会冲突，
-这和直接用上游时一模一样，遇到就分开放。
+本索引**不发明 profile 名**。上游的模型是名字属于用户 ——
+`dsh plugin --profile <name>` 你传什么就建什么 —— 所以插件记录的是它自己文档
+让读者输入的那个名字（65 个是 `web`，2 个 `tui`，1 个 `cc-tui`），
+而 Agent 自己声明名字，因为那个 Agent **就是**那个 profile。
 
 ```bash
-# 实际装了什么、层按什么顺序叠
+# 实际装了什么，以及层的组合顺序
 cat ~/.dsh/profiles/<profile>/package.json
 dsh --profile <profile> --dump-config | grep '^# == '
 ```
 
 </details>
 
-插件默认装进 `web` profile —— 就是上游 `dsh web` 启动的那个。启动方式和上游一致：
-
-```bash
-dsh web
-```
-
-想用别的 profile，名字自己起，和直接用 `dsh plugin` 时一样：
-
-```bash
-DSH_PROFILE=cc-tui xlings install dsh:dsh-cc-tui -y
-dsh --profile cc-tui
-```
-
-**profile 名是你的，不是插件的。** `DSH_PROFILE` 与上游的 `--profile` 一一对应，
-所以上游文档里的每个例子在这里都原样成立。
-
-pnpm 由 `dsh` 的依赖带入 —— `dsh plugin` 本身就是 pnpm 转发器，上游要求 PATH 上有
-pnpm，所以它该待在需要它的那个包的依赖里，而不是出现在每条安装命令上。
-
-完整列表：**<https://sunrisepeak.github.io/dsh-index>**
-
-## 这里的"插件"是什么
-
-dsh 插件是一个 **profile bundle** —— 一个在 `package.json` 里声明
-`"dsh": { "bundle": { "patch": "./cordis.patch.yml" } }` 的 npm 包。装一个插件
-= 往 `$DSH_HOME/profiles/<name>` 加一条依赖，并往 `dsh.profile.bundles` 追加一层；
-dsh 启动时按顺序组合这些层。
-
-这是上游**唯一**的外部插件通道。旧的 `.dsh-plugin` / `repository-plugins` 格式
-已于 2026-08-09 从主线删除。
-
-profile 默认跟随当前 subos，所以进不同 subos 就是不同的插件集。可用
-`DSH_PROFILE` 覆盖。
-
 ## 已镜像 vs 直连
 
-每个包只会是两者之一，站点上有明确标注：
+每个插件二选一，站点上有标：
 
 | | 已镜像 | 直连 |
 |---|---|---|
-| 字节来自 | xlings-res，带 sha256 校验 | GitHub，按 pin 的 commit |
-| CN 加速 | 有 | 无 |
-| 上游删库后 | 仍可安装 | 装不回来 |
-| 带 `prepare` 脚本 | 已在本索引 CI 构建完 | 需要 `DSH_ALLOW_BUILDS=1` |
+| 字节来自 | xlings-res，带 sha256 | GitHub，pin 死的 commit |
+| CN 镜像 | 有 | 无 |
+| 上游删库后 | 仍可安装 | 没了 |
+| 带 `prepare` 脚本 | 已在本索引 CI 里构建 | 需要 `DSH_ALLOW_BUILDS=1` |
 
-**判据是许可证**，不是偏好：镜像 = 再分发。在 `dsh-plugin` topic 下普查的
-169 个 bundle 里，29 个完全没有 LICENSE、另有 13 个无法识别 —— 本索引无权镜像
-它们，所以它们保持直连，并且如实标注。
+**由许可证决定**，不是偏好：镜像即再分发。在 `dsh-plugin` topic 调研的 169 个
+bundle 里，29 个完全没有 LICENSE，另有 13 个无法识别 —— 本索引无权镜像它们，
+所以它们保持直连并如实标注。
 
 ## 新增一个插件
 
-`pkgs/<首字母>/<name>.lua` 下的描述符**只有数据** —— 没有 hook、没有 `xpm`、
-没有 `type`。全部生命周期来自 `template.lua`，由 `pkgindex-build.lua` 在索引
-构建期追加到每个描述符尾部。一套范式，一份实现。
+`pkgs/<首字母>/<名字>.lua` 下的描述符是**纯数据** —— 没有 hook、没有 `xpm`、
+没有 `type`。全部生命周期来自 `template.lua`，由 `pkgindex-build.lua` 在索引构建
+时追加到每个描述符。一套范式，一份实现。
 
 ```lua
 package = {
     spec = "1",
     name = "dsh-cc-tui",
-    description = "Claude Code style full-screen terminal UI",
+    description = "Claude Code 风格全屏终端界面",
     repo = "https://github.com/ccch1mneyyy/dsh-cc-tui",
     licenses = {"BSD-3-Clause"},
 
     dsh = {
+        kind = "plugin",
+        profile = "cc-tui",             -- 它自己 README 让读者输入的名字
         bundle_name = "dsh-cc-tui",
-        versions = { ["0.1.2"] = { commit = "<40 位 sha>" } },
-        latest = "0.1.2",
+        versions = { ["0.1.6"] = { commit = "<40 位 sha>" } },
+        latest = "0.1.6",
         needs_build = false,
     },
 }
 ```
 
-必须 pin 40 位 commit。这个生态里**包名不可信**：36 个社区仓库把自己命名进了
-DeepSeek 在 npm 上真正拥有的 `@deepseek-ai/` scope，裸名安装可能静默解析到
-完全不同的代码。
+永远 pin 40 位 commit。这个生态里包名不可信：36 个社区仓库把自己命名进了
+DeepSeek 在 npm 上真正拥有的 `@deepseek-ai/` 作用域，裸名可能悄悄解析到别的代码。
+
+插件组和 Agent 由 `tools/gen_agents.py` 从 `tools/agents.json` **生成**；
+改源文件，不要改描述符。CI 会重跑展开，两者不会漂移。
 
 详见 [docs/contributing.md](docs/contributing.md)。
+
+## 保持跟进
+
+`tools/discover.py` 扫描 `dsh-plugin` topic，回答三个**分开的**问题，
+每个问题各自成为一个 PR：
+
+```bash
+tools/discover.py --new     # 索引还没收录的仓库
+tools/discover.py --bump    # 已收录但上游发了新版
+tools/discover.py --audit   # 已收录但 pin 的 commit 在上游消失了
+```
+
+`--audit` **永不自动合入**。pin 的 sha 消失意味着 force push 或删库，
+静默跟进会让"本索引 pin 死这些字节"这个承诺无声失效。
 
 ## 检查
 
 ```bash
 lua5.4 tests/libxpkg_sandbox_harness.lua .   # 索引构建回归门
-git checkout -- pkgs/                        # harness 会追加模板，跑完要复原
-pytest -q                                    # 描述符 schema 与策略检查
+git checkout -- pkgs/                        # harness 会追加，跑完还原
+pytest -q                                    # 描述符 schema 与策略
+tools/gen_agents.py --check                  # 组合包与其源文件一致
 ```
 
-沙箱回归门不是可选项。xlings 在 libxpkg 的最小 plain-Lua 沙箱里跑
-`pkgindex-build.lua`，那里 `cprintf` / `try` / `raise` 全是 nil；漏进去一个，
-构建出的索引会**静默丢掉全部 xpm 段**，所有走 artifact 路径的用户都装不上。
+沙箱门不是可选项。xlings 在 libxpkg 的最小 plain-Lua 沙箱里运行
+`pkgindex-build.lua`，那里 `cprintf` / `try` / `raise` 全是 nil；
+混进任何一个，构建出的索引会**静默丢掉全部 xpm 段**，
+走 artifact 路径的所有用户安装都会挂。
 
 ## 相关链接
 
-- [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) · [插件文档](https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/user/develop/basic/publish.zh.md)
-- [`dsh-plugin` topic](https://github.com/topics/dsh-plugin) —— 上游指定的发现入口
+- [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) · [插件文档](https://github.com/deepseek-ai/deepseek-harness/blob/master/docs/user/develop/basic/publish.md)
+- [`dsh-plugin` topic](https://github.com/topics/dsh-plugin) —— 上游的发现入口
 - [xim-pkgindex](https://github.com/openxlings/xim-pkgindex) —— xlings 官方索引（`xim:dsh` 在那里）
 - [awesome-dsh-plugins](https://github.com/AdamPlatin123/awesome-dsh-plugins) —— 生态兼容性报告
 
 ## 许可证
 
-Apache-2.0。每个被收录的插件保留各自的许可证；本仓库只再分发许可证允许的那些。
+Apache-2.0。每个被收录的插件保留自己的许可证；本仓库只再分发许可证允许的那些。

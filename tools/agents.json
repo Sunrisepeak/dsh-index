@@ -1,0 +1,53 @@
+{
+  "_comment": [
+    "Hand-authored source for the group and Agent descriptors.",
+    "tools/gen_agents.py expands `groups` into the flat `members` list that",
+    "template.lua composes at install time, and tests/test_descriptors.py",
+    "re-runs the expansion to prove the committed descriptors still match.",
+    "Members are named here; everything else about them -- version, tarball,",
+    "sha256, licence -- stays in the member's own descriptor."
+  ],
+
+  "groups": [
+    {
+      "name": "group-web-essentials",
+      "version": "0.1.0",
+      "description": {
+        "en": "Five web-surface quality-of-life plugins that compose cleanly: @file mentions, inline annotation, turn rewind, desktop notifications and a background task bar.",
+        "zh": "五个可干净共存的 Web 界面增强插件：@文件引用、选中批注、对话回退、桌面通知、后台任务状态条。"
+      },
+      "members": [
+        "dsh-at-file",
+        "dsh-annotation",
+        "dsh-turn-rewind",
+        "dsh-notification",
+        "dsh-task-status"
+      ]
+    }
+  ],
+
+  "agents": [
+    {
+      "name": "agent-web-coding",
+      "version": "0.1.0",
+      "profile": "coding",
+      "description": {
+        "en": "A ready-to-run coding Agent on the web surface: the harness plus five composed plugins, booted with `dsh --profile coding`.",
+        "zh": "开箱即用的 Web 界面编码 Agent：harness + 五个已组合插件，`dsh --profile coding` 直接启动。"
+      },
+      "groups": ["group-web-essentials"],
+      "extra": []
+    },
+    {
+      "name": "agent-tui-coding",
+      "version": "0.1.0",
+      "profile": "tui-coding",
+      "description": {
+        "en": "A terminal coding Agent: the Claude Code style full-screen TUI surface with desktop notifications, booted with `dsh --profile tui-coding`.",
+        "zh": "终端编码 Agent：Claude Code 风格全屏 TUI 界面 + 桌面通知，`dsh --profile tui-coding` 启动。"
+      },
+      "groups": [],
+      "extra": ["dsh-cc-tui", "dsh-notification"]
+    }
+  ]
+}

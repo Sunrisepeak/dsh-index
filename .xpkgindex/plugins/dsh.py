@@ -1,7 +1,14 @@
-"""dsh plugin-ecosystem renderer for xpkgindex.
+"""dsh ecosystem renderer for xpkgindex.
 
-The one thing a reader of this index must not have to guess is **whether the
-bytes they install are reproducible**. A plugin here arrives one of two ways:
+The index carries three tiers, and the tier is the first thing a reader needs:
+
+  Agent    dsh + a composed plugin set = a complete, runnable Agent. Installing
+           one creates its profile and boots with `dsh --profile <name>`.
+  group    a reusable set of plugins that compose cleanly together.
+  plugin   one atom: a single upstream profile bundle.
+
+The second thing they must not have to guess is **whether the bytes they
+install are reproducible**. A plugin here arrives one of two ways:
 
   mirrored  the tarball lives in xlings-res with a sha256 and a CN mirror; it
             installs offline, survives upstream deleting the repo, and needed
@@ -18,6 +25,7 @@ footnote.
 
 from __future__ import annotations
 
+import json
 import os
 from typing import Any, Dict, List, Optional
 
@@ -31,6 +39,29 @@ def _t(en: str, zh: str, hant: str) -> Dict[str, str]:
 
 # Licenses that grant redistribution, i.e. that make a package mirror-eligible.
 MIRRORABLE = {"MIT", "BSD-3-Clause", "Apache-2.0", "GPL-3.0"}
+
+_HERE = os.path.dirname(os.path.abspath(__file__))
+_ROOT = os.path.dirname(os.path.dirname(_HERE))
+
+
+def _npm_index() -> Dict[str, Any]:
+    """Which bundles npm actually serves, resolved at generation time.
+
+    Rendering must never query npm: a page whose contents depend on a network
+    call made while building is a page that quietly changes meaning when the
+    call fails. tools/check_npm.py resolves it and commits the answer.
+    """
+    try:
+        with open(os.path.join(_ROOT, "tools", "npm.json"), encoding="utf-8") as f:
+            return json.load(f)
+    except (OSError, ValueError):
+        return {}
+
+
+NPM = _npm_index()
+
+TIERS = {"profile": "agent", "group": "group", "plugin": "plugin"}
+TIER_TONES = {"agent": "header", "group": "module", "plugin": "neutral"}
 
 def _facet_value(values, limit: int = 0) -> str:
     """Render a multi-valued facet the way the core reads it: one string, split
@@ -69,6 +100,33 @@ class DshPlugin(Plugin):
             name = os.path.basename(path)[: -len(".lua")]
         return Identity.plain("dsh", name)
 
+    @staticmethod
+    def _native_install(pkg, ext: Dict[str, Any]) -> str:
+        """`dsh plugin --profile <p> add <spec>`, or "" when there is none.
+
+        The spec is chosen by measurement, never by the shape of the name.
+        `bundle_name` is the package's own package.json name and a bare name
+        does not imply publication, so npm.json -- resolved at generation time
+        for both the name AND our pinned version -- decides. Everything else
+        installs from the commit the descriptor already pins, which is always
+        available. Printing a command that 404s is worse than printing none.
+        """
+        if ext["kind"] != "plugin":
+            return ""
+
+        profile = ext["profile"] or "web"
+        entry = NPM.get(pkg.identity.name) or {}
+        if entry.get("pinned_published") and ext["latest"]:
+            spec = f'{entry["name"]}@{ext["latest"]}'
+        elif ext["origin"] and ext["latest"]:
+            commit = str((ext["versions"].get(ext["latest"]) or {}).get("commit") or "")
+            if not commit:
+                return ""
+            spec = f'github:{ext["origin"]}#{commit}'
+        else:
+            return ""
+        return f"dsh plugin --profile {profile} add {spec}"
+
     def on_package(self, pkg, raw: Dict[str, Any]) -> None:
         dsh = raw.get("dsh") or {}
         mirror = dsh.get("mirror") or {}
@@ -90,7 +148,16 @@ class DshPlugin(Plugin):
         # installing runs upstream code on the user's machine.
         needs_auth = bool(dsh.get("needs_build")) and not mirror
 
+        kind = str(dsh.get("kind") or "plugin")
+        tier = TIERS.get(kind, "plugin")
+        latest = str(dsh.get("latest") or "")
+
         ext = {
+            "kind": kind,
+            "tier": tier,
+            "profile": str(dsh.get("profile") or ""),
+            "members": list(dsh.get("members") or []),
+            "groups": list(dsh.get("groups") or []),
             "bundle_name": str(dsh.get("bundle_name") or ""),
             "origin": origin,
             "license": license_id,
@@ -100,12 +167,24 @@ class DshPlugin(Plugin):
             "needs_auth": needs_auth,
             "patch": str(dsh.get("patch") or "./cordis.patch.yml"),
             "versions": dsh.get("versions") or {},
-            "latest": str(dsh.get("latest") or ""),
+            "latest": latest,
             "keywords": raw.get("keywords") or [],
             "authors": raw.get("authors") or [],
             "categories": raw.get("categories") or [],
         }
+        ext["native"] = self._native_install(pkg, ext)
         pkg.extensions["dsh"] = ext
+
+        # dsh installs a plugin itself, so its own command leads and this
+        # index's goes below it (design 6.1). Hiding a path the reader already
+        # has would be the wrong kind of advocacy -- the index earns its place
+        # by saying what it adds, not by omitting the alternative.
+        #
+        # A group and an Agent get no native line at all: dsh has no entry
+        # point that installs a profile (design 2.4), so there is nothing
+        # truthful to print. That is a capability fact, not a layout choice.
+        if ext["native"]:
+            pkg.extensions.setdefault("_core", {})["install_command"] = ext["native"]
 
         # The core reads versions off `xpm`, which does not exist yet at this
         # point: descriptors here are data-only and template.lua supplies xpm
@@ -126,6 +205,7 @@ class DshPlugin(Plugin):
         if not pkg.licenses and license_id and license_id != "NONE":
             pkg.licenses = [license_id]
 
+        pkg.facets["tier"] = tier
         pkg.facets["delivery"] = delivery
         # License stays a fact on the package page (it is what gates mirroring)
         # but is not a browsing axis -- nobody picks a plugin by SPDX id.
@@ -141,12 +221,30 @@ class DshPlugin(Plugin):
             (k for k in ext["keywords"] if k and k != "dsh"), limit=6)
 
         badges = pkg.extensions.setdefault("_badges", [])
+        if tier != "plugin":
+            badges.append(tier)
         badges.append(delivery)
         if needs_auth:
             badges.append("build-opt-in")
 
     def facets(self) -> List[Facet]:
         return [
+            Facet(
+                key="tier",
+                label=_t("kind", "类型", "類型"),
+                weight=5,
+                values=[
+                    FacetValue(key="agent",
+                               label=_t("Agent", "Agent", "Agent"),
+                               tone="header"),
+                    FacetValue(key="group",
+                               label=_t("group", "插件组", "外掛組"),
+                               tone="module"),
+                    FacetValue(key="plugin",
+                               label=_t("plugin", "插件", "外掛"),
+                               tone="neutral"),
+                ],
+            ),
             Facet(
                 key="delivery",
                 label=_t("delivery", "分发方式", "分發方式"),
@@ -165,22 +263,38 @@ class DshPlugin(Plugin):
         ]
 
     def row(self, pkg) -> RowSpec:
-        """The card leads with delivery, because that is the property a reader
-        cannot recover from the package name or description.
+        """An Agent and a group lead with what they are; a plugin leads with
+        how its bytes arrive, because that is the property a reader cannot
+        recover from the name or the description.
 
-        The strip shows the UPSTREAM REPO, not a `dsh plugin add <name>`
-        command. Showing the latter would be actively wrong: `bundle_name` is
-        the package.json name, and in this ecosystem those are not resolvable
-        identifiers -- `@dsh-external/dsh-ads` is not on npm, so anyone copying
-        that line would get a 404. The install command the card already carries
-        (`xlings install dsh:<name>`) is the one that works.
+        A plugin's strip shows the UPSTREAM REPO rather than a bare
+        `dsh plugin add <bundle_name>`: in this ecosystem those names are not
+        resolvable identifiers -- `@dsh-external/dsh-ads` is not on npm -- so
+        that line would 404 for anyone who copied it. The resolvable form is
+        long enough to belong on the package page, not in a listing row, and
+        the page carries it as the leading install command.
+
+        An Agent's strip is the command that boots it, which is the whole
+        point of the tier: install it, then type this.
         """
         ext = pkg.extensions.get("dsh", {})
+        tier = ext.get("tier", "plugin")
+
+        if tier == "agent":
+            p = ext.get("profile") or "web"
+            code = "dsh web" if p == "web" else f"dsh --profile {p}"
+        elif tier == "group":
+            n = len(ext.get("members") or [])
+            code = f"{n} plugins"
+        else:
+            code = f"github.com/{ext['origin']}" if ext.get("origin") else ""
+
         return RowSpec(
             variant="card",
-            tone=DELIVERY_TONES.get(ext.get("delivery"), "neutral"),
-            lead=ext.get("delivery") or "direct",
-            code=(f"github.com/{ext['origin']}" if ext.get("origin") else ""),
+            tone=(TIER_TONES[tier] if tier != "plugin"
+                  else DELIVERY_TONES.get(ext.get("delivery"), "neutral")),
+            lead=(tier if tier != "plugin" else (ext.get("delivery") or "direct")),
+            code=code,
             badges=list(pkg.extensions.get("_badges", [])),
         )
 
@@ -188,6 +302,72 @@ class DshPlugin(Plugin):
         ext = pkg.extensions.get("dsh", {})
         blocks: List[Block] = []
         delivery = ext.get("delivery")
+        tier = ext.get("tier", "plugin")
+        ref = pkg.identity.install_ref
+
+        # Where a plugin's native command leads, this index's follows -- and
+        # says what it adds, since the two are not equivalent: the native one
+        # goes direct with no CN mirror and no checksum.
+        if ext.get("native"):
+            blocks.append(Block(
+                kind="code", weight=1,
+                title=_t("Install with mirror acceleration",
+                         "用镜像加速安装", "用鏡像加速安裝"),
+                data={
+                    "code": f"xlings install dsh:{ref} -y",
+                    "caption": _t(
+                        "The command above installs straight from upstream. "
+                        "This one goes through the index instead: a "
+                        "sha256-checked tarball with a CN mirror where the "
+                        "licence permits one.",
+                        "上面那条直连上游。这条走本索引：带 sha256 校验的 tarball，"
+                        "许可证允许时还有 CN 镜像。",
+                        "上面那條直連上游。這條走本索引：帶 sha256 校驗的 tarball，"
+                        "授權允許時還有 CN 鏡像。",
+                    ),
+                }))
+
+        if tier == "agent":
+            p = ext.get("profile") or "web"
+            launch = "dsh web" if p == "web" else f"dsh --profile {p}"
+            blocks.append(Block(
+                kind="callout", weight=2,
+                data={"tone": "header", "text": _t(
+                    f"An Agent: installing composes {len(ext.get('members') or [])} "
+                    f"plugins into the profile '{p}'. Boot it with `{launch}`.",
+                    f"一个 Agent：安装即把 {len(ext.get('members') or [])} 个插件"
+                    f"组合进 profile『{p}』，用 `{launch}` 启动。",
+                    f"一個 Agent：安裝即把 {len(ext.get('members') or [])} 個外掛"
+                    f"組合進 profile『{p}』，用 `{launch}` 啟動。",
+                )}))
+        elif tier == "group":
+            blocks.append(Block(
+                kind="callout", weight=2,
+                data={"tone": "module", "text": _t(
+                    "A reusable group: these plugins are verified not to "
+                    "replace the same base row, so they compose. Installing it "
+                    "installs all of them.",
+                    "一个可复用插件组：这些插件经校验不会替换同一个 base 行，"
+                    "因此可以共存。安装它就是安装全部成员。",
+                    "一個可重用外掛組：這些外掛經校驗不會替換同一個 base 行，"
+                    "因此可以共存。安裝它就是安裝全部成員。",
+                )}))
+
+        members = ext.get("members") or []
+        if members:
+            blocks.append(Block(
+                kind="list", weight=20,
+                title=_t(f"Members ({len(members)})", f"成员（{len(members)}）",
+                         f"成員（{len(members)}）"),
+                data={"items": members}))
+            if ext.get("groups"):
+                blocks.append(Block(
+                    kind="kv", weight=21,
+                    title=_t("Built from", "组合自", "組合自"),
+                    data={"items": [{"key": _t("groups", "插件组", "外掛組"),
+                                     "value": ", ".join(ext["groups"]),
+                                     "mono": True}]}))
+            return blocks
 
         if delivery == "mirrored":
             note = _t(
@@ -252,6 +432,13 @@ class DshPlugin(Plugin):
         if ext.get("origin"):
             items.append({"key": _t("upstream", "上游仓库", "上游倉庫"),
                           "value": ext["origin"], "mono": True})
+        if ext.get("profile"):
+            # Recorded from the plugin's own README, not derived here: the
+            # profile name belongs to upstream, and every earlier attempt to
+            # infer one made upstream's own examples wrong under this index.
+            items.append({"key": _t("README profile", "README 的 profile",
+                                    "README 的 profile"),
+                          "value": ext["profile"], "mono": True})
         if ext.get("license"):
             items.append({"key": _t("license", "许可证", "授權"),
                           "value": ext["license"]})

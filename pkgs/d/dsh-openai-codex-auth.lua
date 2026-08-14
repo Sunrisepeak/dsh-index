@@ -13,6 +13,10 @@ package = {
     keywords = {"dsh", "openai-codex"},
 
     dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "web",
+
         bundle_name = "dsh-openai-codex-auth",
 
         versions = {
@@ -20,6 +24,10 @@ package = {
         },
         latest = "0.2.0",
 
+        -- Base rows this bundle replaces. Another bundle patching
+        -- any of these in the same profile silently wins or loses,
+        -- depending on install order.
+        overrides = {"llm-pi-ai"},
         needs_build = false,
 
         -- Published by tools/mirror.py to GitHub and GitCode, verified

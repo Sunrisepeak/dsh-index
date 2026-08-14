@@ -13,6 +13,10 @@ package = {
     keywords = {"dsh", "plugin", "template"},
 
     dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "web",
+
         bundle_name = "@your-scope/dsh-plugin-template",
 
         versions = {

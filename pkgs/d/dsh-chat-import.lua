@@ -13,6 +13,10 @@ package = {
     keywords = {"dsh", "agent", "ai-agents", "automation", "chatgpt", "claude-code", "codex", "cursor", "developer-tools"},
 
     dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "web",
+
         bundle_name = "dsh-chat-import",
 
         versions = {
