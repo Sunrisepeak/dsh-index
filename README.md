@@ -215,12 +215,55 @@ Every plugin is one of two kinds, and the site labels which:
 and 13 more are unclassifiable — this index has no right to mirror those, so
 they stay direct and say so.
 
+## Defining an Agent
+
+This is the contribution that matters most here: **compose plugins that already
+exist into something someone can run.** An Agent is a manifest — a few hundred
+bytes naming its members, with no payload of its own.
+
+Agents and groups are generated, so edit the source and never the descriptor;
+CI re-runs the expansion, so the two cannot drift.
+
+```jsonc
+// tools/agents.json
+"agents": [
+  { "name": "agent-web-coding", "version": "0.1.0",
+    "description": { "en": "…", "zh": "…" },
+    "groups": ["group-web-essentials"],   // expanded into members
+    "extra": ["dsh-notification"] }       // plus these plugins
+]
+```
+
+```bash
+tools/gen_agents.py            # write the descriptors
+tools/gen_agents.py --check    # what CI runs
+```
+
+Three rules, and all three are refusals rather than warnings, because here the
+**index** chooses the combination:
+
+| Rule | Why |
+|---|---|
+| the profile name is the package name | `xlings install dsh:X` must be followed by `dsh --profile X` |
+| every member must be mirrored | a curated set whose contents fetch from upstream at boot is not reproducible |
+| no two members may replace the same `dsh-base` row | a patch replaces a row whole, so the later member silently wins |
+
+Members are pinned to a version and a commit, so an Agent names one fixed set
+of bytes.
+
 ## Adding a plugin
+
+Let the scanner collect the facts — it pins the head sha first and reads
+`package.json` **at that sha**:
+
+```bash
+tools/discover.py --new --json /tmp/new.json
+tools/sync.py --new /tmp/new.json
+```
 
 Descriptors under `pkgs/<letter>/<name>.lua` are **data only** — no hooks, no
 `xpm`, no `type`. All lifecycle comes from `template.lua`, appended to every
-descriptor at index-build time by `pkgindex-build.lua`. One paradigm, one
-implementation.
+descriptor at index-build time by `pkgindex-build.lua`.
 
 ```lua
 package = {
@@ -231,7 +274,7 @@ package = {
     licenses = {"BSD-3-Clause"},
 
     dsh = {
-        kind = "plugin",
+        kind = "plugin",                -- plugin | group | profile
         profile = "cc-tui",             -- what its own README tells readers
         bundle_name = "dsh-cc-tui",
         versions = { ["0.1.6"] = { commit = "<40-hex sha>" } },
@@ -245,11 +288,26 @@ Always pin a 40-hex commit. Package names are not trustworthy here: 36
 community repos name themselves into the `@deepseek-ai/` scope that DeepSeek
 actually owns on npm, so a bare name can silently resolve to different code.
 
-Groups and Agents are **generated** from `tools/agents.json` by
-`tools/gen_agents.py`; edit the source, not the descriptor. CI re-runs the
-expansion, so the two cannot drift.
+## Working on this with an agent
 
-See [docs/contributing.md](docs/contributing.md).
+The authoring rules are written as skills, so hand your agent the path and it
+has the whole contract — field-by-field rules, both Lua runtimes and the gaps
+that fail silently in each, and the PR requirements.
+
+```
+Read https://github.com/Sunrisepeak/dsh-index — an xlings package index that
+distributes DeepSeek Harness Agents, where Agent = Harness + Plugins. Before
+changing anything, read .agents/skills/xpkg-creater/SKILL.md for the package
+authoring contract and .agents/skills/pr-workflow/SKILL.md for how changes
+land. Design rationale is in .agents/docs/. Then <what you want>.
+```
+
+| Skill | Covers |
+|---|---|
+| [`xpkg-creater`](.agents/skills/xpkg-creater/SKILL.md) | the three tiers, every `dsh.*` field, the two Lua runtimes and what is nil in each, isolation limits, acceptance |
+| [`pr-workflow`](.agents/skills/pr-workflow/SKILL.md) | branch, PR body, the checks that must be green, merge rules |
+
+See [docs/contributing.md](docs/contributing.md) for the short path.
 
 ## Staying current
 
