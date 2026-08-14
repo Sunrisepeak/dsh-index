@@ -437,6 +437,62 @@ local function config_agent()
         return false
     end
 
+    -- The surface. `dsh plugin --profile <new> add` scaffolds a profile with
+    -- `@deepseek-ai/dsh-base` and nothing else, while dsh's own `web` profile
+    -- carries `@deepseek-ai/dsh-web-app` beside it -- a bundle that ships
+    -- inside the dsh installation and has no pnpm dependency, which is why
+    -- the web profile's `dependencies` is empty.
+    --
+    -- Without it an Agent boots into a profile with no UI, and every plugin
+    -- that attaches to one waits forever: `dsh-task-status: pending (waiting
+    -- for service: webServer)`, then `1 entry did not activate`. The members
+    -- all install, the manifest lists them all, and `--dump-config` prints a
+    -- correct tree -- because none of those import anything.
+    --
+    -- It goes after dsh-base and before the members, so the members have a
+    -- surface to attach to by the time they load.
+    if package.dsh.surface and package.dsh.surface ~= "" then
+        local mf = profile_manifest()
+        local f = io.open(mf, "r")
+        if not f then
+            log.error(("%s: profile '%s' has no manifest to declare a surface in.")
+                      :format(package.name, profile()))
+            return false
+        end
+        local body = f:read("*a")
+        f:close()
+        if not body:find(package.dsh.surface, 1, true) then
+            -- Insert after dsh-base, reusing that line's own indent and
+            -- respecting whether it already ends in a comma. Writing the
+            -- comma unconditionally produced `"…dsh-base",,` and left the
+            -- manifest unparseable, which dsh reports as a JSON error rather
+            -- than as a bad surface.
+            local base = '"@deepseek-ai/dsh-base"'
+            local i, j = body:find(base, 1, true)
+            if not i then
+                log.error(("%s: profile '%s' does not list dsh-base; cannot "
+                        .. "place the surface."):format(package.name, profile()))
+                return false
+            end
+            local indent = body:sub(1, i - 1):match("\n([ \t]*)$") or "        "
+            local after = body:sub(j + 1, j + 1)
+            local cut, sep = j, ","
+            if after == "," then
+                cut, sep = j + 1, ""          -- keep the comma that is there
+            end
+            body = body:sub(1, cut) .. sep .. "\n" .. indent .. "\""
+                    .. package.dsh.surface .. "\","
+                    .. body:sub(cut + 1)
+            local w = io.open(mf, "w")
+            if not w then
+                log.error(("%s: cannot write the profile manifest."):format(package.name))
+                return false
+            end
+            w:write(body)
+            w:close()
+        end
+    end
+
     -- The Agent's own opinion. Of dsh's four patch layers only the profile's
     -- own cordis.patch.yml is both persistent and per-profile -- the bundle
     -- layer belongs to each plugin's author, $DSH_HOME/cordis.patch.yml is

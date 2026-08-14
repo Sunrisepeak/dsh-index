@@ -59,6 +59,31 @@ jobs:
       - name: Every plugin declares kind and profile
         run: python3 tools/add_kind.py --check
 
+  boot:
+    name: composites boot
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      # The gate that `--dump-config` only looked like. A dump composes the
+      # layers without importing any of them, so an Agent whose plugin cannot
+      # be imported dumps a correct tree and then dies on boot -- which is
+      # exactly how a member that needed an uninstallable peer, and an Agent
+      # with no UI for its plugins to attach to, both reached main.
+      - name: Install xlings
+        run: curl -fsSL https://d2learn.org/xlings-install.sh | bash
+      - name: Boot every member of every composite
+        run: |
+          export PATH="$HOME/.xlings/bin:$PATH"
+          xlings config --index-repo "dsh:$PWD"
+          xlings update
+          for a in $(grep -l 'kind = "profile"' pkgs/*/*.lua | xargs -n1 basename | sed 's/.lua//'); do
+            xlings install "dsh:$a" -y
+            python3 tools/bootcheck.py --composite "$a"
+          done
+
   site:
     name: site builds
     runs-on: ubuntu-latest

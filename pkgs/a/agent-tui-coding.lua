@@ -14,6 +14,9 @@ package = {
 
     dsh = {
         kind = "profile",
+        -- The UI this Agent boots into. It ships inside dsh
+        -- itself, so it is a bundle name and not a dependency.
+        surface = "dsh-cc-tui",
         profile = "agent-tui-coding",
 
         -- Expanded by tools/gen_agents.py; template.lua composes
