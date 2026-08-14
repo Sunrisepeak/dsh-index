@@ -296,8 +296,11 @@ class DshPlugin(Plugin):
         tier = ext.get("tier", "plugin")
 
         if tier == "agent":
-            p = ext.get("profile") or "web"
-            code = "dsh web" if p == "web" else f"dsh --profile {p}"
+            # The command, not the long-hand boot line: installing an Agent
+            # registers an xvm shim named after the package, so this is
+            # literally what you type. Same shape xim-pkgindex uses for a
+            # program (`$ <binary>`), because it answers the same question.
+            code = f"$ {pkg.identity.name}"
         elif tier == "group":
             n = len(ext.get("members") or [])
             code = f"{n} plugins"
@@ -343,17 +346,26 @@ class DshPlugin(Plugin):
                 }))
 
         if tier == "agent":
-            p = ext.get("profile") or "web"
-            launch = "dsh web" if p == "web" else f"dsh --profile {p}"
+            name = pkg.identity.name
+            n = len(ext.get("members") or [])
+            # `role: "interface"` puts this in the page's hero slot, the way
+            # xim-pkgindex shows the binary a package gives you. An Agent does
+            # give you one: installing registers an xvm shim named after the
+            # package, aliased onto `dsh --profile <name>`.
+            blocks.append(Block(
+                kind="code", weight=1,
+                data={"role": "interface", "code": f"$ {name}",
+                      "tone": "header", "label": _t("command", "命令", "命令")}))
             blocks.append(Block(
                 kind="callout", weight=2,
                 data={"tone": "header", "text": _t(
-                    f"An Agent: installing composes {len(ext.get('members') or [])} "
-                    f"plugins into the profile '{p}'. Boot it with `{launch}`.",
-                    f"一个 Agent：安装即把 {len(ext.get('members') or [])} 个插件"
-                    f"组合进 profile『{p}』，用 `{launch}` 启动。",
-                    f"一個 Agent：安裝即把 {len(ext.get('members') or [])} 個外掛"
-                    f"組合進 profile『{p}』，用 `{launch}` 啟動。",
+                    f"An Agent: installing composes {n} plugins into the "
+                    f"profile '{name}' and registers `{name}` as a command. "
+                    f"`dsh --profile {name}` is the same thing spelled out.",
+                    f"一个 Agent：安装即把 {n} 个插件组合进 profile『{name}』，"
+                    f"并注册 `{name}` 这个命令。`dsh --profile {name}` 是它的长写法。",
+                    f"一個 Agent：安裝即把 {n} 個外掛組合進 profile『{name}』，"
+                    f"並註冊 `{name}` 這個命令。`dsh --profile {name}` 是它的長寫法。",
                 )}))
         elif tier == "group":
             blocks.append(Block(
