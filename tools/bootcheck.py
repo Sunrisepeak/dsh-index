@@ -133,11 +133,23 @@ def boot(profile: str, members: list, surface: str, dsh_home: str) -> str:
     # piped check reports the whole tier as broken and hides the real failures
     # among the noise.
     out, code = _run_on_pty([DSH, "--profile", profile], env)
-    if code is None:
-        return ""          # still running when the timer expired -- it booted
+    # Two ways to pass. A web surface runs until it is killed, so outliving
+    # the timer is a pass. A TUI with nobody at the keyboard reads EOF and
+    # exits cleanly, so a zero exit is one too -- it started, imported the
+    # whole tree, and stopped on its own. Every load failure seen here throws
+    # and leaves node with a non-zero status.
+    if code is None or code == 0:
+        return ""
+    # A busy port is this machine's problem, not the package's. Reporting it
+    # as a broken Agent sends the reader to the descriptor instead of to the
+    # dsh already running in another terminal.
+    if "EADDRINUSE" in out:
+        port = re.search(r"address already in use ([^\s]+)", out)
+        return (f"ENVIRONMENT: {port.group(1) if port else 'a port'} is in use; "
+                f"stop the dsh instance holding it and re-run")
     hit = re.search(r"Cannot find package '[^']+'|failed to import loader entry [^\s:]+"
                     r"|Error: dsh: [^\n]+", out)
-    return hit.group(0) if hit else f"exited {code}"
+    return hit.group(0) if hit else f"exited {code}: {out.strip()[-300:]}"
 
 
 def _run_on_pty(cmd: list, env: dict):
