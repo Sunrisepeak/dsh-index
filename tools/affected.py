@@ -73,7 +73,27 @@ class TooManyUnits(RuntimeError):
 # fail-open rule above) -- this list is the only way to get an empty result,
 # which is what keeps "we skipped the gate" a deliberate act.
 NO_BOOT_PREFIXES = ("docs/", "site/", ".agents/")
-NO_BOOT_EXACT = {"LICENSE", ".gitignore"}
+NO_BOOT_EXACT = {
+    "LICENSE",
+    ".gitignore",
+    # Data files whose only route to a boot runs THROUGH a descriptor, which
+    # means the descriptor is in the same diff and already selects the units.
+    # The `--check` steps in the descriptor job close the other direction:
+    # editing one of these without regenerating fails there, so there is no
+    # path where one of them changes a boot on its own.
+    #
+    # This is not a convenience. Both automated PRs carry one -- `--bump`
+    # writes tools/npm.json and `--new` writes tools/profiles.json -- so
+    # treating them as infrastructure made every discover PR a "full run",
+    # which boots three composites and NONE of the packages the PR added.
+    # That is precisely the failure this scoping exists to end, arriving by
+    # the back door.
+    "tools/npm.json",         # written by check_npm.py, read by the site plugin
+    "tools/profiles.json",    # read by add_kind.py, which writes descriptors
+    "tools/agents.json",      # read by gen_agents.py, which writes composites
+    "tools/excluded.json",    # a discovery input; no boot reads it
+    "tools/mirror-report.json",   # a report artifact
+}
 
 
 def _dsh_block(body: str) -> str:

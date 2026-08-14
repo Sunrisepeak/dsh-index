@@ -860,3 +860,52 @@ class TestAffectedCap:
     @pytest.mark.static
     def test_the_ceiling_is_under_githubs_matrix_limit(self):
         assert self._mod().MAX_UNITS < 256
+
+class TestAffectedOnRealAutomationDiffs:
+    """The shapes discover.yml actually produces.
+
+    Both automated PRs carry a generated data file next to their descriptors.
+    Treating those as infrastructure made every discover PR a "full run" --
+    three composites booted and none of the packages the PR added, which is
+    exactly the failure the scoping exists to end. Measured on PR #18, whose
+    22 bumped descriptors were classified `full run (tools/npm.json)`.
+    """
+
+    def _mod(self):
+        sys.path.insert(0, str(ROOT / "tools"))
+        import affected
+        return affected
+
+    @pytest.mark.static
+    def test_a_bump_pr_boots_the_bumped_packages(self):
+        affected = self._mod()
+        known = affected.descriptors(ROOT)
+        name = next(n for n, d in known.items() if d["kind"] == "plugin")
+        r = affected.affected([f"pkgs/x/{name}.lua", "tools/npm.json"], known)
+        assert not r["full"], r["reason"]
+        assert name in {u["name"] for u in r["units"]}
+
+    @pytest.mark.static
+    def test_a_new_plugins_pr_boots_the_new_packages(self):
+        affected = self._mod()
+        known = affected.descriptors(ROOT)
+        name = next(n for n, d in known.items() if d["kind"] == "plugin")
+        r = affected.affected([f"pkgs/x/{name}.lua", "tools/profiles.json"], known)
+        assert not r["full"], r["reason"]
+        assert name in {u["name"] for u in r["units"]}
+
+    @pytest.mark.static
+    def test_a_data_file_alone_boots_nothing(self):
+        affected = self._mod()
+        known = affected.descriptors(ROOT)
+        r = affected.affected(["tools/npm.json", "tools/profiles.json"], known)
+        assert not r["any"] and not r["full"], r
+
+    @pytest.mark.static
+    def test_tool_code_still_forces_a_full_run(self):
+        """The exemption is for data, not for the scripts that read it."""
+        affected = self._mod()
+        known = affected.descriptors(ROOT)
+        for path in ("tools/check_npm.py", "tools/add_kind.py",
+                     "tools/gen_agents.py", "tools/sync.py"):
+            assert affected.affected([path], known)["full"], path
