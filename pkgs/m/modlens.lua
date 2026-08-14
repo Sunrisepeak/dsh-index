@@ -30,6 +30,11 @@ package = {
         -- Published by tools/mirror.py to GitHub and GitCode, verified
         -- three ways: local build, GLOBAL and CN all hash the same.
         mirror = {
+            ["3.11.0"] = {
+                tarball = "modlens-3.11.0.tgz",
+                sha256  = "07aad008656d591934970a48162e65b4ebf39aee1c8557f42e6a0f8e2bd59bb1",
+                cn      = true,
+            },
             ["3.9.1"] = {
                 tarball = "modlens-3.9.1.tgz",
                 sha256  = "76e8845e98c55769251988c3c3147aea81e7b7021e41bb96611446fbdfe30746",

@@ -83,7 +83,8 @@ jobs:
         run: curl -fsSL https://d2learn.org/xlings-install.sh | bash
       - name: Boot every member of every composite
         run: |
-          export PATH="$HOME/.xlings/bin:$PATH"
+          # Shims live in the subos bin; $HOME/.xlings/bin holds xlings itself.
+          export PATH="$HOME/.xlings/bin:$HOME/.xlings/subos/default/bin:$PATH"
           xlings config --index-repo "dsh:$PWD"
           xlings update
           for a in $(grep -l 'kind = "profile"' pkgs/*/*.lua | xargs -n1 basename | sed 's/.lua//'); do

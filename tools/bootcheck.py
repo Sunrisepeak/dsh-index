@@ -27,11 +27,35 @@ import pathlib
 import pty
 import selectors
 import re
+import shutil
 import subprocess
 import sys
 import tempfile
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
+
+
+def dsh_bin() -> str:
+    """Where the `dsh` shim actually is.
+
+    xvm puts shims under `$XLINGS_HOME/subos/<name>/bin`, not in
+    `$XLINGS_HOME/bin` -- that one holds xlings itself. A PATH carrying only
+    the latter looks right and fails with a bare FileNotFoundError from
+    subprocess, which says nothing about why.
+    """
+    found = shutil.which("dsh")
+    if found:
+        return found
+    for cand in sorted(glob.glob(os.path.join(_home(), "subos", "*", "bin", "dsh"))):
+        if os.access(cand, os.X_OK):
+            return cand
+    raise SystemExit(
+        "dsh is not on PATH and no shim was found under "
+        f"{_home()}/subos/*/bin. Install it with `xlings install dsh -y` and put "
+        f"that directory on PATH.")
+
+
+DSH = None
 # Long enough for node to import the whole tree on a cold cache; an import
 # failure lands in well under a second, so this only ever costs time on a pass.
 BOOT_SECONDS = 40
@@ -52,8 +76,30 @@ def members_of(name: str) -> list:
     return re.findall(r'name = "([^"]+)", version = "([^"]+)"', m.group(1))
 
 
+def surface_of(name: str) -> str:
+    m = re.search(r'surface = "([^"]+)"', descriptor(name))
+    return m.group(1) if m else ""
+
+
+def declare_surface(manifest: str, surface: str) -> None:
+    """Put the surface bundle after dsh-base, the way template.lua does."""
+    d = json.load(open(manifest))
+    bundles = d["dsh"]["profile"]["bundles"]
+    if surface and surface not in bundles:
+        bundles.insert(bundles.index("@deepseek-ai/dsh-base") + 1, surface)
+        json.dump(d, open(manifest, "w"), indent=2)
+
+
+XLINGS_HOME = ""
+
+
+def _home() -> str:
+    return (XLINGS_HOME or os.environ.get("XLINGS_HOME")
+            or os.path.expanduser("~/.xlings"))
+
+
 def tarball(name: str, version: str) -> str:
-    home = os.environ.get("XLINGS_HOME") or os.path.expanduser("~/.xlings")
+    home = _home()
     hits = glob.glob(os.path.join(
         home, "data", "xpkgs", f"dsh-x-{name}", version, f"{name}-{version}.tgz"))
     if not hits:
@@ -63,20 +109,30 @@ def tarball(name: str, version: str) -> str:
     return hits[0]
 
 
-def boot(name: str, version: str, dsh_home: str) -> str:
-    """"" on success, else the reason."""
-    profile = f"bootcheck-{name}"
+def boot(profile: str, members: list, surface: str, dsh_home: str) -> str:
+    """"" on success, else the reason.
+
+    The unit is the whole composite, not one member at a time. A member is
+    allowed to need something its Agent supplies -- `dsh-task-status` waits on
+    a `webServer` service and only activates once the profile carries a web
+    surface -- so booting members in isolation asks a question this index
+    never promised an answer to, and reports working packages as broken.
+    """
     env = dict(os.environ, DSH_HOME=dsh_home)
-    add = subprocess.run(
-        ["dsh", "plugin", "--profile", profile, "add", tarball(name, version)],
-        capture_output=True, text=True, env=env, cwd="/tmp", timeout=600)
-    if add.returncode != 0:
-        return f"compose failed: {add.stderr.strip().splitlines()[-1:] or add.stdout[-200:]}"
+    for name, version in members:
+        add = subprocess.run(
+            [DSH, "plugin", "--profile", profile, "add", tarball(name, version)],
+            capture_output=True, text=True, env=env, cwd="/tmp", timeout=900)
+        if add.returncode != 0:
+            tail = (add.stderr.strip().splitlines() or [add.stdout[-200:]])[-1]
+            return f"compose failed at {name}@{version}: {tail}"
+    declare_surface(os.path.join(dsh_home, "profiles", profile, "package.json"),
+                    surface)
     # Under a pty, not a pipe. A TUI surface refuses to start without one --
     # `cc-tui requires an interactive terminal (stdout must be a TTY)` -- so a
     # piped check reports the whole tier as broken and hides the real failures
     # among the noise.
-    out, code = _run_on_pty(["dsh", "--profile", profile], env)
+    out, code = _run_on_pty([DSH, "--profile", profile], env)
     if code is None:
         return ""          # still running when the timer expired -- it booted
     hit = re.search(r"Cannot find package '[^']+'|failed to import loader entry [^\s:]+"
@@ -120,31 +176,43 @@ def _run_on_pty(cmd: list, env: dict):
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--composite", action="store_true",
-                    help="treat each name as a group/Agent and check its members")
+                    help="treat each name as a group/Agent and boot it whole")
+    ap.add_argument("--xlings-home", default="",
+                    help="where packages are installed; defaults to "
+                         "$XLINGS_HOME, then ~/.xlings. Explicit because a "
+                         "shell that re-exports XLINGS_HOME silently sends "
+                         "this at the wrong store.")
     ap.add_argument("names", nargs="+")
     args = ap.parse_args()
 
-    targets = []
+    global DSH, XLINGS_HOME
+    XLINGS_HOME = args.xlings_home
+    DSH = dsh_bin()
+
+    jobs = []
     for n in args.names:
-        targets += members_of(n) if args.composite else [
-            (n, re.search(r'latest = "([^"]+)"', descriptor(n)).group(1))]
+        if args.composite:
+            jobs.append((n, members_of(n), surface_of(n)))
+        else:
+            v = re.search(r'latest = "([^"]+)"', descriptor(n)).group(1)
+            jobs.append((n, [(n, v)], ""))
 
     home = tempfile.mkdtemp(prefix="bootcheck-dsh-")
     bad = []
-    for name, version in dict.fromkeys(targets):
-        why = boot(name, version, home)
-        print(f"  {name}@{version:<12} {why or 'OK'}", flush=True)
+    for name, members, surface in jobs:
+        why = boot(f"bootcheck-{name}", members, surface, home)
+        detail = ", ".join(f"{m}@{v}" for m, v in members)
+        print(f"  {name:<22} {why or 'OK'}   [{detail}]", flush=True)
         if why:
-            bad.append((name, version, why))
+            bad.append((name, why))
 
     if bad:
-        print(f"\n{len(bad)} package(s) cannot boot:", file=sys.stderr)
-        for name, version, why in bad:
-            print(f"  {name}@{version}: {why}", file=sys.stderr)
+        print(f"\n{len(bad)} cannot boot:", file=sys.stderr)
+        for name, why in bad:
+            print(f"  {name}: {why}", file=sys.stderr)
         return 1
-    print(f"\n{len(targets)} package(s) booted")
+    print(f"\n{len(jobs)} booted")
     return 0
-
 
 if __name__ == "__main__":
     raise SystemExit(main())

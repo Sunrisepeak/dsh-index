@@ -30,6 +30,11 @@ package = {
         -- Published by tools/mirror.py to GitHub and GitCode, verified
         -- three ways: local build, GLOBAL and CN all hash the same.
         mirror = {
+            ["0.2.0"] = {
+                tarball = "dsh-chat-import-0.2.0.tgz",
+                sha256  = "79d342e7a5dbf7cafbe248b21079921ac81fe1e372940c6bd07fd5ab5bff78a2",
+                cn      = true,
+            },
             ["0.1.1"] = {
                 tarball = "dsh-chat-import-0.1.1.tgz",
                 sha256  = "6690ee9c24336aa64b6f85b4eb9dfd03728232b41561505c4eb7e7f28f0aeb41",

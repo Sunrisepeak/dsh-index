@@ -34,6 +34,11 @@ package = {
         -- Published by tools/mirror.py to GitHub and GitCode, verified
         -- three ways: local build, GLOBAL and CN all hash the same.
         mirror = {
+            ["0.3.3"] = {
+                tarball = "dsh-cc-tui-0.3.3.tgz",
+                sha256  = "e59bd5ef979e23858d6810ff1d70937d3a8fd367ab1c0f589d03a4b912352996",
+                cn      = true,
+            },
             ["0.1.6"] = {
                 tarball = "dsh-cc-tui-0.1.6.tgz",
                 sha256  = "b8016904a72e7bf4858a0bb24e6eb952357ecdc7e963a482f33e143ea2312d1b",
