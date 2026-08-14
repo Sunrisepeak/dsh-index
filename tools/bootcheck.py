@@ -190,6 +190,19 @@ def boot(profile: str, members: list, surface: str, dsh_home: str) -> str:
             [DSH, "plugin", "--profile", profile, "add", spec(name, version)],
             capture_output=True, text=True, env=env, cwd="/tmp", timeout=900)
         if add.returncode != 0:
+            blob = add.stdout + add.stderr
+            # pnpm refusing to run a git-hosted package's `prepare` script is
+            # this index's policy working, not a broken package: building
+            # upstream code is an explicit act the user authorises at compose
+            # time (design 3.7), and nothing here may authorise it for them.
+            # Reporting it as a boot failure would send a reader to a
+            # descriptor that is fine. It is still a package this run did not
+            # verify, and the caller says so loudly.
+            if "ERR_PNPM_GIT_DEP_PREPARE_NOT_ALLOWED" in blob or "allowBuilds" in blob:
+                return (f"ENVIRONMENT: {name}@{version} ships a `prepare` build "
+                        f"script and is not mirrored, so composing it would run "
+                        f"upstream code -- which this index does not authorise "
+                        f"on anyone's behalf (pnpm allowBuilds)")
             tail = (add.stderr.strip().splitlines() or [add.stdout[-200:]])[-1]
             return f"compose failed at {name}@{version}: {tail}"
     declare_surface(os.path.join(dsh_home, "profiles", profile, "package.json"),
