@@ -74,7 +74,7 @@ do
     -- landed. No new composition field -- see design section 2.2.
     local deps = {"xim:dsh", "xim:pnpm"}
     for _, m in ipairs(MEMBERS) do
-        deps[#deps + 1] = "dsh:" .. m
+        deps[#deps + 1] = "dsh:" .. m.name
     end
 
     for _, plat in ipairs({"linux", "macosx", "windows"}) do
@@ -210,11 +210,24 @@ end
 -- reproducible unit of this index, and one whose members fetch from upstream
 -- at boot would inherit every failure mode -- no CN mirror, no checksum, and
 -- gone if the repo is deleted -- while presenting itself as a curated set.
+-- The tarball name is derived, not globbed and not copied. `os.files` does not
+-- exist in the libxpkg hook runtime -- an install that reached here died with
+-- `attempt to call a nil value (field 'files')` after every member had already
+-- been composed, so the failure looked like the Agent and was the glob.
+--
+-- Nothing needs to be looked up: xpkg installs a dependency into
+-- `<store>/dsh-x-<name>/<version>`, and tools/mirror.py names every tarball
+-- `<name>-<version>.tgz`. So the version is the last path component and the
+-- filename follows from it, which also means this cannot drift out of sync
+-- with the member's own descriptor the way a copied filename would.
 local function member_spec(name)
     local dir = pkginfo.dep_install_dir("dsh:" .. name)
-    if not dir or not os.isdir(dir) then return nil end
-    local hits = os.files(path.join(dir, "*.tgz"))
-    return hits and hits[1] or nil
+    if not dir then return nil end
+    local ver = dir:match("[/\\]([^/\\]+)[/\\]?$")
+    if not ver then return nil end
+    local tgz = path.join(dir, name .. "-" .. ver .. ".tgz")
+    if not os.isfile(tgz) then return nil end
+    return tgz
 end
 
 -- Truth lives in the profile manifest, not in xim's own installed marker: the
@@ -227,7 +240,7 @@ end
 function installed()
     if KIND == "group" then
         for _, m in ipairs(MEMBERS) do
-            if not member_spec(m) then return false end
+            if not member_spec(m.name) then return false end
         end
         return #MEMBERS > 0
     end
@@ -236,8 +249,12 @@ function installed()
     if not body then return false end
 
     if KIND == "profile" then
+        -- Match on the bundle name, which is what the manifest records. The
+        -- descriptor name is often different (`dsh-annotation` is
+        -- `@omdsh-dev/dsh-annotation` there), so checking that would report a
+        -- correctly composed profile as incomplete.
         for _, m in ipairs(MEMBERS) do
-            if not body:find(m, 1, true) then return false end
+            if not body:find(m.bundle, 1, true) then return false end
         end
         return #MEMBERS > 0
     end
@@ -346,7 +363,7 @@ local function config_group()
     -- left is to say what the user now has, because `xlings install` printing
     -- only the group's name would leave the actual contents invisible.
     local names = {}
-    for _, m in ipairs(MEMBERS) do names[#names + 1] = "  - " .. m end
+    for _, m in ipairs(MEMBERS) do names[#names + 1] = "  - " .. m.name end
     log.info(("%s brought in %d plugins:\n%s")
              :format(package.name, #MEMBERS, table.concat(names, "\n")))
     return true
@@ -359,11 +376,11 @@ local function config_agent()
     -- first -- upstream's own command is the constructor.
     print("")
     for _, m in ipairs(MEMBERS) do
-        local s = member_spec(m)
+        local s = member_spec(m.name)
         if not s then
             log.error(("%s: member '%s' has no installed tarball. Members must "
                     .. "be mirrored packages; this one resolved to nothing.")
-                    :format(package.name, m))
+                    :format(package.name, m.name))
             return false
         end
         system.exec(("dsh plugin --profile %s add %s"):format(profile(), s))
@@ -429,8 +446,13 @@ function uninstall()
 
     print("")
     if KIND == "profile" then
+        -- Remove by bundle name: that is what the profile manifest records
+        -- and what pnpm matches on. Passing the descriptor name failed with
+        -- ERR_PNPM_CANNOT_REMOVE_MISSING_DEPS partway through, leaving the
+        -- profile half dismantled.
         for _, m in ipairs(MEMBERS) do
-            system.exec(("dsh plugin --profile %s remove %s"):format(profile(), m))
+            system.exec(("dsh plugin --profile %s remove %s")
+                        :format(profile(), m.bundle))
         end
         -- The profile directory itself stays. The user may have added their
         -- own plugins to it or edited its patch layer, and this recipe cannot

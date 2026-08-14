@@ -17,13 +17,15 @@ package = {
 
         -- Expanded by tools/gen_agents.py; template.lua composes
         -- these at install time and cannot read another descriptor,
-        -- so the list is flat rather than a reference.
+        -- so the list is flat rather than a reference. `bundle` is
+        -- the name the profile manifest records, which is what
+        -- `dsh plugin remove` matches on.
         members = {
-            "dsh-at-file",
-            "dsh-annotation",
-            "dsh-turn-rewind",
-            "dsh-notification",
-            "dsh-task-status",
+            { name = "dsh-at-file", bundle = "dsh-at-file" },
+            { name = "dsh-annotation", bundle = "@omdsh-dev/dsh-annotation" },
+            { name = "dsh-turn-rewind", bundle = "@dsh-external/turn-rewind" },
+            { name = "dsh-notification", bundle = "dsh-notification" },
+            { name = "dsh-task-status", bundle = "@dsh-external/dsh-task-status" },
         },
 
         versions = { ["0.1.0"] = {} },

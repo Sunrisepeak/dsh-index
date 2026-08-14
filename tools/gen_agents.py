@@ -69,8 +69,18 @@ def read_member(name: str) -> dict:
         raise SystemExit(f"member '{name}' has no descriptor")
     body = hits[0].read_text(encoding="utf-8")
     ov = re.search(r"overrides = \{([^}]*)\}", body)
+    bundle = re.search(r'bundle_name = "([^"]+)"', body)
+    if not bundle:
+        raise SystemExit(f"member '{name}' declares no bundle_name")
     return {
         "name": name,
+        # The name the profile manifest records, which is what `dsh plugin
+        # remove` matches on. It is often not the descriptor name -- the
+        # `dsh-annotation` package is `@omdsh-dev/dsh-annotation` in the
+        # manifest -- and an uninstall that passed the descriptor name got
+        # ERR_PNPM_CANNOT_REMOVE_MISSING_DEPS halfway through, leaving the
+        # profile partly dismantled.
+        "bundle": bundle.group(1),
         "mirrored": "mirror = {" in body,
         "overrides": re.findall(r'"([^"]+)"', ov.group(1)) if ov else [],
     }
@@ -98,17 +108,20 @@ def check_members(owner: str, names: list) -> list:
     return facts
 
 
-def descriptor(spec: dict, kind: str, members: list) -> str:
+def descriptor(spec: dict, kind: str, facts: list) -> str:
     lines = []
     if kind == "profile":
         lines.append(f'        profile = {lua_str(spec["profile"])},\n')
     lines.append("\n")
     lines.append("        -- Expanded by tools/gen_agents.py; template.lua composes\n")
     lines.append("        -- these at install time and cannot read another descriptor,\n")
-    lines.append("        -- so the list is flat rather than a reference.\n")
+    lines.append("        -- so the list is flat rather than a reference. `bundle` is\n")
+    lines.append("        -- the name the profile manifest records, which is what\n")
+    lines.append("        -- `dsh plugin remove` matches on.\n")
     lines.append("        members = {\n")
-    for m in members:
-        lines.append(f"            {lua_str(m)},\n")
+    for f in facts:
+        lines.append(f'            {{ name = {lua_str(f["name"])}, '
+                     f'bundle = {lua_str(f["bundle"])} }},\n')
     lines.append("        },\n\n")
     if spec.get("groups"):
         lines.append("        -- Provenance for the expansion above.\n")
@@ -150,8 +163,8 @@ def main() -> int:
             # it twice; dedupe on the way in rather than letting pnpm do it.
             members = list(dict.fromkeys(members))
 
-        check_members(spec["name"], members)
-        text = descriptor(spec, kind, members)
+        facts = check_members(spec["name"], members)
+        text = descriptor(spec, kind, facts)
         path = PKGS / spec["name"][0].lower() / f"{spec['name']}.lua"
         path.parent.mkdir(parents=True, exist_ok=True)
         if check:

@@ -18,10 +18,12 @@ package = {
 
         -- Expanded by tools/gen_agents.py; template.lua composes
         -- these at install time and cannot read another descriptor,
-        -- so the list is flat rather than a reference.
+        -- so the list is flat rather than a reference. `bundle` is
+        -- the name the profile manifest records, which is what
+        -- `dsh plugin remove` matches on.
         members = {
-            "dsh-cc-tui",
-            "dsh-notification",
+            { name = "dsh-cc-tui", bundle = "dsh-cc-tui" },
+            { name = "dsh-notification", bundle = "dsh-notification" },
         },
 
         versions = { ["0.1.0"] = {} },

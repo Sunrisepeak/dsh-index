@@ -46,9 +46,14 @@ def _kind(body: str) -> str:
 
 
 def _members(body: str) -> list:
+    """[(descriptor name, bundle name)] — the bundle name is what the profile
+    manifest records, and the two differ often enough that conflating them
+    broke uninstall."""
     d = _dsh_block(body)
     m = re.search(r"members = \{(.*?)\n        \}", d, re.S)
-    return re.findall(r'"([^"]+)"', m.group(1)) if m else []
+    if not m:
+        return []
+    return re.findall(r'name = "([^"]+)", bundle = "([^"]+)"', m.group(1))
 
 
 @pytest.fixture(scope="module", params=[p for p in PKGS], ids=lambda p: p.stem)
@@ -239,7 +244,7 @@ class TestComposition:
     def test_members_exist(self):
         names = {p.stem for p in PKGS}
         for path, body in self._composites():
-            for m in _members(body):
+            for m, _ in _members(body):
                 assert m in names, f"{path.stem}: member {m!r} has no descriptor"
 
     @pytest.mark.static
@@ -250,9 +255,25 @@ class TestComposition:
         tools/gen_agents.py), not by naming it here."""
         kind_of = {p.stem: _kind(p.read_text(encoding="utf-8")) for p in PKGS}
         for path, body in self._composites():
-            for m in _members(body):
+            for m, _ in _members(body):
                 assert kind_of[m] == "plugin", \
                     f"{path.stem}: member {m!r} is a {kind_of[m]}, not a plugin"
+
+    @pytest.mark.static
+    def test_member_bundle_names_match_their_descriptors(self):
+        """A composite records each member's bundle name so it can remove it
+        later. The profile manifest keys on that name, not on the descriptor
+        name -- `dsh-annotation` is `@omdsh-dev/dsh-annotation` there -- and
+        an uninstall that passed the wrong one failed partway through with
+        ERR_PNPM_CANNOT_REMOVE_MISSING_DEPS, leaving the profile half
+        dismantled."""
+        bundle_of = {p.stem: _field(_dsh_block(p.read_text(encoding="utf-8")),
+                                    "bundle_name") for p in PKGS}
+        for path, body in self._composites():
+            for name, bundle in _members(body):
+                assert bundle == bundle_of[name], (
+                    f"{path.stem}: member {name!r} recorded as {bundle!r} but "
+                    f"its descriptor says {bundle_of[name]!r}")
 
     @pytest.mark.static
     def test_members_are_mirrored(self):
@@ -263,7 +284,7 @@ class TestComposition:
         mirrored = {p.stem for p in PKGS
                     if "mirror = {" in p.read_text(encoding="utf-8")}
         for path, body in self._composites():
-            for m in _members(body):
+            for m, _ in _members(body):
                 assert m in mirrored, \
                     f"{path.stem}: member {m!r} is not mirrored"
 
@@ -288,7 +309,7 @@ class TestComposition:
 
         for path, body in self._composites():
             owner = {}
-            for member in _members(body):
+            for member, _ in _members(body):
                 for row in rows_of.get(member, []):
                     assert row not in owner, (
                         f"{path.stem}: {member!r} and {owner[row]!r} both "
@@ -400,6 +421,25 @@ class TestTemplate:
         a shim that always fails and doctor reports as an orphan."""
         t = (ROOT / "template.lua").read_text(encoding="utf-8")
         assert 'type = "group"' in t
+
+    @pytest.mark.static
+    def test_template_avoids_functions_the_hook_runtime_lacks(self):
+        """The hook runtime is not xmake, and the gaps are silent.
+
+        `os.files` is nil there: an Agent install crashed with `attempt to
+        call a nil value (field 'files')` only after every member had already
+        been composed, so the traceback pointed at the Agent rather than at
+        the glob. `try` / `raise` / `cprintf` are the same class of gap in the
+        plain-Lua index-build sandbox, where they cost the whole xpm section.
+        """
+        t = (ROOT / "template.lua").read_text(encoding="utf-8")
+        body = "\n".join(l for l in t.splitlines() if not l.lstrip().startswith("--"))
+        for missing in ("os.files(", "os.dirs(", "os.filedirs(",
+                        "cprintf(", "raise(", "os.getwinsize("):
+            assert missing not in body, (
+                f"{missing} does not exist in the runtime that runs these hooks")
+        assert not re.search(r"\btry\s*\{", body), \
+            "xmake's try{} is nil in the libxpkg sandbox; use pcall"
 
     @pytest.mark.isolation
     def test_template_uses_only_libxpkg_imports(self):
