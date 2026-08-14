@@ -28,6 +28,7 @@ import pty
 import selectors
 import re
 import shutil
+import signal
 import subprocess
 import sys
 import tempfile
@@ -147,16 +148,40 @@ def boot(profile: str, members: list, surface: str, dsh_home: str) -> str:
         port = re.search(r"address already in use ([^\s]+)", out)
         return (f"ENVIRONMENT: {port.group(1) if port else 'a port'} is in use; "
                 f"stop the dsh instance holding it and re-run")
+    # A bundle the harness itself ships failing to load is a property of the
+    # dsh installation on this machine, not of the composition this index
+    # published. `@deepseek-ai/dsh-attachment-local` needs the native `sharp`
+    # module and cannot load it on a bare runner -- reporting that as a broken
+    # Agent would point the reader at a descriptor that is fine.
+    own = re.search(r"failed to (?:import|apply) loader entry [^\s(]+ "
+                    r"\((@deepseek-ai/[^)]+)\): ([^\n]+)", out)
+    if own:
+        return f"ENVIRONMENT: the harness's own {own.group(1)} did not load here: {own.group(2)[:120]}"
     hit = re.search(r"Cannot find package '[^']+'|failed to import loader entry [^\s:]+"
                     r"|Error: dsh: [^\n]+", out)
     return hit.group(0) if hit else f"exited {code}: {out.strip()[-300:]}"
 
 
+def _kill_group(proc) -> None:
+    try:
+        os.killpg(os.getpgid(proc.pid), signal.SIGKILL)
+    except (ProcessLookupError, PermissionError):
+        pass
+    try:
+        proc.wait(timeout=10)
+    except subprocess.TimeoutExpired:
+        pass
+
+
 def _run_on_pty(cmd: list, env: dict):
     """(output, exit code). The code is None when it outlived BOOT_SECONDS."""
     parent, child = pty.openpty()
+    # Own session, so the whole tree can be killed. dsh boots a web server in
+    # a child; killing only the launcher left it holding 127.0.0.1:3080, and
+    # the next composite then failed on a port this check had leaked itself.
     proc = subprocess.Popen(cmd, stdin=child, stdout=child, stderr=child,
-                            env=env, cwd="/tmp", close_fds=True)
+                            env=env, cwd="/tmp", close_fds=True,
+                            start_new_session=True)
     os.close(child)
     chunks, sel = [], selectors.DefaultSelector()
     sel.register(parent, selectors.EVENT_READ)
@@ -179,9 +204,9 @@ def _run_on_pty(cmd: list, env: dict):
         sel.close()
         os.close(parent)
         if proc.poll() is None:
-            proc.kill()
-            proc.wait(timeout=10)
+            _kill_group(proc)
             return b"".join(chunks).decode("utf-8", "replace"), None
+    _kill_group(proc)
     return b"".join(chunks).decode("utf-8", "replace"), proc.returncode
 
 
@@ -210,20 +235,27 @@ def main() -> int:
             jobs.append((n, [(n, v)], ""))
 
     home = tempfile.mkdtemp(prefix="bootcheck-dsh-")
-    bad = []
+    bad, skipped = [], []
     for name, members, surface in jobs:
         why = boot(f"bootcheck-{name}", members, surface, home)
         detail = ", ".join(f"{m}@{v}" for m, v in members)
         print(f"  {name:<22} {why or 'OK'}   [{detail}]", flush=True)
-        if why:
+        if why.startswith("ENVIRONMENT:"):
+            skipped.append((name, why))
+        elif why:
             bad.append((name, why))
 
+    # Loud, never silent: an environment skip is a composite this run did not
+    # actually verify, and a run that swallowed it would read as a pass.
+    for name, why in skipped:
+        print(f"::warning::{name} was NOT verified -- {why}", file=sys.stderr)
     if bad:
         print(f"\n{len(bad)} cannot boot:", file=sys.stderr)
         for name, why in bad:
             print(f"  {name}: {why}", file=sys.stderr)
         return 1
-    print(f"\n{len(jobs)} booted")
+    print(f"\n{len(jobs) - len(skipped)} booted, {len(skipped)} skipped "
+          f"(environment)")
     return 0
 
 if __name__ == "__main__":
