@@ -281,45 +281,56 @@ class TestComposition:
                     f"its descriptor says {bundle_of[name]!r}")
 
     @pytest.mark.static
-    def test_member_versions_are_pinned_to_the_member_descriptor(self):
+    def test_member_pins_match_the_member_descriptor(self):
         """A composite names one fixed set of bytes.
 
-        Without the version its deps would resolve to whatever `latest` was
-        that day, so `agent-tui-coding@0.1.0` would quietly mean something
-        different after any member released. The recorded version and commit
-        must therefore still be what the member's own descriptor says.
+        Without a version its deps would resolve to whatever `latest` was that
+        day, so `agent-tui-coding@0.1.0` would quietly mean something else
+        after any member released. The pin is deliberately NOT `latest`: it is
+        the newest version this index has actually mirrored, which lags
+        upstream by however long publishing takes. What must hold is that the
+        recorded version exists in the member's descriptor and that the commit
+        recorded beside it is the one that descriptor declares.
         """
+        declared = {}
         for path in PKGS:
-            body = path.read_text(encoding="utf-8")
-            d = _dsh_block(body)
-            latest_of = _field(d, "latest")
-            commit_of = re.search(rf'\["{re.escape(latest_of or "x")}"\]\s*=\s*'
-                                  r'\{[^}]*commit = "([0-9a-f]{40})"', d)
-            globals().setdefault("_PINS", {})[path.stem] = (
-                latest_of, commit_of.group(1) if commit_of else "")
+            d = _dsh_block(path.read_text(encoding="utf-8"))
+            declared[path.stem] = dict(
+                re.findall(r'\["([^"]+)"\]\s*=\s*\{[^}]*commit = "([0-9a-f]{40})"', d))
 
-        pins = globals()["_PINS"]
         for path, body in self._composites():
             for name, version, _bundle, commit in _members(body):
-                want_v, want_c = pins[name]
-                assert version == want_v, (
-                    f"{path.stem}: member {name!r} pinned at {version!r} but "
-                    f"its descriptor is at {want_v!r} -- re-run gen_agents.py")
-                assert commit == want_c, (
-                    f"{path.stem}: member {name!r} commit is stale")
+                assert version in declared[name], (
+                    f"{path.stem}: member {name!r} pinned at {version!r}, which "
+                    f"its descriptor does not declare -- re-run gen_agents.py")
+                assert commit == declared[name][version], (
+                    f"{path.stem}: member {name}@{version} commit is stale")
 
     @pytest.mark.static
-    def test_members_are_mirrored(self):
+    def test_the_pinned_member_version_is_mirrored(self):
         """A group or an Agent is this index's reproducible unit. One whose
         members fetch from upstream at boot inherits every failure mode the
         mirror exists to remove -- no CN mirror, no checksum, and unusable if
-        the repo is deleted -- while presenting itself as curated."""
-        mirrored = {p.stem for p in PKGS
-                    if "mirror = {" in p.read_text(encoding="utf-8")}
+        the repo is deleted -- while presenting itself as curated.
+
+        The question is per VERSION, not per package. Asking it per package
+        passed while an Agent pinned `dsh-cc-tui@0.3.3` and only `0.1.6` had
+        a tarball: mirroring lags upstream by however long publishing takes,
+        so "this package is mirrored" and "the version we pinned is mirrored"
+        come apart every time a member releases.
+        """
+        mirrored = {}
+        for p in PKGS:
+            body = p.read_text(encoding="utf-8")
+            m = re.search(r"mirror = \{(.*?)\n        \}", body, re.S)
+            mirrored[p.stem] = set(
+                re.findall(r'\["([^"]+)"\]\s*=\s*\{', m.group(1)) if m else [])
+
         for path, body in self._composites():
-            for m, _, _b, _c in _members(body):
-                assert m in mirrored, \
-                    f"{path.stem}: member {m!r} is not mirrored"
+            for m, version, _b, _c in _members(body):
+                assert version in mirrored[m], (
+                    f"{path.stem}: member {m}@{version} has no mirrored "
+                    f"tarball (mirrored: {sorted(mirrored[m]) or 'none'})")
 
     @pytest.mark.static
     def test_no_two_members_replace_the_same_base_row(self):

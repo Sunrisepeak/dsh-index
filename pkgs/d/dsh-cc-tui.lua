@@ -20,9 +20,10 @@ package = {
         bundle_name = "dsh-cc-tui",
 
         versions = {
+            ["0.3.3"] = { commit = "046da285d6eb1c95bb8468a447f420f6f3c0560c" },
             ["0.1.6"] = { commit = "8516ffb3aac3ada74760eff9b8c14c65d344b67d" },
         },
-        latest = "0.1.6",
+        latest = "0.3.3",
 
         -- Base rows this bundle replaces. Another bundle patching
         -- any of these in the same profile silently wins or loses,

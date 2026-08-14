@@ -19,9 +19,10 @@ package = {
         bundle_name = "@dsh-external/dsh-super-injector",
 
         versions = {
+            ["0.3.0"] = { commit = "10a0ff251803462ea10d7d5ca214d41c6e7945ad" },
             ["0.2.5"] = { commit = "d8986d6f482efee8714bdf80d106c91407b24c56" },
         },
-        latest = "0.2.5",
+        latest = "0.3.0",
 
         needs_build = false,
 

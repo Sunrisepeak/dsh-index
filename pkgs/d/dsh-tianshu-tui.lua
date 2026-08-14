@@ -20,9 +20,10 @@ package = {
         bundle_name = "@huiliyi37/dsh-tianshu-tui",
 
         versions = {
+            ["0.1.1-rc.6"] = { commit = "95ea545aac764ef7fc3dcdfe23c086d6f99a30fb" },
             ["0.1.0-rc.6"] = { commit = "47908f40599a45c16275ec1adeae60cb29f903b5" },
         },
-        latest = "0.1.0-rc.6",
+        latest = "0.1.1-rc.6",
 
         needs_build = false,
 

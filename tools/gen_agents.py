@@ -30,6 +30,9 @@ import pathlib
 import re
 import sys
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+from discover import newer  # noqa: E402
+
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 PKGS = ROOT / "pkgs"
 
@@ -72,10 +75,26 @@ def read_member(name: str) -> dict:
     bundle = re.search(r'bundle_name = "([^"]+)"', body)
     if not bundle:
         raise SystemExit(f"member '{name}' declares no bundle_name")
-    latest = re.search(r'latest = "([^"]+)"', body)
-    if not latest:
-        raise SystemExit(f"member '{name}' declares no latest version")
-    commit = re.search(rf'\["{re.escape(latest.group(1))}"\]\s*=\s*'
+
+    # The newest MIRRORED version, which is not always the newest version.
+    # Mirroring lags upstream by however long tools/mirror.py takes to publish
+    # -- dsh-cc-tui reached 0.3.3 while 0.1.6 was still the only tarball -- and
+    # pinning `latest` there gave the Agent a member with no tarball to
+    # compose. The package-level "is it mirrored" check passed, because that
+    # question is per VERSION and it was being asked per package.
+    mirrored = set()
+    mblock = re.search(r"mirror = \{(.*?)\n        \}", body, re.S)
+    if mblock:
+        mirrored = set(re.findall(r'\["([^"]+)"\]\s*=\s*\{', mblock.group(1)))
+    best = None
+    for v in mirrored:
+        if best is None or newer(v, best) is True:
+            best = v
+    if best is None:
+        raise SystemExit(
+            f"member '{name}' has no mirrored version. A group or an Agent is "
+            f"this index's reproducible unit; run tools/mirror.py first.")
+    commit = re.search(rf'\["{re.escape(best)}"\]\s*=\s*'
                        r'\{[^}]*commit = "([0-9a-f]{40})"', body)
     return {
         "name": name,
@@ -89,21 +108,14 @@ def read_member(name: str) -> dict:
         # Pinned, not floating. Without a version the Agent composes whatever
         # `latest` happens to be that day, so "Agent 0.1.0" would name a
         # different set of bytes each time a member released.
-        "version": latest.group(1),
+        "version": best,
         "commit": commit.group(1) if commit else "",
-        "mirrored": "mirror = {" in body,
         "overrides": re.findall(r'"([^"]+)"', ov.group(1)) if ov else [],
     }
 
 
 def check_members(owner: str, names: list) -> list:
     facts = [read_member(n) for n in names]
-
-    unmirrored = [f["name"] for f in facts if not f["mirrored"]]
-    if unmirrored:
-        raise SystemExit(
-            f"{owner}: members must be mirrored, these are not: "
-            + ", ".join(unmirrored))
 
     seen = {}
     for f in facts:
