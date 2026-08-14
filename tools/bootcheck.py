@@ -141,15 +141,38 @@ def _home() -> str:
             or os.path.expanduser("~/.xlings"))
 
 
-def tarball(name: str, version: str) -> str:
+def spec(name: str, version: str) -> str:
+    """What to hand `dsh plugin add` for this exact version.
+
+    A mirrored version is a tarball in the xlings store. An un-mirrored one is
+    not, and it installs from its pinned commit instead -- which is exactly
+    what its package page tells a reader will happen, so booting it that way
+    is the faithful check rather than a fallback.
+
+    This split is not an edge case, it is the normal state of anything new.
+    `mirror` blocks are written by tools/mirror.py only after a licence check,
+    so every descriptor `discover` proposes -- and every version it bumps to --
+    arrives un-mirrored by design. Requiring a tarball left the gate hollow
+    for precisely the PRs it exists to check: measured on PR #18, all 22
+    bumped packages failed with "no installed tarball" while the three
+    composites, which pin mirrored versions, passed.
+    """
     home = _home()
     hits = glob.glob(os.path.join(
         home, "data", "xpkgs", f"dsh-x-{name}", version, f"{name}-{version}.tgz"))
-    if not hits:
+    if hits:
+        return hits[0]
+    body = descriptor(name)
+    repo = re.search(r'repo = "https://github\.com/([^"]+)"', body)
+    pin = re.search(rf'\["{re.escape(version)}"\]\s*=\s*'
+                    r'\{[^}]*commit = "([0-9a-f]{40})"', body)
+    if not (repo and pin):
         raise SystemExit(
-            f"{name}@{version}: no installed tarball. Install it first:\n"
-            f"  xlings install dsh:{name}@{version} -y")
-    return hits[0]
+            f"{name}@{version}: not mirrored, and the descriptor carries no "
+            f"github repo plus 40-hex commit to install from instead. One or "
+            f"the other has to be true for this version to be installable at "
+            f"all.")
+    return f"github:{repo.group(1).rstrip('/')}#{pin.group(1)}"
 
 
 def boot(profile: str, members: list, surface: str, dsh_home: str) -> str:
@@ -164,7 +187,7 @@ def boot(profile: str, members: list, surface: str, dsh_home: str) -> str:
     env = dict(os.environ, DSH_HOME=dsh_home)
     for name, version in members:
         add = subprocess.run(
-            [DSH, "plugin", "--profile", profile, "add", tarball(name, version)],
+            [DSH, "plugin", "--profile", profile, "add", spec(name, version)],
             capture_output=True, text=True, env=env, cwd="/tmp", timeout=900)
         if add.returncode != 0:
             tail = (add.stderr.strip().splitlines() or [add.stdout[-200:]])[-1]
