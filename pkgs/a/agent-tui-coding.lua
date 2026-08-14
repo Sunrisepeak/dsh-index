@@ -20,10 +20,11 @@ package = {
         -- these at install time and cannot read another descriptor,
         -- so the list is flat rather than a reference. `bundle` is
         -- the name the profile manifest records, which is what
-        -- `dsh plugin remove` matches on.
+        -- `dsh plugin remove` matches on, and `version` pins the
+        -- member so this Agent means one fixed set of bytes.
         members = {
-            { name = "dsh-cc-tui", bundle = "dsh-cc-tui" },
-            { name = "dsh-notification", bundle = "dsh-notification" },
+            { name = "dsh-cc-tui", version = "0.1.6", bundle = "dsh-cc-tui", commit = "8516ffb3aac3ada74760eff9b8c14c65d344b67d" },
+            { name = "dsh-notification", version = "0.1.1", bundle = "dsh-notification", commit = "3e33100f51f25f24cece20bfd3d50cfbde0cbca5" },
         },
 
         versions = { ["0.1.0"] = {} },

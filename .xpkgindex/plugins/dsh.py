@@ -392,10 +392,22 @@ class DshPlugin(Plugin):
                 title=_t(f"Members ({len(members)})", f"成员（{len(members)}）",
                          f"成員（{len(members)}）"),
                 data={"head": [_t("package", "包", "套件"),
+                               _t("version", "版本", "版本"),
+                               _t("commit", "commit", "commit"),
                                _t("bundle in the profile manifest",
                                   "profile 清单里的 bundle 名",
                                   "profile 清單裡的 bundle 名")],
-                      "rows": [[m.get("name", ""), m.get("bundle", "")]
+                      # The pin is the point: a member's version and the
+                      # commit behind it are what make this package name one
+                      # fixed set of bytes rather than "whatever was latest".
+                      # The member name is a package in this index, so it is
+                      # a link. The slug is ours to supply; the URL is the
+                      # core's to build.
+                      "rows": [[{"text": m.get("name", ""),
+                                 "slug": m.get("name", "")},
+                                m.get("version", ""),
+                                str(m.get("commit", ""))[:12],
+                                m.get("bundle", "")]
                                for m in members]}))
             if ext.get("groups"):
                 blocks.append(Block(

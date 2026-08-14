@@ -53,7 +53,8 @@ def _members(body: str) -> list:
     m = re.search(r"members = \{(.*?)\n        \}", d, re.S)
     if not m:
         return []
-    return re.findall(r'name = "([^"]+)", bundle = "([^"]+)"', m.group(1))
+    return re.findall(r'name = "([^"]+)", version = "([^"]+)", '
+                      r'bundle = "([^"]+)", commit = "([^"]*)"', m.group(1))
 
 
 @pytest.fixture(scope="module", params=[p for p in PKGS], ids=lambda p: p.stem)
@@ -155,10 +156,14 @@ class TestDshBlock:
         _, body = pkg
         d = _dsh_block(body)
         if _kind(body) != "plugin":
-            # A group and an Agent pin nothing themselves: their
-            # reproducibility is entirely their members' pins, which
-            # TestComposition checks by requiring every member be mirrored.
-            assert "commit" not in d, "only a plugin pins an upstream commit"
+            # A group and an Agent have no upstream of their own to pin, so
+            # their `versions` block carries no commit. They do record their
+            # members' pins -- that is what makes the composite mean one fixed
+            # set of bytes -- so the check is scoped to the versions block
+            # rather than to the whole descriptor.
+            vblock = d[d.index("versions = {"):]
+            assert "commit" not in vblock[:vblock.index("},")], \
+                "only a plugin pins an upstream commit of its own"
             return
         commits = re.findall(r'commit\s*=\s*"([^"]*)"', d)
         assert commits, "every version must pin a commit"
@@ -244,7 +249,7 @@ class TestComposition:
     def test_members_exist(self):
         names = {p.stem for p in PKGS}
         for path, body in self._composites():
-            for m, _ in _members(body):
+            for m, _, _b, _c in _members(body):
                 assert m in names, f"{path.stem}: member {m!r} has no descriptor"
 
     @pytest.mark.static
@@ -255,7 +260,7 @@ class TestComposition:
         tools/gen_agents.py), not by naming it here."""
         kind_of = {p.stem: _kind(p.read_text(encoding="utf-8")) for p in PKGS}
         for path, body in self._composites():
-            for m, _ in _members(body):
+            for m, _, _b, _c in _members(body):
                 assert kind_of[m] == "plugin", \
                     f"{path.stem}: member {m!r} is a {kind_of[m]}, not a plugin"
 
@@ -270,10 +275,38 @@ class TestComposition:
         bundle_of = {p.stem: _field(_dsh_block(p.read_text(encoding="utf-8")),
                                     "bundle_name") for p in PKGS}
         for path, body in self._composites():
-            for name, bundle in _members(body):
+            for name, _v, bundle, _c in _members(body):
                 assert bundle == bundle_of[name], (
                     f"{path.stem}: member {name!r} recorded as {bundle!r} but "
                     f"its descriptor says {bundle_of[name]!r}")
+
+    @pytest.mark.static
+    def test_member_versions_are_pinned_to_the_member_descriptor(self):
+        """A composite names one fixed set of bytes.
+
+        Without the version its deps would resolve to whatever `latest` was
+        that day, so `agent-tui-coding@0.1.0` would quietly mean something
+        different after any member released. The recorded version and commit
+        must therefore still be what the member's own descriptor says.
+        """
+        for path in PKGS:
+            body = path.read_text(encoding="utf-8")
+            d = _dsh_block(body)
+            latest_of = _field(d, "latest")
+            commit_of = re.search(rf'\["{re.escape(latest_of or "x")}"\]\s*=\s*'
+                                  r'\{[^}]*commit = "([0-9a-f]{40})"', d)
+            globals().setdefault("_PINS", {})[path.stem] = (
+                latest_of, commit_of.group(1) if commit_of else "")
+
+        pins = globals()["_PINS"]
+        for path, body in self._composites():
+            for name, version, _bundle, commit in _members(body):
+                want_v, want_c = pins[name]
+                assert version == want_v, (
+                    f"{path.stem}: member {name!r} pinned at {version!r} but "
+                    f"its descriptor is at {want_v!r} -- re-run gen_agents.py")
+                assert commit == want_c, (
+                    f"{path.stem}: member {name!r} commit is stale")
 
     @pytest.mark.static
     def test_members_are_mirrored(self):
@@ -284,7 +317,7 @@ class TestComposition:
         mirrored = {p.stem for p in PKGS
                     if "mirror = {" in p.read_text(encoding="utf-8")}
         for path, body in self._composites():
-            for m, _ in _members(body):
+            for m, _, _b, _c in _members(body):
                 assert m in mirrored, \
                     f"{path.stem}: member {m!r} is not mirrored"
 
@@ -309,7 +342,7 @@ class TestComposition:
 
         for path, body in self._composites():
             owner = {}
-            for member, _ in _members(body):
+            for member, _, _b, _c in _members(body):
                 for row in rows_of.get(member, []):
                     assert row not in owner, (
                         f"{path.stem}: {member!r} and {owner[row]!r} both "

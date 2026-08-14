@@ -72,6 +72,11 @@ def read_member(name: str) -> dict:
     bundle = re.search(r'bundle_name = "([^"]+)"', body)
     if not bundle:
         raise SystemExit(f"member '{name}' declares no bundle_name")
+    latest = re.search(r'latest = "([^"]+)"', body)
+    if not latest:
+        raise SystemExit(f"member '{name}' declares no latest version")
+    commit = re.search(rf'\["{re.escape(latest.group(1))}"\]\s*=\s*'
+                       r'\{[^}]*commit = "([0-9a-f]{40})"', body)
     return {
         "name": name,
         # The name the profile manifest records, which is what `dsh plugin
@@ -81,6 +86,11 @@ def read_member(name: str) -> dict:
         # ERR_PNPM_CANNOT_REMOVE_MISSING_DEPS halfway through, leaving the
         # profile partly dismantled.
         "bundle": bundle.group(1),
+        # Pinned, not floating. Without a version the Agent composes whatever
+        # `latest` happens to be that day, so "Agent 0.1.0" would name a
+        # different set of bytes each time a member released.
+        "version": latest.group(1),
+        "commit": commit.group(1) if commit else "",
         "mirrored": "mirror = {" in body,
         "overrides": re.findall(r'"([^"]+)"', ov.group(1)) if ov else [],
     }
@@ -121,11 +131,14 @@ def descriptor(spec: dict, kind: str, facts: list) -> str:
     lines.append("        -- these at install time and cannot read another descriptor,\n")
     lines.append("        -- so the list is flat rather than a reference. `bundle` is\n")
     lines.append("        -- the name the profile manifest records, which is what\n")
-    lines.append("        -- `dsh plugin remove` matches on.\n")
+    lines.append("        -- `dsh plugin remove` matches on, and `version` pins the\n")
+    lines.append("        -- member so this Agent means one fixed set of bytes.\n")
     lines.append("        members = {\n")
     for f in facts:
         lines.append(f'            {{ name = {lua_str(f["name"])}, '
-                     f'bundle = {lua_str(f["bundle"])} }},\n')
+                     f'version = {lua_str(f["version"])}, '
+                     f'bundle = {lua_str(f["bundle"])}, '
+                     f'commit = {lua_str(f["commit"])} }},\n')
     lines.append("        },\n\n")
     if spec.get("groups"):
         lines.append("        -- Provenance for the expansion above.\n")

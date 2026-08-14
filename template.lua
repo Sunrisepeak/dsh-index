@@ -74,7 +74,9 @@ do
     -- landed. No new composition field -- see design section 2.2.
     local deps = {"xim:dsh", "xim:pnpm"}
     for _, m in ipairs(MEMBERS) do
-        deps[#deps + 1] = "dsh:" .. m.name
+        -- Pinned: a floating member would make this package name a
+        -- different set of bytes on different days.
+        deps[#deps + 1] = "dsh:" .. m.name .. "@" .. m.version
     end
 
     for _, plat in ipairs({"linux", "macosx", "windows"}) do

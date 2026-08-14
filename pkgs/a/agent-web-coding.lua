@@ -20,13 +20,14 @@ package = {
         -- these at install time and cannot read another descriptor,
         -- so the list is flat rather than a reference. `bundle` is
         -- the name the profile manifest records, which is what
-        -- `dsh plugin remove` matches on.
+        -- `dsh plugin remove` matches on, and `version` pins the
+        -- member so this Agent means one fixed set of bytes.
         members = {
-            { name = "dsh-at-file", bundle = "dsh-at-file" },
-            { name = "dsh-annotation", bundle = "@omdsh-dev/dsh-annotation" },
-            { name = "dsh-turn-rewind", bundle = "@dsh-external/turn-rewind" },
-            { name = "dsh-notification", bundle = "dsh-notification" },
-            { name = "dsh-task-status", bundle = "@dsh-external/dsh-task-status" },
+            { name = "dsh-at-file", version = "0.1.0", bundle = "dsh-at-file", commit = "3c8408e8df06ebbd7126d1d7ebcf897ec92a3b86" },
+            { name = "dsh-annotation", version = "1.3.13", bundle = "@omdsh-dev/dsh-annotation", commit = "a37edb01c3dbb0b19249cab3b93138ad529281ed" },
+            { name = "dsh-turn-rewind", version = "0.1.0", bundle = "@dsh-external/turn-rewind", commit = "55cf4a842a7f177cd6f42f3243603e61385e0c29" },
+            { name = "dsh-notification", version = "0.1.1", bundle = "dsh-notification", commit = "3e33100f51f25f24cece20bfd3d50cfbde0cbca5" },
+            { name = "dsh-task-status", version = "0.3.0", bundle = "@dsh-external/dsh-task-status", commit = "4453da02d62289aeb19b046b4d2b5439dd4ce55a" },
         },
 
         -- Provenance for the expansion above.
