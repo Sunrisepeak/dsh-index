@@ -80,6 +80,10 @@ jobs:
 
           $(cat /tmp/new.log)"
           git push -q -u origin "$BR"
+          # A repo with "Allow GitHub Actions to create and approve pull
+          # requests" turned off rejects this with a bare GraphQL error, which
+          # reads as a broken workflow rather than a setting. The branch is
+          # already pushed either way, so say what to do with it.
           gh pr create --base main --title "chore(index): new plugins from the dsh-plugin topic" \
             --body "Found by \`tools/discover.py --new\`. Each entry declares \`dsh.bundle\` in its
           package.json at the scanned commit, is not archived, and has at least 2 stars.
@@ -90,7 +94,12 @@ jobs:
 
           \`\`\`
           $(cat /tmp/new.log)
-          \`\`\`"
+          \`\`\`" || {
+            echo "::error::could not open a PR. Branch $BR is pushed; open it by hand." \
+                 "Fix: Settings > Actions > General > allow Actions to create pull requests," \
+                 "or set a DISCOVER_TOKEN secret (which also lets the PR trigger CI)."
+            exit 1
+          }
 
   bump:
     name: version updates
@@ -130,4 +139,9 @@ jobs:
           $(cat /tmp/bump.log)
           \`\`\`
 
-          Note: a newly added version is **not mirrored** until \`tools/mirror.py\` publishes it."
+          Note: a newly added version is **not mirrored** until \`tools/mirror.py\` publishes it." || {
+            echo "::error::could not open a PR. Branch $BR is pushed; open it by hand." \
+                 "Fix: Settings > Actions > General > allow Actions to create pull requests," \
+                 "or set a DISCOVER_TOKEN secret (which also lets the PR trigger CI)."
+            exit 1
+          }
