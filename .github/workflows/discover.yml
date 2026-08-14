@@ -5,6 +5,15 @@
 # attention and must not share a PR. A reviewer reading "14 new plugins"
 # should not also be reviewing a repin of something already published, and an
 # audit hit is not a change to review at all -- it is a promise that broke.
+#
+# Each mutating job owns ONE long-lived branch and appends to it. Dated
+# branches looked tidier and were the bug: discover.py decides what is already
+# carried by reading the working tree, so a branch freshly cut from main never
+# sees yesterday's unmerged findings and re-proposes them. Three unmerged days
+# meant three PRs, each a strict superset of the last, and the same packages
+# reviewed three times. Checking out the working branch instead makes each run
+# append only what is genuinely new -- and because nothing is rewritten, review
+# comments left yesterday still point at the lines they were written about.
 name: discover
 
 on:
@@ -24,10 +33,20 @@ permissions:
   contents: write
   pull-requests: write
 
+# A dispatch fired while the nightly is running would otherwise have both runs
+# pushing the same two branches.
+concurrency:
+  group: discover
+  cancel-in-progress: false
+
 env:
-  # Falls back to the run's own token, which can read public repos and open a
-  # PR. A PAT in DISCOVER_TOKEN raises the search-API rate limit and lets the
-  # opened PR trigger CI, which GITHUB_TOKEN-authored PRs deliberately do not.
+  # DISCOVER_TOKEN is a PAT, and it is not an optimisation. GITHUB_TOKEN
+  # cannot open a PR here at all (the repo has Actions PR creation off), and
+  # even with that flipped, no workflow runs on a push or PR it authors -- so
+  # the one batch of changes nobody has read would be the one batch with no CI
+  # on it. It also raises the REST ceiling from 1,000/hour to 5,000, which
+  # matters because a full scan already costs ~760 calls and grows with the
+  # index. The fallback keeps the read-only audit working if the token lapses.
   GH_TOKEN: ${{ secrets.DISCOVER_TOKEN || secrets.GITHUB_TOKEN }}
 
 jobs:
@@ -47,11 +66,22 @@ jobs:
       - name: Every pinned commit must still resolve
         run: python3 tools/discover.py --audit --json /tmp/gone.json
       - if: failure()
+        # Guarded: when the audit fails for a reason other than a missing pin
+        # -- a rate limit, a network fault -- this file does not exist, and an
+        # unguarded `cat` would fail the summary step and bury the real error.
         run: |
-          echo "### Pinned commits missing upstream" >> "$GITHUB_STEP_SUMMARY"
-          echo '```json' >> "$GITHUB_STEP_SUMMARY"
-          cat /tmp/gone.json >> "$GITHUB_STEP_SUMMARY"
-          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          if [ -f /tmp/gone.json ]; then
+            {
+              echo "### Pinned commits missing upstream"
+              echo '```json'
+              cat /tmp/gone.json
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "### The audit could not complete" >> "$GITHUB_STEP_SUMMARY"
+            echo "No result file was written, so this is NOT a report that any pin is gone." \
+              >> "$GITHUB_STEP_SUMMARY"
+          fi
 
   new:
     name: new plugins
@@ -59,47 +89,87 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # The token the push is attributed to. Without it the push is
+          # GITHUB_TOKEN's and triggers nothing, so the PR sits there with no
+          # CI regardless of who opened it.
+          token: ${{ secrets.DISCOVER_TOKEN || github.token }}
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
+      - name: Work on the standing branch
+        run: |
+          BR=chore/discover
+          git config user.name  "dsh-index bot"
+          git config user.email "bot@users.noreply.github.com"
+          # The PR body diffs against main, so that ref has to be present
+          # regardless of which branch this run ends up on.
+          git fetch -q origin main
+          if git ls-remote --exit-code --heads origin "$BR" >/dev/null 2>&1; then
+            git fetch -q origin "$BR:$BR"
+            git checkout -q "$BR"
+          else
+            git checkout -q -b "$BR"
+          fi
+          echo "BR=$BR" >> "$GITHUB_ENV"
+
       - name: Scan the topics
         run: python3 tools/discover.py --new --json /tmp/new.json
+
       - name: Write descriptors
         run: |
           python3 tools/sync.py --new /tmp/new.json | tee /tmp/new.log
           python3 tools/add_kind.py
-      - name: Open a PR if anything changed
+
+      - name: Append and open or refresh the PR
         run: |
-          git config user.name  "dsh-index bot"
-          git config user.email "bot@users.noreply.github.com"
-          git add pkgs/ tools/profiles.json 2>/dev/null || true
+          git add pkgs/
+          [ -f tools/profiles.json ] && git add tools/profiles.json
           git diff --cached --quiet && { echo "nothing new"; exit 0; }
-          BR="chore/discover-$(date +%Y%m%d)"
-          git checkout -b "$BR"
-          git commit -q -m "chore(index): add plugins found in the dsh-plugin topic
 
-          $(cat /tmp/new.log)"
+          printf 'chore(index): add plugins found in the dsh-plugin topic\n\n' > /tmp/msg.txt
+          cat /tmp/new.log >> /tmp/msg.txt
+          git commit -q -F /tmp/msg.txt
           git push -q -u origin "$BR"
-          # A repo with "Allow GitHub Actions to create and approve pull
-          # requests" turned off rejects this with a bare GraphQL error, which
-          # reads as a broken workflow rather than a setting. The branch is
-          # already pushed either way, so say what to do with it.
-          gh pr create --base main --title "chore(index): new plugins from the dsh-plugin topic" \
-            --body "Found by \`tools/discover.py --new\`. Each entry declares \`dsh.bundle\` in its
-          package.json at the scanned commit, is not archived, and has at least 2 stars.
 
-          Descriptors arrive **un-mirrored** — that is the fail-closed state. \`tools/mirror.py\`
-          adds a \`mirror\` block only after publishing a verified tarball under a licence that
-          permits redistribution.
+          # The accumulated set, not just this run's delta -- the PR describes
+          # everything still waiting to be merged.
+          git diff --name-only origin/main..."$BR" -- pkgs/ \
+            | sed 's|.*/||; s|\.lua$||' | sort > /tmp/pending.txt
 
-          \`\`\`
-          $(cat /tmp/new.log)
-          \`\`\`" || {
-            echo "::error::could not open a PR. Branch $BR is pushed; open it by hand." \
-                 "Fix: Settings > Actions > General > allow Actions to create pull requests," \
-                 "or set a DISCOVER_TOKEN secret (which also lets the PR trigger CI)."
-            exit 1
-          }
+          # --body-file, never an interpolated string. The log carries upstream
+          # repo names and descriptions verbatim, and one containing a backtick
+          # or $(...) would execute inside a double-quoted shell argument.
+          {
+            echo "Found by \`tools/discover.py --new\`. Each entry declares \`dsh.bundle\` in its"
+            echo "package.json at the scanned commit, is not archived, and has at least 2 stars."
+            echo
+            echo "Descriptors arrive **un-mirrored** — that is the fail-closed state."
+            echo "\`tools/mirror.py\` adds a \`mirror\` block only after publishing a verified"
+            echo "tarball under a licence that permits redistribution."
+            echo
+            echo "### Pending in this PR ($(wc -l < /tmp/pending.txt))"
+            echo '```'
+            cat /tmp/pending.txt
+            echo '```'
+            echo
+            echo "### Added by this run"
+            echo '```'
+            cat /tmp/new.log
+            echo '```'
+          } > /tmp/body.md
+
+          PR=$(gh pr list --head "$BR" --state open --json number --jq '.[0].number // empty')
+          if [ -n "$PR" ]; then
+            gh pr edit "$PR" --body-file /tmp/body.md
+            echo "refreshed PR #$PR"
+          else
+            gh pr create --base main --head "$BR" \
+              --title "chore(index): new plugins from the dsh-plugin topic" \
+              --body-file /tmp/body.md
+          fi
 
   bump:
     name: version updates
@@ -107,41 +177,86 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.DISCOVER_TOKEN || github.token }}
+          fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+
+      - name: Work on the standing branch
+        run: |
+          BR=chore/bump
+          git config user.name  "dsh-index bot"
+          git config user.email "bot@users.noreply.github.com"
+          # The PR body diffs against main, so that ref has to be present
+          # regardless of which branch this run ends up on.
+          git fetch -q origin main
+          if git ls-remote --exit-code --heads origin "$BR" >/dev/null 2>&1; then
+            git fetch -q origin "$BR:$BR"
+            git checkout -q "$BR"
+          else
+            git checkout -q -b "$BR"
+          fi
+          echo "BR=$BR" >> "$GITHUB_ENV"
+
       - name: Look for releases past our pins
         run: python3 tools/discover.py --bump --json /tmp/bump.json
+
       - name: Add the new versions
         # The old version stays: somebody may be pinned to it, and its mirror
         # tarball is already published under that tag.
         run: python3 tools/sync.py --bump /tmp/bump.json | tee /tmp/bump.log
+
       - name: Refresh the npm resolution the site renders from
-        run: python3 tools/check_npm.py || true
-      - name: Open a PR if anything changed
+        # Not silenced. It reaches the network and may legitimately fail, but
+        # a swallowed failure here means the site renders a stale resolution
+        # and nothing ever says so.
+        id: npm
+        continue-on-error: true
+        run: python3 tools/check_npm.py
+
+      - name: Append and open or refresh the PR
         run: |
-          git config user.name  "dsh-index bot"
-          git config user.email "bot@users.noreply.github.com"
-          git add pkgs/ tools/npm.json
+          git add pkgs/
+          [ -f tools/npm.json ] && git add tools/npm.json
           git diff --cached --quiet && { echo "nothing to bump"; exit 0; }
-          BR="chore/bump-$(date +%Y%m%d)"
-          git checkout -b "$BR"
-          git commit -q -m "chore(index): follow upstream releases
 
-          $(cat /tmp/bump.log)"
+          printf 'chore(index): follow upstream releases\n\n' > /tmp/msg.txt
+          cat /tmp/bump.log >> /tmp/msg.txt
+          git commit -q -F /tmp/msg.txt
           git push -q -u origin "$BR"
-          gh pr create --base main --title "chore(index): follow upstream releases" \
-            --body "Found by \`tools/discover.py --bump\`. A moved head whose package.json version
-          is unchanged is skipped — repinning bytes under the same version number is the one thing
-          a version key must never mean.
 
-          \`\`\`
-          $(cat /tmp/bump.log)
-          \`\`\`
+          git diff --name-only origin/main..."$BR" -- pkgs/ \
+            | sed 's|.*/||; s|\.lua$||' | sort > /tmp/pending.txt
+          {
+            echo "Found by \`tools/discover.py --bump\`. A moved head whose package.json version"
+            echo "is unchanged is skipped — repinning bytes under the same version number is the"
+            echo "one thing a version key must never mean."
+            echo
+            echo "A newly added version is **not mirrored** until \`tools/mirror.py\` publishes it."
+            echo
+            if [ "${{ steps.npm.outcome }}" != success ]; then
+              echo "> ⚠️ \`check_npm.py\` did not succeed in this run; \`tools/npm.json\` may be stale."
+              echo
+            fi
+            echo "### Pending in this PR ($(wc -l < /tmp/pending.txt))"
+            echo '```'
+            cat /tmp/pending.txt
+            echo '```'
+            echo
+            echo "### Added by this run"
+            echo '```'
+            cat /tmp/bump.log
+            echo '```'
+          } > /tmp/body.md
 
-          Note: a newly added version is **not mirrored** until \`tools/mirror.py\` publishes it." || {
-            echo "::error::could not open a PR. Branch $BR is pushed; open it by hand." \
-                 "Fix: Settings > Actions > General > allow Actions to create pull requests," \
-                 "or set a DISCOVER_TOKEN secret (which also lets the PR trigger CI)."
-            exit 1
-          }
+          PR=$(gh pr list --head "$BR" --state open --json number --jq '.[0].number // empty')
+          if [ -n "$PR" ]; then
+            gh pr edit "$PR" --body-file /tmp/body.md
+            echo "refreshed PR #$PR"
+          else
+            gh pr create --base main --head "$BR" \
+              --title "chore(index): follow upstream releases" \
+              --body-file /tmp/body.md
+          fi
