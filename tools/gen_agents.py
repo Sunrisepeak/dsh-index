@@ -111,7 +111,11 @@ def check_members(owner: str, names: list) -> list:
 def descriptor(spec: dict, kind: str, facts: list) -> str:
     lines = []
     if kind == "profile":
-        lines.append(f'        profile = {lua_str(spec["profile"])},\n')
+        # The profile name IS the package name. `xlings install dsh:X` followed
+        # by `dsh --profile Y` gives the reader two names for one thing and no
+        # way to know they are related; upstream's own docs are the only thing
+        # that can license a different name, and these Agents are ours.
+        lines.append(f'        profile = {lua_str(spec["name"])},\n')
     lines.append("\n")
     lines.append("        -- Expanded by tools/gen_agents.py; template.lua composes\n")
     lines.append("        -- these at install time and cannot read another descriptor,\n")

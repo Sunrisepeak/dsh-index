@@ -30,10 +30,9 @@
     {
       "name": "agent-web-coding",
       "version": "0.1.0",
-      "profile": "coding",
       "description": {
-        "en": "A ready-to-run coding Agent on the web surface: the harness plus five composed plugins, booted with `dsh --profile coding`.",
-        "zh": "开箱即用的 Web 界面编码 Agent：harness + 五个已组合插件，`dsh --profile coding` 直接启动。"
+        "en": "A ready-to-run coding Agent on the web surface: Agent = Harness + Plugins. Five composed plugins, booted with `dsh --profile agent-web-coding`.",
+        "zh": "开箱即用的 Web 界面编码 Agent：Agent = dsh + 五个已组合插件，`dsh --profile agent-web-coding` 直接启动。"
       },
       "groups": ["group-web-essentials"],
       "extra": []
@@ -41,10 +40,9 @@
     {
       "name": "agent-tui-coding",
       "version": "0.1.0",
-      "profile": "tui-coding",
       "description": {
-        "en": "A terminal coding Agent: the Claude Code style full-screen TUI surface with desktop notifications, booted with `dsh --profile tui-coding`.",
-        "zh": "终端编码 Agent：Claude Code 风格全屏 TUI 界面 + 桌面通知，`dsh --profile tui-coding` 启动。"
+        "en": "A terminal coding Agent: the Claude Code style full-screen TUI surface with desktop notifications, booted with `dsh --profile agent-tui-coding`.",
+        "zh": "终端编码 Agent：Claude Code 风格全屏 TUI 界面 + 桌面通知，`dsh --profile agent-tui-coding` 启动。"
       },
       "groups": [],
       "extra": ["dsh-cc-tui", "dsh-notification"]

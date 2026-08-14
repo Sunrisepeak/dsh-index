@@ -2,7 +2,7 @@
 
 English | [中文](README.zh.md)
 
-**dsh + a set of plugins = an Agent.** This index browses, and distributes,
+**Agent = Harness + Plugins/Packages.** This index browses, and distributes,
 both — the plugins of the [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)
 ecosystem, and complete Agents assembled from them.
 
@@ -18,10 +18,11 @@ over time.
 so every plugin page leads with its native command. This index's command sits
 below it and adds what dsh cannot: a sha256-checked tarball and a CN mirror.
 
-**3 · A distribution channel for Agents.** An Agent is a harness plus a
-composed set of plugins — in dsh's own model, a *profile*. Here each one is a
-single xpkg descriptor, so `xlings install` resolves the members, installs
-them, writes the profile, and you boot it.
+**3 · A distribution channel for Agents.** `Agent = Harness + Plugins/Packages`
+— in dsh's own model, a *profile*. Here each one is a single xpkg descriptor, so
+`xlings install` resolves the members, installs them, writes the profile, and you
+boot it. **An Agent's profile name is its package name**, so what you install and
+what you boot are the same word.
 
 ## Quick start
 
@@ -30,7 +31,7 @@ xlings install dsh -y
 xlings config --index-repo dsh:https://github.com/Sunrisepeak/dsh-index.git
 
 xlings install dsh:agent-web-coding -y   # a complete Agent
-dsh --profile coding                     # boot it
+dsh --profile agent-web-coding           # boot it — same name
 ```
 
 <details>
@@ -56,7 +57,7 @@ irm https://d2learn.org/xlings-install.ps1.txt | iex
 | --- | --- | --- |
 | **plugin** | one upstream bundle — an atom | adds it to the profile its own README documents |
 | **group** | a reusable set that composes cleanly | installs every member |
-| **Agent** | harness + members + this Agent's own config layer | creates its profile and composes everything into it |
+| **Agent** | `Harness + Plugins` + this Agent's own config layer | creates its profile and composes everything into it |
 
 A group and an Agent carry no bytes of their own. They are manifests a few
 hundred bytes long; the members hold the payload. Members are required to be
@@ -70,7 +71,7 @@ dsh composes a profile from four patch layers, and you can hand it another one
 at boot:
 
 ```bash
-dsh --profile coding --patch ./extra.yml
+dsh --profile agent-web-coding --patch ./extra.yml
 ```
 
 But a patch carries configuration only — **no dependency declarations** — and
@@ -150,15 +151,16 @@ Installing prints the answer, but the rule is:
 
 | What you installed | Profile | Launch |
 | --- | --- | --- |
-| an Agent | the one it declares | `dsh --profile <name>` |
+| an Agent | its own package name | `dsh --profile <package-name>` |
 | `xlings install dsh:<plugin>` | the one its own README documents | `dsh web`, or `dsh --profile <name>` |
 | `XIM_DSH_PROFILE=<name> xlings install …` | `<name>` | `dsh --profile <name>` |
 
 This index does not invent profile names. Upstream's model says the name is
 the user's — `dsh plugin --profile <name>` creates whatever you pass — so a
 plugin is recorded with the name its own documentation tells readers to type
-(65 say `web`, 2 say `tui`, 1 says `cc-tui`), and an Agent declares its own,
-because the Agent *is* that profile.
+(65 say `web`, 2 say `tui`, 1 says `cc-tui`). An Agent uses its own package
+name, so `xlings install dsh:X` is always followed by `dsh --profile X` — two
+names for one thing would leave a reader no way to know they are related.
 
 ```bash
 # what is actually installed, and in what order the layers apply

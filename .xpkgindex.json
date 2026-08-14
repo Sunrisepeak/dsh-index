@@ -6,9 +6,9 @@
       "zh-Hant": "dsh index — 外掛與 Agent"
     },
     "description": {
-      "en": "Browse the DeepSeek Harness plugin ecosystem, and install ready-to-run Agents: a harness plus a composed set of plugins. Install with dsh directly, or through xlings for mirror acceleration.",
-      "zh": "浏览 DeepSeek Harness 插件生态，并安装开箱即用的 Agent —— harness 加一组已组合的插件。可直接用 dsh 安装，也可经 xlings 走镜像加速。",
-      "zh-Hant": "瀏覽 DeepSeek Harness 外掛生態，並安裝開箱即用的 Agent —— harness 加一組已組合的外掛。可直接用 dsh 安裝，也可經 xlings 走鏡像加速。"
+      "en": "Browse the DeepSeek Harness plugin ecosystem, and install ready-to-run Agents — Agent = Harness + Plugins/Packages. Install with dsh directly, or through xlings for mirror acceleration.",
+      "zh": "浏览 DeepSeek Harness 插件生态，并安装开箱即用的 Agent —— Agent = dsh + 一组插件。可直接用 dsh 安装，也可经 xlings 走镜像加速。",
+      "zh-Hant": "瀏覽 DeepSeek Harness 外掛生態，並安裝開箱即用的 Agent —— Agent = dsh + 一組外掛。可直接用 dsh 安裝，也可經 xlings 走鏡像加速。"
     },
     "logo": "dsh index"
   },
@@ -33,9 +33,9 @@
     "project_name": "xlings",
     "project_url": "https://github.com/openxlings/xlings",
     "description": {
-      "en": "dsh plus a set of plugins is an Agent. This index carries all three tiers — plugins as atoms, groups as reusable sets, and Agents as complete profiles you can boot — and each is one xpkg descriptor, so xlings resolves the dependencies and writes the profile for you.",
-      "zh": "dsh + 一组插件 = 一个 Agent。本索引收录三层：插件是原子，插件组是可复用组合，Agent 是可直接启动的完整 profile —— 每一层都是一个 xpkg 描述文件，xlings 会替你解析依赖并写好 profile。",
-      "zh-Hant": "dsh + 一組外掛 = 一個 Agent。本索引收錄三層：外掛是原子，外掛組是可重用組合，Agent 是可直接啟動的完整 profile —— 每一層都是一個 xpkg 描述檔，xlings 會替你解析相依並寫好 profile。"
+      "en": "Agent = Harness + Plugins/Packages. This index carries all three tiers — plugins as atoms, groups as reusable sets, and Agents as complete profiles you can boot — and each is one xpkg descriptor, so xlings resolves the dependencies and writes the profile for you.",
+      "zh": "Agent = dsh + 一组插件。本索引收录三层：插件是原子，插件组是可复用组合，Agent 是可直接启动的完整 profile —— 每一层都是一个 xpkg 描述文件，xlings 会替你解析依赖并写好 profile。",
+      "zh-Hant": "Agent = dsh + 一組外掛。本索引收錄三層：外掛是原子，外掛組是可重用組合，Agent 是可直接啟動的完整 profile —— 每一層都是一個 xpkg 描述檔，xlings 會替你解析相依並寫好 profile。"
     },
     "maintainers": [
       "Sunrisepeak"
@@ -176,7 +176,7 @@
         "xlings install dsh -y",
         "xlings config --index-repo dsh:https://github.com/Sunrisepeak/dsh-index.git",
         "xlings install dsh:agent-web-coding -y",
-        "dsh --profile coding"
+        "dsh --profile agent-web-coding"
       ],
       "action": {
         "en": "Read the guide",

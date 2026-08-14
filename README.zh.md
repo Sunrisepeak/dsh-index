@@ -2,7 +2,7 @@
 
 [English](README.md) | 中文
 
-**dsh + 一组插件 = 一个 Agent。** 本索引同时浏览与分发这两者 ——
+**Agent = dsh + 一组插件。** 本索引同时浏览与分发这两者 ——
 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness) 生态的插件，
 以及由它们组装成的完整 Agent。
 
@@ -16,9 +16,10 @@
 **2 · 一条命令安装，两条路可选。** dsh 自己就能装插件，所以每个插件页**先给出它的
 原生命令**；本索引的命令排在下面，补上 dsh 给不了的东西：sha256 校验与 CN 镜像。
 
-**3 · Agent 的分发渠道。** 一个 Agent 就是 harness 加一组已组合的插件 ——
-在 dsh 自己的模型里就是一个 *profile*。这里每个 Agent 是一个 xpkg 描述文件，
-`xlings install` 会解析成员、装齐、写好 profile，然后你直接启动。
+**3 · Agent 的分发渠道。** `Agent = dsh + 一组插件` —— 在 dsh 自己的模型里
+就是一个 *profile*。这里每个 Agent 是一个 xpkg 描述文件，`xlings install`
+会解析成员、装齐、写好 profile，然后你直接启动。**Agent 的 profile 名就是它的
+包名**，所以装的和启动的是同一个词。
 
 ## 快速开始
 
@@ -27,7 +28,7 @@ xlings install dsh -y
 xlings config --index-repo dsh:https://github.com/Sunrisepeak/dsh-index.git
 
 xlings install dsh:agent-web-coding -y   # 一个完整 Agent
-dsh --profile coding                     # 启动它
+dsh --profile agent-web-coding           # 启动它 —— 同名
 ```
 
 <details>
@@ -53,7 +54,7 @@ irm https://d2learn.org/xlings-install.ps1.txt | iex
 | --- | --- | --- |
 | **插件** | 一个上游 bundle —— 原子 | 装进它自己 README 所写的 profile |
 | **插件组** | 可干净共存的可复用组合 | 装齐全部成员 |
-| **Agent** | harness + 成员 + 这个 Agent 自己的配置层 | 建它的 profile，把成员全部组合进去 |
+| **Agent** | `dsh + 一组插件` + 这个 Agent 自己的配置层 | 建它的 profile，把成员全部组合进去 |
 
 插件组和 Agent **没有自己的字节**，它们是几百字节的清单，载荷在成员身上。
 成员必须是已镜像的包 —— 一个内容要在启动时回上游拉的"精选集"，
@@ -65,7 +66,7 @@ irm https://d2learn.org/xlings-install.ps1.txt | iex
 dsh 的 profile 由四层 patch 组合而成，启动时还能再叠一层：
 
 ```bash
-dsh --profile coding --patch ./extra.yml
+dsh --profile agent-web-coding --patch ./extra.yml
 ```
 
 但 patch **只有配置、没有依赖声明**，而 dsh 的启动路径根本不碰包管理器。
@@ -140,14 +141,15 @@ xlings remove dsh:dsh-cc-tui -y
 
 | 你装的是 | profile | 启动 |
 | --- | --- | --- |
-| 一个 Agent | 它自己声明的 | `dsh --profile <name>` |
+| 一个 Agent | 它自己的包名 | `dsh --profile <包名>` |
 | `xlings install dsh:<plugin>` | 它自己 README 所写的 | `dsh web`，或 `dsh --profile <name>` |
 | `XIM_DSH_PROFILE=<name> xlings install …` | `<name>` | `dsh --profile <name>` |
 
 本索引**不发明 profile 名**。上游的模型是名字属于用户 ——
 `dsh plugin --profile <name>` 你传什么就建什么 —— 所以插件记录的是它自己文档
-让读者输入的那个名字（65 个是 `web`，2 个 `tui`，1 个 `cc-tui`），
-而 Agent 自己声明名字，因为那个 Agent **就是**那个 profile。
+让读者输入的那个名字（65 个是 `web`，2 个 `tui`，1 个 `cc-tui`）。
+Agent 则用**自己的包名**，于是 `xlings install dsh:X` 之后一定是
+`dsh --profile X` —— 一个东西两个名字，读者没有办法知道它们是同一个。
 
 ```bash
 # 实际装了什么，以及层的组合顺序

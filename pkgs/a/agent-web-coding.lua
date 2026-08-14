@@ -2,7 +2,7 @@ package = {
     spec = "1",
 
     name = "agent-web-coding",
-    description = "A ready-to-run coding Agent on the web surface: the harness plus five composed plugins, booted with `dsh --profile coding`.",
+    description = "A ready-to-run coding Agent on the web surface: Agent = Harness + Plugins. Five composed plugins, booted with `dsh --profile agent-web-coding`.",
     repo = "https://github.com/Sunrisepeak/dsh-index",
     homepage = "https://sunrisepeak.github.io/dsh-index",
     licenses = {"Apache-2.0"},
@@ -14,7 +14,7 @@ package = {
 
     dsh = {
         kind = "profile",
-        profile = "coding",
+        profile = "agent-web-coding",
 
         -- Expanded by tools/gen_agents.py; template.lua composes
         -- these at install time and cannot read another descriptor,

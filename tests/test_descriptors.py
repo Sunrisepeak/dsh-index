@@ -341,6 +341,23 @@ class TestAgent:
                 f"{path.stem}: an Agent must declare dsh.profile"
 
     @pytest.mark.static
+    def test_agent_profile_is_its_package_name(self):
+        """`xlings install dsh:X` must be followed by `dsh --profile X`.
+
+        Two names for one thing leaves a reader no way to know they are
+        related -- installing `agent-web-coding` and then booting `coding`
+        reads as a typo or a second package. Upstream documentation is the
+        only thing that can license a different name, and these Agents are
+        this index's own, so there is nothing to defer to.
+        """
+        for path in PKGS:
+            body = path.read_text(encoding="utf-8")
+            if _kind(body) != "profile":
+                continue
+            assert _field(_dsh_block(body), "profile") == path.stem, (
+                f"{path.stem}: an Agent's profile must be its package name")
+
+    @pytest.mark.static
     def test_group_declares_no_profile(self):
         """A group is a set of plugins, not a running thing. Naming a profile
         would imply booting it, which a group cannot do."""

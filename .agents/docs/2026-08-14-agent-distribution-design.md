@@ -196,6 +196,8 @@ Agent 包 = deps（成员代码） + profile 的 cordis.patch.yml（这个 Agent
 
 在三层模型里这条自然满足：**profile 名由 profile 包声明**，因为那个包就是那个 Agent，名字是它的一部分，不是索引推导的。
 
+进一步，**Agent 的 profile 名就等于它的包名**。`xlings install dsh:X` 之后必须是 `dsh --profile X` —— 装 `agent-web-coding` 却要启动 `coding`，读者没有任何依据知道这两个词是同一个东西，只会读成打错字或另一个包。能授权用不同名字的只有上游文档，而这些 Agent 是本索引自己写的，没有可对齐的上游。规则写死在 `tools/gen_agents.py`（`profile` 从 `name` 推导，不再是可填字段）与一条测试里。
+
 **dsh 没有任何环境变量能选 profile。** 全树只读 `DSH_HOME`、`DSH_WEB_URL`、`DSH_TELEMETRY_DISABLED`。选 profile 的唯一入口是 `--profile` 参数。所以：
 
 - 索引不能提供"进某个环境自动用某个 profile"，除非上游加 `DSH_PROFILE`（值得提 issue）

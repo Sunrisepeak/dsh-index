@@ -2,7 +2,7 @@ package = {
     spec = "1",
 
     name = "agent-tui-coding",
-    description = "A terminal coding Agent: the Claude Code style full-screen TUI surface with desktop notifications, booted with `dsh --profile tui-coding`.",
+    description = "A terminal coding Agent: the Claude Code style full-screen TUI surface with desktop notifications, booted with `dsh --profile agent-tui-coding`.",
     repo = "https://github.com/Sunrisepeak/dsh-index",
     homepage = "https://sunrisepeak.github.io/dsh-index",
     licenses = {"Apache-2.0"},
@@ -14,7 +14,7 @@ package = {
 
     dsh = {
         kind = "profile",
-        profile = "tui-coding",
+        profile = "agent-tui-coding",
 
         -- Expanded by tools/gen_agents.py; template.lua composes
         -- these at install time and cannot read another descriptor,

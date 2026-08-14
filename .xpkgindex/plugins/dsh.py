@@ -175,6 +175,15 @@ class DshPlugin(Plugin):
         ext["native"] = self._native_install(pkg, ext)
         pkg.extensions["dsh"] = ext
 
+        # A composite's members ARE its xpkg dependencies -- that is how
+        # template.lua declares them, and how xlings installs them. Saying so
+        # here puts them on the core's own axis, so each member page gains a
+        # linked `required by` pointing back at every group and Agent that
+        # contains it. Inventing a private vocabulary for it would have left
+        # that relationship visible from only one side.
+        if not pkg.deps and ext["members"]:
+            pkg.deps = [m.get("name", "") for m in ext["members"] if m.get("name")]
+
         # dsh installs a plugin itself, so its own command leads and this
         # index's goes below it (design 6.1). Hiding a path the reader already
         # has would be the wrong kind of advocacy -- the index earns its place
@@ -359,11 +368,21 @@ class DshPlugin(Plugin):
 
         members = ext.get("members") or []
         if members:
+            # Members are xpkg packages in this very index, so they are
+            # rendered as dependencies -- the core's own axis, which also
+            # gives each member page a `required by` link back. A private
+            # list block would have been a second, unlinked vocabulary for
+            # a relationship xpkg already has a word for.
             blocks.append(Block(
-                kind="list", weight=20,
+                kind="table", weight=20,
                 title=_t(f"Members ({len(members)})", f"成员（{len(members)}）",
                          f"成員（{len(members)}）"),
-                data={"items": members}))
+                data={"head": [_t("package", "包", "套件"),
+                               _t("bundle in the profile manifest",
+                                  "profile 清单里的 bundle 名",
+                                  "profile 清單裡的 bundle 名")],
+                      "rows": [[m.get("name", ""), m.get("bundle", "")]
+                               for m in members]}))
             if ext.get("groups"):
                 blocks.append(Block(
                     kind="kv", weight=21,
@@ -375,13 +394,10 @@ class DshPlugin(Plugin):
 
         if delivery == "mirrored":
             note = _t(
-                "Mirrored to xlings-res with a sha256 and a CN mirror: installs "
-                "offline, survives upstream deletion, and needs no build "
-                "authorisation.",
-                "已镜像到 xlings-res，带 sha256 与 CN 镜像：可离线安装，上游删库后仍可装回，"
-                "且不需要构建授权。",
-                "已鏡像到 xlings-res，帶 sha256 與 CN 鏡像：可離線安裝，上游刪庫後仍可裝回，"
-                "且不需要建置授權。",
+                "Mirrored to xlings-res with a sha256 and a CN mirror: "
+                "installs offline.",
+                "已镜像到 xlings-res，带 sha256 与 CN 镜像：可离线安装。",
+                "已鏡像到 xlings-res，帶 sha256 與 CN 鏡像：可離線安裝。",
             )
         else:
             lic = ext.get("license") or "unknown"
