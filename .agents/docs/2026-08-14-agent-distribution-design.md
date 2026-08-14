@@ -237,6 +237,40 @@ Plugins     原子能力                        ← 索引底座，默认折叠
 
 每个 Agent 页展示：它包含哪些插件、启动命令、是否全部已镜像（决定能否离线/CN 安装）、成员是否有行冲突。
 
+### 6.1 包页的安装方式：dsh 原生在前，xlings 在后
+
+plugin 是 dsh 自己就能装的东西（`dsh plugin` 转发给 pnpm），**包页就应该先给出 dsh 原生命令，xlings 的放在它后面**。理由是诚实：索引不该把用户本来就有的路径藏起来，它的价值（镜像加速、sha256、依赖闭包）要靠说明差异来体现，不是靠遮蔽替代品。
+
+```
+① dsh plugin --profile web add <spec>     ← 原生，任何装了 dsh 的人都能用
+② xlings install dsh:<name> -y            ← 本索引，带镜像 / 校验 / 闭包
+```
+
+**只有 plugin 层有 ①。** group 和 Agent(profile) 没有 —— §2.4 已证明 dsh 没有任何"装一个 profile"的入口，它们只保留 xlings 那条。这不是排版选择，是能力事实。
+
+### 6.2 `<spec>` 与 `<profile>` 怎么生成（fail-closed）
+
+规则写死，因为印一条 404 的命令比不印更糟。
+
+**spec 分两种，按实测选，不按 `bundle_name` 长相猜。** `bundle_name` 是包自己 `package.json` 的 name，裸名**不等于**已发布：68 个包里 19 个用合成名 `@dsh-external/*`（npm 上 404），剩下 49 个裸名中只有 **18 个真在 npm 上**。所以：
+
+| 条件 | spec | 数量（今日） |
+|---|---|---|
+| 该 name **与该 pin 版本**在 npm 上都解析得到 | `<bundle_name>@<version>` | 18 |
+| 其余 | `github:<owner>/<repo>#<commit>` | 50 |
+
+第二列的 `owner/repo` 与 40 位 `commit` 描述符里都有，所以两种 spec 都是**可生成且已 pin** 的。判定在生成期做一次并写进产物，站点不实时查 npm。**版本也要一起验** —— 光验 name 不够，我们 pin 的版本可能已被 unpublish（`dsh-cc-tui` 我们 pin `0.1.6`、npm 已到 `0.2.0` 就是这个风险的现实样本）。
+
+**`needs_build = true` 的 13 个包走 git spec 时必须带警告。** pnpm 会拦住 git 包的 prepare 脚本，dsh 自己的错误信息就是这么说的：
+
+> git-hosted plugins build on install via their prepare script, which pnpm blocks until allowed — add the exact key pnpm printed above under allowBuilds in `<profile>/pnpm-workspace.yaml`, then re-run
+
+页面照实写这一步，别让人撞了才知道。
+
+**`--profile` 用上游自己 README 里的值，不推导。** `tools/mine_profiles.py` 已从每个仓库挖出来，今日分布 65 `web` / 2 `tui` / 1 `cc-tui`。§4 的规则是"profile 名属于用户、索引不得发明"——照抄上游 README 不算发明，而按 `categories` 里的 `tui` / `web-ui` 去推**算**，那正是 v1 被推翻过的做法。
+
+**两条命令给的东西不一样，页面要说清。** ① 走 npm/GitHub 直连，无 CN 加速、无 sha256 校验；② 走本索引，可镜像的成员有双镜像与三方校验（127 可镜像 / 41 已发布，§5）。让用户自己选，而不是替他选。
+
 ---
 
 ## 7. 取舍与代价
