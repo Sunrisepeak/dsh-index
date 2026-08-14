@@ -197,11 +197,50 @@ dsh --profile <profile> --dump-config | grep '^# == '
 bundle 里，29 个完全没有 LICENSE，另有 13 个无法识别 —— 本索引无权镜像它们，
 所以它们保持直连并如实标注。
 
+## 定义一个 Agent
+
+这是本仓库最重要的一类贡献：**把已经存在的插件组合成一个别人可以直接运行的东西。**
+Agent 是一份清单 —— 几百字节，列出成员，自己没有载荷。
+
+Agent 和插件组是**生成的**，改源文件、不要改描述符；CI 会重跑展开，两者不会漂移。
+
+```jsonc
+// tools/agents.json
+"agents": [
+  { "name": "agent-web-coding", "version": "0.1.0",
+    "description": { "en": "…", "zh": "…" },
+    "groups": ["group-web-essentials"],   // 展开进 members
+    "extra": ["dsh-notification"] }       // 再加这些插件
+]
+```
+
+```bash
+tools/gen_agents.py            # 写出描述符
+tools/gen_agents.py --check    # CI 跑的
+```
+
+三条规则，全是**拒绝**而不是告警 —— 因为这里是**索引**在选组合：
+
+| 规则 | 为什么 |
+|---|---|
+| profile 名 = 包名 | `xlings install dsh:X` 之后必须是 `dsh --profile X` |
+| 成员必须已镜像 | 内容要在启动时回上游拉的"精选集"不可复现 |
+| 两个成员不得替换同一个 `dsh-base` 行 | patch 替换整行，后装的静默胜出 |
+
+成员被 pin 到版本和 commit，所以一个 Agent 指代**一批固定的字节**。
+
 ## 新增一个插件
+
+让扫描器去收集事实 —— 它先 pin 住 head sha，再**在那个 sha 上**读 `package.json`：
+
+```bash
+tools/discover.py --new --json /tmp/new.json
+tools/sync.py --new /tmp/new.json
+```
 
 `pkgs/<首字母>/<名字>.lua` 下的描述符是**纯数据** —— 没有 hook、没有 `xpm`、
 没有 `type`。全部生命周期来自 `template.lua`，由 `pkgindex-build.lua` 在索引构建
-时追加到每个描述符。一套范式，一份实现。
+时追加到每个描述符。
 
 ```lua
 package = {
@@ -212,7 +251,7 @@ package = {
     licenses = {"BSD-3-Clause"},
 
     dsh = {
-        kind = "plugin",
+        kind = "plugin",                -- plugin | group | profile
         profile = "cc-tui",             -- 它自己 README 让读者输入的名字
         bundle_name = "dsh-cc-tui",
         versions = { ["0.1.6"] = { commit = "<40 位 sha>" } },
@@ -225,10 +264,25 @@ package = {
 永远 pin 40 位 commit。这个生态里包名不可信：36 个社区仓库把自己命名进了
 DeepSeek 在 npm 上真正拥有的 `@deepseek-ai/` 作用域，裸名可能悄悄解析到别的代码。
 
-插件组和 Agent 由 `tools/gen_agents.py` 从 `tools/agents.json` **生成**；
-改源文件，不要改描述符。CI 会重跑展开，两者不会漂移。
+## 用 agent 参与这个项目
 
-详见 [docs/contributing.md](docs/contributing.md)。
+编写规范都写成了 skill，把路径给你自己的 agent，它就拿到了完整约定 ——
+逐字段规则、两个 Lua 运行时各自会静默失败的缺口、以及提 PR 的要求。
+
+```
+阅读 https://github.com/Sunrisepeak/dsh-index —— 一个 xlings 包索引，分发
+DeepSeek Harness 的 Agent，其中 Agent = Harness + Plugins。动手前先读
+.agents/skills/xpkg-creater/SKILL.md 了解包的编写约定，读
+.agents/skills/pr-workflow/SKILL.md 了解变更如何合入，设计依据在 .agents/docs/。
+然后 <你要做的事>。
+```
+
+| Skill | 覆盖 |
+|---|---|
+| [`xpkg-creater`](.agents/skills/xpkg-creater/SKILL.md) | 三层模型、每个 `dsh.*` 字段、两个 Lua 运行时各自缺什么、隔离约束、验收 |
+| [`pr-workflow`](.agents/skills/pr-workflow/SKILL.md) | 分支、PR 正文、必须全绿的检查、合并规则 |
+
+短路径见 [docs/contributing.md](docs/contributing.md)。
 
 ## 保持跟进
 
