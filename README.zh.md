@@ -18,8 +18,14 @@
 
 **3 · Agent 的分发渠道。** `Agent = dsh + 一组插件` —— 在 dsh 自己的模型里
 就是一个 *profile*。这里每个 Agent 是一个 xpkg 描述文件，`xlings install`
-会解析成员、装齐、写好 profile，然后你直接启动。**Agent 的 profile 名就是它的
-包名**，所以装的和启动的是同一个词。
+会解析成员、装齐、写好 profile，并**注册一个以包名命名的命令**。
+一次安装，一个词就能跑：
+
+```bash
+xlings install dsh:agent-web-coding -y   →   agent-web-coding
+```
+
+profile 名同样是包名，所以 `dsh --profile agent-web-coding` 是同一件事的长写法。
 
 ## 快速开始
 
@@ -28,8 +34,19 @@ xlings install dsh -y
 xlings config --index-repo dsh:https://github.com/Sunrisepeak/dsh-index.git
 
 xlings install dsh:agent-web-coding -y   # 一个完整 Agent
-dsh --profile agent-web-coding           # 启动它 —— 同名
+agent-web-coding                         # 运行它 —— 包名就是命令
 ```
+
+最后一行不是笔误。**装完一个 Agent，你会得到一个以它命名的命令**，
+经 xlings 的 `xvm` 注册，本质是 `dsh --profile agent-web-coding` 的别名。
+因为这个名字归 xvm 管，**带版本、按 subos** 是白拿的：
+
+```bash
+xlings install dsh:agent-web-coding@0.2.0 -y
+xlings use agent-web-coding 0.1.0        # 切换，只影响当前 subos
+```
+
+`dsh --profile agent-web-coding` 依然可用 —— 命令是别名，不是替代。
 
 <details>
 <summary>还没装 xlings？点开看安装命令</summary>
@@ -52,9 +69,9 @@ irm https://d2learn.org/xlings-install.ps1.txt | iex
 
 | 层 | 是什么 | 安装它会做什么 |
 | --- | --- | --- |
-| **插件** | 一个上游 bundle —— 原子 | 装进它自己 README 所写的 profile |
+| **插件** | 一个上游 bundle —— 原子 | 下载并 pin 好字节，打印出组合它的那一行 |
 | **插件组** | 可干净共存的可复用组合 | 装齐全部成员 |
-| **Agent** | `dsh + 一组插件` + 这个 Agent 自己的配置层 | 建它的 profile，把成员全部组合进去 |
+| **Agent** | `dsh + 一组插件` + 这个 Agent 自己的配置层 | 建它的 profile、把成员全部组合进去，并注册一个以包名命名的命令 |
 
 插件组和 Agent **没有自己的字节**，它们是几百字节的清单，载荷在成员身上。
 成员必须是已镜像的包 —— 一个内容要在启动时回上游拉的"精选集"，
@@ -114,17 +131,14 @@ xlings install dsh:group-web-essentials -y  # 一个插件组
 xlings install dsh:dsh-cc-tui -y            # 单个插件
 xlings install dsh:dsh-cc-tui@0.1.6 -y      # 指定版本
 
-# 指定插件落到哪个 profile
+# 改掉插件打印那一行里的 profile 名
 XIM_DSH_PROFILE=work xlings install dsh:dsh-at-file -y
 
-# 未镜像且带构建脚本的插件需要显式授权，
-# 因为安装它等于在你机器上执行上游代码
-DSH_ALLOW_BUILDS=1 xlings install dsh:<plugin> -y
+# 按 subos 切换版本 —— 对 Agent 来说就是切换它的命令指向哪个版本，
+# 所以两个版本可以同时装着
+xlings use agent-web-coding 0.1.0
 
-# 按 subos 切换版本
-xlings use dsh-cc-tui 0.1.6
-
-# 卸载 —— 同时从 profile 里移除
+# 卸载
 xlings remove dsh:dsh-cc-tui -y
 ```
 
@@ -137,19 +151,28 @@ xlings remove dsh:dsh-cc-tui -y
 <details>
 <summary>插件装到哪去了？怎么启动？</summary>
 
-安装时会打印答案，规则是：
+**装一个插件不会把它放进任何 profile。** 取字节和做组合是两件事、两个主人，
+所以原子只负责取，并打印出组合它的那一行：
+
+```
+dsh-at-file is downloaded and pinned. It is not in any profile yet.
+  Add it:     dsh plugin --profile web add /…/dsh-at-file-0.1.0.tgz
+  Launch it:  dsh web
+```
+
+原来原子自己注册的时候，装一个 Agent 会连带把它的五个成员也塞进 `web`
+—— 因为每个成员在 Agent 还没运行时就已经替自己决定了归属。
 
 | 你装的是 | profile | 启动 |
 | --- | --- | --- |
-| 一个 Agent | 它自己的包名 | `dsh --profile <包名>` |
-| `xlings install dsh:<plugin>` | 它自己 README 所写的 | `dsh web`，或 `dsh --profile <name>` |
-| `XIM_DSH_PROFILE=<name> xlings install …` | `<name>` | `dsh --profile <name>` |
+| 一个 Agent | 它自己的包名，已替你组合好 | `dsh --profile <包名>` |
+| 一个插件组 | 无；成员只是被取下来，没有被组合 | — |
+| 单个插件 | 在你粘贴那一行之前，无 | `dsh web`，或 `dsh --profile <name>` |
 
-本索引**不发明 profile 名**。上游的模型是名字属于用户 ——
-`dsh plugin --profile <name>` 你传什么就建什么 —— 所以插件记录的是它自己文档
-让读者输入的那个名字（65 个是 `web`，2 个 `tui`，1 个 `cc-tui`）。
-Agent 则用**自己的包名**，于是 `xlings install dsh:X` 之后一定是
-`dsh --profile X` —— 一个东西两个名字，读者没有办法知道它们是同一个。
+那行里的 profile 是插件自己 README 所写的名字（65 个 `web`，2 个 `tui`，
+1 个 `cc-tui`）—— 本索引**不发明名字**，换成任何名字都行。Agent 用自己的包名，
+所以 `xlings install dsh:X` 之后一定是 `dsh --profile X`；一个东西两个名字，
+读者没有办法知道它们是同一个。
 
 ```bash
 # 实际装了什么，以及层的组合顺序
@@ -168,7 +191,7 @@ dsh --profile <profile> --dump-config | grep '^# == '
 | 字节来自 | xlings-res，带 sha256 | GitHub，pin 死的 commit |
 | CN 镜像 | 有 | 无 |
 | 上游删库后 | 仍可安装 | 没了 |
-| 带 `prepare` 脚本 | 已在本索引 CI 里构建 | 需要 `DSH_ALLOW_BUILDS=1` |
+| 带 `prepare` 脚本 | 已在本索引 CI 里构建 | pnpm 会拦住，需你显式允许 |
 
 **由许可证决定**，不是偏好：镜像即再分发。在 `dsh-plugin` topic 调研的 169 个
 bundle 里，29 个完全没有 LICENSE，另有 13 个无法识别 —— 本索引无权镜像它们，

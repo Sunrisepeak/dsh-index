@@ -206,9 +206,11 @@ namespace — clear both before testing:
 rm -rf ~/.xlings/data/xpkgs/{dsh,local}-x-<name>/<version>
 ```
 
-For a `needs_build = true` package, verify **both** paths: without
-`DSH_ALLOW_BUILDS` it must fail, with `DSH_ALLOW_BUILDS=1` it must install.
-"It installed without authorisation" is a security defect, not a convenience.
+For a `needs_build = true` package, check that installing **warns** and does
+not build. Nothing this recipe runs executes upstream code — `pnpm store add`
+only fetches — so the gate is pnpm's own `allowBuilds`, and it applies when
+the user composes the plugin into a profile. An index-owned opt-in here would
+have been a second, weaker copy of the gate that actually stops the script.
 
 ## 5. PR
 

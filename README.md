@@ -20,9 +20,15 @@ below it and adds what dsh cannot: a sha256-checked tarball and a CN mirror.
 
 **3 · A distribution channel for Agents.** `Agent = Harness + Plugins/Packages`
 — in dsh's own model, a *profile*. Here each one is a single xpkg descriptor, so
-`xlings install` resolves the members, installs them, writes the profile, and you
-boot it. **An Agent's profile name is its package name**, so what you install and
-what you boot are the same word.
+`xlings install` resolves the members, installs them, writes the profile, and
+**registers a command named after the package**. One install, one word to type:
+
+```bash
+xlings install dsh:agent-web-coding -y   →   agent-web-coding
+```
+
+The profile name is the package name too, so `dsh --profile agent-web-coding`
+is the same thing spelled the long way.
 
 ## Quick start
 
@@ -31,8 +37,21 @@ xlings install dsh -y
 xlings config --index-repo dsh:https://github.com/Sunrisepeak/dsh-index.git
 
 xlings install dsh:agent-web-coding -y   # a complete Agent
-dsh --profile agent-web-coding           # boot it — same name
+agent-web-coding                         # run it — the package name IS the command
 ```
+
+That last line is not a typo. **Installing an Agent leaves you a command named
+after it**, registered through xlings' `xvm` as an alias onto
+`dsh --profile agent-web-coding`. Because the name is xvm's, it is versioned
+and scoped per subos for free:
+
+```bash
+xlings install dsh:agent-web-coding@0.2.0 -y
+xlings use agent-web-coding 0.1.0        # switch, in this subos only
+```
+
+`dsh --profile agent-web-coding` keeps working — the command is an alias, not
+a replacement.
 
 <details>
 <summary>Don't have xlings yet? Click for the install command</summary>
@@ -55,9 +74,9 @@ irm https://d2learn.org/xlings-install.ps1.txt | iex
 
 | tier | what it is | installing it |
 | --- | --- | --- |
-| **plugin** | one upstream bundle — an atom | adds it to the profile its own README documents |
+| **plugin** | one upstream bundle — an atom | downloads and pins the bytes, and prints the one line that composes it |
 | **group** | a reusable set that composes cleanly | installs every member |
-| **Agent** | `Harness + Plugins` + this Agent's own config layer | creates its profile and composes everything into it |
+| **Agent** | `Harness + Plugins` + this Agent's own config layer | creates its profile, composes everything into it, and registers a command named after the package |
 
 A group and an Agent carry no bytes of their own. They are manifests a few
 hundred bytes long; the members hold the payload. Members are required to be
@@ -123,17 +142,14 @@ xlings install dsh:group-web-essentials -y  # a group
 xlings install dsh:dsh-cc-tui -y            # one plugin
 xlings install dsh:dsh-cc-tui@0.1.6 -y      # a specific version
 
-# choose the profile a plugin lands in
+# change the profile named in the line a plugin prints
 XIM_DSH_PROFILE=work xlings install dsh:dsh-at-file -y
 
-# a plugin that ships a build script AND is not mirrored needs this,
-# because installing it runs upstream code on your machine
-DSH_ALLOW_BUILDS=1 xlings install dsh:<plugin> -y
+# switch versions per subos — for an Agent this switches which one its
+# command resolves to, so two versions can be installed at once
+xlings use agent-web-coding 0.1.0
 
-# switch versions per subos
-xlings use dsh-cc-tui 0.1.6
-
-# remove — takes the plugin out of the profile too
+# remove
 xlings remove dsh:dsh-cc-tui -y
 ```
 
@@ -149,18 +165,31 @@ contract that does not exist.
 
 Installing prints the answer, but the rule is:
 
+**Installing a plugin does not put it in a profile.** Fetching and composing
+are separate acts with separate owners, so the atom fetches and prints the one
+line that composes it:
+
+```
+dsh-at-file is downloaded and pinned. It is not in any profile yet.
+  Add it:     dsh plugin --profile web add /…/dsh-at-file-0.1.0.tgz
+  Launch it:  dsh web
+```
+
+While the atom registered itself, installing one Agent also put its five
+members in `web`, because each member had already decided where it belonged
+before the Agent ran.
+
 | What you installed | Profile | Launch |
 | --- | --- | --- |
-| an Agent | its own package name | `dsh --profile <package-name>` |
-| `xlings install dsh:<plugin>` | the one its own README documents | `dsh web`, or `dsh --profile <name>` |
-| `XIM_DSH_PROFILE=<name> xlings install …` | `<name>` | `dsh --profile <name>` |
+| an Agent | its own package name — composed for you | `dsh --profile <package-name>` |
+| a group | none; its members are fetched, not composed | — |
+| one plugin | none until you paste the printed line | `dsh web`, or `dsh --profile <name>` |
 
-This index does not invent profile names. Upstream's model says the name is
-the user's — `dsh plugin --profile <name>` creates whatever you pass — so a
-plugin is recorded with the name its own documentation tells readers to type
-(65 say `web`, 2 say `tui`, 1 says `cc-tui`). An Agent uses its own package
-name, so `xlings install dsh:X` is always followed by `dsh --profile X` — two
-names for one thing would leave a reader no way to know they are related.
+The profile in that printed line is the one the plugin's own README documents
+(65 say `web`, 2 say `tui`, 1 says `cc-tui`) — this index does not invent
+names, and any name works. An Agent uses its own package name, so
+`xlings install dsh:X` is always followed by `dsh --profile X`; two names for
+one thing would leave a reader no way to know they are related.
 
 ```bash
 # what is actually installed, and in what order the layers apply
@@ -179,7 +208,7 @@ Every plugin is one of two kinds, and the site labels which:
 | bytes come from | xlings-res, sha256-checked | GitHub, at a pinned commit |
 | CN mirror | yes | no |
 | upstream deletes the repo | still installable | gone |
-| ships a `prepare` script | built in this index's CI | needs `DSH_ALLOW_BUILDS=1` |
+| ships a `prepare` script | built in this index's CI | pnpm blocks it until you allow it |
 
 **The licence decides**, not a preference: mirroring is redistribution. Of the
 169 bundles surveyed across the `dsh-plugin` topic, 29 ship no LICENSE at all

@@ -2,19 +2,21 @@
 
 The index carries three tiers, and the tier is the first thing a reader needs:
 
-  Agent    dsh + a composed plugin set = a complete, runnable Agent. Installing
-           one creates its profile and boots with `dsh --profile <name>`.
+  Agent    Agent = Harness + Plugins. Installing one creates its profile,
+           composes every member into it, and boots with `dsh --profile <name>`.
   group    a reusable set of plugins that compose cleanly together.
-  plugin   one atom: a single upstream profile bundle.
+  plugin   one atom: a single upstream profile bundle. Installing it fetches
+           and pins the bytes; composing it into a profile is a separate act
+           with a separate owner, so the page prints that line rather than
+           performing it.
 
 The second thing they must not have to guess is **whether the bytes they
 install are reproducible**. A plugin here arrives one of two ways:
 
-  mirrored  the tarball lives in xlings-res with a sha256 and a CN mirror; it
-            installs offline, survives upstream deleting the repo, and needed
-            no build authorisation because the build ran in this index's CI
-  direct    pnpm fetches it from GitHub at a pinned commit; no CN mirror is
-            possible, and if upstream disappears it cannot be reinstalled
+  mirrored  the tarball lives in xlings-res with a sha256 and a CN mirror,
+            so it installs offline
+  direct    the pinned commit is fetched into pnpm's store from GitHub; no CN
+            mirror is possible, and if upstream disappears it is gone
 
 That split is not a preference, it is the license: mirroring is
 redistribution. 42 of the 169 bundles surveyed carry no LICENSE at all, so
@@ -417,13 +419,13 @@ class DshPlugin(Plugin):
                 )
             note = {
                 k: (
-                    {"en": "Installed straight from GitHub at a pinned commit. "
-                           "No CN mirror, and it cannot be reinstalled if "
-                           "upstream disappears. ",
-                     "zh": "从 GitHub 按 pin 的 commit 直装。没有 CN 加速，"
-                           "上游消失后无法再装回。",
-                     "zh-Hant": "從 GitHub 按 pin 的 commit 直裝。沒有 CN 加速，"
-                                "上游消失後無法再裝回。"}[k] + why[k]
+                    {"en": "Fetched into pnpm's store from GitHub at a pinned "
+                           "commit. No CN mirror, and if upstream disappears "
+                           "it is gone. ",
+                     "zh": "按 pin 的 commit 从 GitHub 取进 pnpm 的 store。"
+                           "没有 CN 加速，上游消失后就没有了。",
+                     "zh-Hant": "按 pin 的 commit 從 GitHub 取進 pnpm 的 store。"
+                                "沒有 CN 加速，上游消失後就沒有了。"}[k] + why[k]
                 )
                 for k in ("en", "zh", "zh-Hant")
             }
@@ -436,13 +438,16 @@ class DshPlugin(Plugin):
             blocks.append(Block(
                 kind="callout", weight=6,
                 data={"tone": "tool", "text": _t(
-                    "This package ships a `prepare` build script. Installing it "
-                    "un-mirrored executes its code on your machine at install "
-                    "time, outside any sandbox. Opt in with DSH_ALLOW_BUILDS=1.",
-                    "该包带 `prepare` 构建脚本。未镜像时安装 = 在你的机器上执行它的代码，"
-                    "且不在任何沙箱内。确认信任后用 DSH_ALLOW_BUILDS=1 显式授权。",
-                    "該套件帶 `prepare` 建置腳本。未鏡像時安裝 = 在你的機器上執行它的程式碼，"
-                    "且不在任何沙箱內。確認信任後用 DSH_ALLOW_BUILDS=1 顯式授權。",
+                    "This package ships a `prepare` build script and is not "
+                    "mirrored, so composing it into a profile runs its code on "
+                    "your machine, outside any sandbox. pnpm blocks that until "
+                    "you allow it in the profile's pnpm-workspace.yaml.",
+                    "该包带 `prepare` 构建脚本且未镜像，所以把它组合进 profile 时会"
+                    "在你的机器上执行它的代码，且不在任何沙箱内。pnpm 会拦住，"
+                    "直到你在该 profile 的 pnpm-workspace.yaml 里放行。",
+                    "該套件帶 `prepare` 建置腳本且未鏡像，所以把它組合進 profile 時會"
+                    "在你的機器上執行它的程式碼，且不在任何沙箱內。pnpm 會攔住，"
+                    "直到你在該 profile 的 pnpm-workspace.yaml 裡放行。",
                 )}))
 
         items = []

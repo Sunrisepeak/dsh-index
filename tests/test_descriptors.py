@@ -430,7 +430,13 @@ class TestTemplate:
         t = (ROOT / "template.lua").read_text(encoding="utf-8")
         assert "package.dsh.mirror" in t, "template must branch on the mirror block"
         assert "GLOBAL" in t and "CN" in t, "mirrored versions need both mirrors"
-        assert "DSH_ALLOW_BUILDS" in t, "un-mirrored prepare scripts need opt-in"
+        # The index no longer carries its own build opt-in: nothing it runs
+        # executes upstream code any more -- `pnpm store add` only fetches --
+        # and pnpm's allowBuilds already guards the compose step, which is
+        # where a `prepare` script would actually run. A second gate here
+        # would have been a weaker copy of that one.
+        assert "DSH_ALLOW_BUILDS" not in t
+        assert "allowBuilds" in t, "the real gate must still be pointed at"
 
     @pytest.mark.static
     def test_template_registers_xvm_as_group(self):
@@ -544,6 +550,40 @@ class TestProfileResolution:
             if _field(d, "kind") != "plugin":
                 continue
             assert _field(d, "profile"), f"{path.stem}: dsh.profile required"
+
+    @pytest.mark.static
+    def test_an_agent_gets_a_command_named_after_the_package(self):
+        """Installing an Agent should leave you a command you can type.
+
+        `xvm.add(<package>, { alias = "dsh --profile <package>" })` gives that
+        for free, and because the name is xvm's it is versioned and per-subos:
+        two versions of one Agent coexist and `xlings use` switches between
+        them. A plugin and a group keep `type = "group"` -- neither backs an
+        executable, and the default program kind would leave a shim that
+        always fails plus an orphan in `self doctor`.
+        """
+        t = (ROOT / "template.lua").read_text(encoding="utf-8")
+        assert 'alias = "dsh --profile "' in t, \
+            "an Agent must register a command alias onto its profile"
+        assert 'type = "group"' in t, \
+            "a plugin and a group must stay shim-less"
+
+    @pytest.mark.static
+    def test_a_plugin_registers_itself_into_no_profile(self):
+        """Fetching and composing are separate acts with separate owners.
+
+        While the atom registered itself, installing one Agent also put its
+        five members into `web`, because each member had already decided
+        where it belonged before the Agent ran. Only a composite -- or the
+        user pasting the printed command -- may write to a profile.
+        """
+        t = (ROOT / "template.lua").read_text(encoding="utf-8")
+        body = t[t.index("local function config_plugin()"):]
+        body = body[:body.index("local function config_group()")]
+        assert "system.exec" not in body, \
+            "a plugin's config must not run a command against a profile"
+        assert "dsh plugin --profile" in body, \
+            "it must still print the exact command to paste"
 
     @pytest.mark.static
     def test_install_prints_upstreams_own_launch_command(self):
