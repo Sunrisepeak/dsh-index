@@ -947,3 +947,23 @@ class TestBootcheckSpec:
         with pytest.raises(SystemExit) as e:
             bc.spec(name, "0.0.0-not-a-declared-version")
         assert "not mirrored" in str(e.value)
+
+    @pytest.mark.static
+    def test_install_resolves_the_mirror_per_version(self):
+        """Mirroring is a licence answer given one tarball at a time.
+
+        tools/mirror.py publishes a version only after verifying that
+        version's tarball, so a package routinely carries a `mirror` block for
+        0.1.0 while a freshly bumped 0.6.0 has no entry yet. A package-level
+        `if not MIRROR` took the mirrored branch for that package and then
+        indexed a nil -- which was every package for the whole window between
+        a bump landing and the mirror pipeline running. Reproduced against
+        dsh-at-file@0.6.0: `install hook failed: attempt to index a nil value`.
+        """
+        t = (ROOT / "template.lua").read_text(encoding="utf-8")
+        body = t[t.index("function install()"):]
+        body = body[:body.index("\n-- Warn when this package replaces")]
+        assert "MIRROR[pkginfo.version()].tarball" not in body, \
+            "install() must not index MIRROR without checking this version"
+        assert "MIRROR and MIRROR[pkginfo.version()]" in body, \
+            "install() must resolve the mirror entry for the version it installs"

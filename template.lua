@@ -286,7 +286,17 @@ function install()
         return true
     end
 
-    if not MIRROR then
+    -- Per VERSION, not per package. Mirroring is a licence answer given one
+    -- tarball at a time, and tools/mirror.py publishes a version only after
+    -- it verifies that tarball -- so a package routinely carries a `mirror`
+    -- block for 0.1.0 while its newly bumped 0.6.0 has no entry yet. Asking
+    -- `if not MIRROR` took the mirrored branch for that package and then
+    -- indexed a nil, which is every package for as long as the window between
+    -- a bump landing and the mirror pipeline running. `spec()` above already
+    -- gets this right; install() did not.
+    local m = MIRROR and MIRROR[pkginfo.version()]
+
+    if not m then
         -- Architecture A has no tarball this index may redistribute, but the
         -- bytes can still be fetched now rather than at compose time: pnpm's
         -- store is content-addressed and shared, so warming it at the pinned
@@ -311,7 +321,7 @@ function install()
         return true
     end
 
-    local tgz = MIRROR[pkginfo.version()].tarball
+    local tgz = m.tarball
     os.tryrm(pkginfo.install_dir())
     os.mkdir(pkginfo.install_dir())
     os.mv(pkginfo.install_file(), path.join(pkginfo.install_dir(), tgz))
@@ -380,7 +390,10 @@ local function config_plugin()
     -- code, and that now happens in the command above rather than here --
     -- pnpm's `store add` only fetches. Saying so before the user runs it is
     -- the point at which the warning is still useful.
-    if (not MIRROR) and package.dsh.needs_build then
+    -- Per version here too, and for the same reason: the version being
+    -- composed is the one whose bytes run, so a package with a mirrored
+    -- 0.1.0 and an un-mirrored 0.6.0 must still warn on 0.6.0.
+    if not (MIRROR and MIRROR[pkginfo.version()]) and package.dsh.needs_build then
         log.warn(("%s ships a `prepare` build script and is not mirrored "
                .. "(licence: %s), so composing it runs upstream code on your "
                .. "machine, outside any agent sandbox. pnpm blocks that until "
