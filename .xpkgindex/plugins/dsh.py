@@ -414,33 +414,25 @@ class DshPlugin(Plugin):
                 "已鏡像到 xlings-res，帶 sha256 與 CN 鏡像：可離線安裝。",
             )
         else:
-            lic = ext.get("license") or "unknown"
+            # One sentence, and it is the reason rather than the consequence:
+            # a reader who knows why there is no CN mirror can tell whether it
+            # is coming. Spelling out that upstream deletion loses the package,
+            # or that redistribution needs a licence, was three clauses for a
+            # badge that already says `direct`.
             if ext.get("mirror_eligible"):
-                why = _t(
-                    f"License {lic} permits mirroring; the tarball is not "
-                    f"published yet.",
-                    f"许可证 {lic} 允许镜像，只是 tarball 尚未发布。",
-                    f"授權 {lic} 允許鏡像，只是 tarball 尚未發布。",
+                lic = ext.get("license") or "unknown"
+                note = _t(
+                    f"Licence {lic} permits mirroring, but the tarball is not "
+                    f"published yet, so there is no CN mirror.",
+                    f"许可证 {lic} 允许镜像，但 tarball 尚未发布，暂时没有 CN 加速。",
+                    f"授權 {lic} 允許鏡像，但 tarball 尚未發布，暫時沒有 CN 加速。",
                 )
             else:
-                why = _t(
-                    "Its license is unknown -- upstream declares none that can "
-                    "be identified -- so this index has no right to mirror it.",
-                    "它的许可证未知 —— 上游没有声明可识别的许可证 —— 本索引无权镜像。",
-                    "它的授權未知 —— 上游沒有宣告可識別的授權 —— 本索引無權鏡像。",
+                note = _t(
+                    "Upstream's licence is unknown, so there is no CN mirror.",
+                    "上游许可证未知，暂时没有 CN 加速。",
+                    "上游授權未知，暫時沒有 CN 加速。",
                 )
-            note = {
-                k: (
-                    {"en": "Fetched into pnpm's store from GitHub at a pinned "
-                           "commit. No CN mirror, and if upstream disappears "
-                           "it is gone. ",
-                     "zh": "按 pin 的 commit 从 GitHub 取进 pnpm 的 store。"
-                           "没有 CN 加速，上游消失后就没有了。",
-                     "zh-Hant": "按 pin 的 commit 從 GitHub 取進 pnpm 的 store。"
-                                "沒有 CN 加速，上游消失後就沒有了。"}[k] + why[k]
-                )
-                for k in ("en", "zh", "zh-Hant")
-            }
 
         blocks.append(Block(
             kind="callout", weight=5,
