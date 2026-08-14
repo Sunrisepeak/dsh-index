@@ -30,6 +30,11 @@ package = {
         -- Published by tools/mirror.py to GitHub and GitCode, verified
         -- three ways: local build, GLOBAL and CN all hash the same.
         mirror = {
+            ["0.1.1-rc.6"] = {
+                tarball = "dsh-tianshu-tui-0.1.1-rc.6.tgz",
+                sha256  = "b8e20b1daef76588fb61a7c869655e4b79962bfa40d03e647ff0d1d134a2cd12",
+                cn      = true,
+            },
             ["0.1.0-rc.6"] = {
                 tarball = "dsh-tianshu-tui-0.1.0-rc.6.tgz",
                 sha256  = "150436031a9708396a7e7875270a8609ac7d989568fc455bec7e4cfaea9e7603",

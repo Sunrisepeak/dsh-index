@@ -14,6 +14,9 @@ package = {
 
     dsh = {
         kind = "profile",
+        -- The UI this Agent boots into. It ships inside dsh
+        -- itself, so it is a bundle name and not a dependency.
+        surface = "dsh-cc-tui",
         profile = "agent-tui-coding",
 
         -- Expanded by tools/gen_agents.py; template.lua composes
@@ -23,7 +26,7 @@ package = {
         -- `dsh plugin remove` matches on, and `version` pins the
         -- member so this Agent means one fixed set of bytes.
         members = {
-            { name = "dsh-cc-tui", version = "0.1.6", bundle = "dsh-cc-tui", commit = "8516ffb3aac3ada74760eff9b8c14c65d344b67d" },
+            { name = "dsh-cc-tui", version = "0.3.3", bundle = "dsh-cc-tui", commit = "046da285d6eb1c95bb8468a447f420f6f3c0560c" },
             { name = "dsh-notification", version = "0.1.1", bundle = "dsh-notification", commit = "3e33100f51f25f24cece20bfd3d50cfbde0cbca5" },
         },
 

@@ -1010,6 +1010,16 @@
     "stars": 1,
     "verified": false
   },
+  "dsh-turn-rewind": {
+    "reasons": [
+      {
+        "detail": "REFUSED: dsh-turn-rewind: imports `cordis` but declares it only as a peerDependency, and dsh writes `autoInstallPeers: false` into every profile it scaffolds, so nothing provides it. Boots with ERR_MODULE_NOT_FOUND on a clean profile; no profile on a test machine carried cordis, including one with 57 packages.",
+        "kind": "broken"
+      }
+    ],
+    "repo": "Anionex/dsh-turn-rewind",
+    "verified": true
+  },
   "dsh-undo": {
     "reasons": [
       {

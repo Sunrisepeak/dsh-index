@@ -402,6 +402,26 @@ class TestAgent:
                 f"{path.stem}: an Agent's profile must be its package name")
 
     @pytest.mark.static
+    def test_agent_declares_a_surface(self):
+        """An Agent must name the bundle that gives it a UI.
+
+        `dsh plugin --profile <new> add` scaffolds with `@deepseek-ai/dsh-base`
+        and nothing else, while dsh's own `web` profile carries
+        `@deepseek-ai/dsh-web-app` beside it. Without a surface the Agent boots
+        into a profile with no UI and every plugin that attaches to one waits
+        forever -- `pending (waiting for service: webServer)`, then `1 entry
+        did not activate`. Nothing earlier catches it: the members install, the
+        manifest lists them, and `--dump-config` prints a correct tree, because
+        none of those import anything.
+        """
+        for path in PKGS:
+            body = path.read_text(encoding="utf-8")
+            if _kind(body) != "profile":
+                continue
+            assert _field(_dsh_block(body), "surface"), \
+                f"{path.stem}: an Agent must declare dsh.surface"
+
+    @pytest.mark.static
     def test_group_declares_no_profile(self):
         """A group is a set of plugins, not a running thing. Naming a profile
         would imply booting it, which a group cannot do."""

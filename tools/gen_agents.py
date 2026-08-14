@@ -133,6 +133,14 @@ def check_members(owner: str, names: list) -> list:
 def descriptor(spec: dict, kind: str, facts: list) -> str:
     lines = []
     if kind == "profile":
+        if not spec.get("surface"):
+            raise SystemExit(
+                f"{spec['name']}: an Agent must declare a surface. Without one "
+                f"it boots into a profile with no UI and every plugin that "
+                f"attaches to one waits forever.")
+        lines.append(f'        -- The UI this Agent boots into. It ships inside dsh\n')
+        lines.append(f'        -- itself, so it is a bundle name and not a dependency.\n')
+        lines.append(f'        surface = {lua_str(spec["surface"])},\n')
         # The profile name IS the package name. `xlings install dsh:X` followed
         # by `dsh --profile Y` gives the reader two names for one thing and no
         # way to know they are related; upstream's own docs are the only thing
