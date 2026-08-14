@@ -811,3 +811,52 @@ class TestDiscoverErrorSemantics:
         with pytest.raises(Exception) as e:
             d.rate_check(500, "--audit")
         assert "Refusing to start" in str(e.value)
+
+class TestAffectedCap:
+    """A run may not ask for a matrix GitHub will refuse.
+
+    `discover --new` proposed 358 packages in one PR on 2026-08-15. GitHub
+    caps a matrix at 256 jobs and does not degrade past it: the boot job never
+    starts, and the gate fails with a cause that appears nowhere in the logs.
+    """
+
+    def _mod(self):
+        sys.path.insert(0, str(ROOT / "tools"))
+        import affected
+        return affected
+
+    @pytest.mark.static
+    def test_too_many_units_refuses_rather_than_sampling(self):
+        affected = self._mod()
+        known = {f"p{i}": {"kind": "plugin", "profile": "web", "members": []}
+                 for i in range(affected.MAX_UNITS + 1)}
+        with pytest.raises(affected.TooManyUnits) as e:
+            affected.affected(
+                [f"pkgs/p/p{i}.lua" for i in range(affected.MAX_UNITS + 1)], known)
+        assert "ci:full" in str(e.value), "the message must name the escape hatch"
+
+    @pytest.mark.static
+    def test_exactly_the_ceiling_is_allowed(self):
+        affected = self._mod()
+        known = {f"p{i}": {"kind": "plugin", "profile": "web", "members": []}
+                 for i in range(affected.MAX_UNITS)}
+        r = affected.affected(
+            [f"pkgs/p/p{i}.lua" for i in range(affected.MAX_UNITS)], known)
+        assert len(r["units"]) == affected.MAX_UNITS
+
+    @pytest.mark.static
+    def test_a_full_run_is_never_capped(self):
+        """A full run is bounded by the composite count, not by the diff --
+        the one path that must keep working no matter how big the change."""
+        affected = self._mod()
+        known = {f"p{i}": {"kind": "plugin", "profile": "web", "members": []}
+                 for i in range(affected.MAX_UNITS * 3)}
+        known["a"] = {"kind": "profile", "profile": "a", "members": []}
+        r = affected.affected([f"pkgs/p/p{i}.lua" for i in range(200)],
+                              known, full=True)
+        assert r["units"] == [{"name": "a", "kind": "profile",
+                               "composite": True, "install": "a"}]
+
+    @pytest.mark.static
+    def test_the_ceiling_is_under_githubs_matrix_limit(self):
+        assert self._mod().MAX_UNITS < 256

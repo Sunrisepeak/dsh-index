@@ -51,6 +51,24 @@ SURFACE_PACKAGE = {"dsh-cc-tui": "dsh-cc-tui"}
 
 COMPOSITE_KINDS = {"group", "profile"}
 
+# How many units one run may boot. GitHub refuses a matrix over 256 jobs, and
+# a run that asks for more does not degrade -- the boot job never starts and
+# the gate reports a failure whose cause is nowhere in the logs. Measured:
+# `discover --new` proposed 358 packages in one PR on 2026-08-15 and did
+# exactly that.
+#
+# The number is well under 256 on purpose. Each unit installs and boots for up
+# to 40 seconds, four at a time; forty of them is already a quarter of an hour.
+# A change touching more packages than that is not a change the gate should be
+# stretched to cover in one run -- it is a PR to split, which is what this
+# repo's own PR rules ask for anyway. The escape hatch is the `ci:full` label,
+# which boots the composites instead of every package.
+MAX_UNITS = 40
+
+
+class TooManyUnits(RuntimeError):
+    """More packages changed than one run can honestly verify."""
+
 # Cannot reach a boot. Everything not matched here is a full run (see the
 # fail-open rule above) -- this list is the only way to get an empty result,
 # which is what keeps "we skipped the gate" a deliberate act.
@@ -162,6 +180,14 @@ def affected(paths, known: dict, full: bool = False) -> dict:
                 if c in d["members"]:
                     names.add(other)
         names = sorted(names)
+        if len(names) > MAX_UNITS:
+            raise TooManyUnits(
+                f"{len(changed)} descriptor(s) changed, which needs {len(names)} "
+                f"boot units and the ceiling is {MAX_UNITS}. Split this into "
+                f"smaller PRs, or label it `ci:full` to boot the composites "
+                f"instead of every package. Refusing rather than booting a "
+                f"subset: a gate that quietly verifies some of what changed "
+                f"reads exactly like one that verified all of it.")
         reason = (f"{len(changed)} descriptor(s) changed -> {len(names)} unit(s)"
                   if changed else "nothing that can affect a boot")
     units = [unit(n, known) for n in names]
@@ -179,7 +205,11 @@ def main() -> int:
 
     raw = sys.stdin.read() if args.files == "-" else \
         pathlib.Path(args.files).read_text(encoding="utf-8")
-    result = affected(raw.splitlines(), descriptors(), full=args.full)
+    try:
+        result = affected(raw.splitlines(), descriptors(), full=args.full)
+    except TooManyUnits as e:
+        print(f"::error::{e}", file=sys.stderr)
+        return 3
 
     print(f"{result['reason']}", file=sys.stderr)
     for u in result["units"]:
