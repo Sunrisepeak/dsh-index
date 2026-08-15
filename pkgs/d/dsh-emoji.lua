@@ -20,9 +20,10 @@ package = {
         bundle_name = "@dsh-external/dsh-emoji",
 
         versions = {
+            ["0.2.2-beta.1"] = { commit = "1cc7201076e15b014ac5363772d4c8ef1137aa00" },
             ["0.2.0"] = { commit = "254daf2253e41ed136cb340b0ca5390493bb7b74" },
         },
-        latest = "0.2.0",
+        latest = "0.2.2-beta.1",
 
         needs_build = false,
 
