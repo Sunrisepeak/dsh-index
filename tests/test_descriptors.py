@@ -1052,3 +1052,59 @@ class TestAuditMirrorPolicy:
         rows = d.mode_audit()
         assert rows[0]["mirrored"] is False
         assert "REMOVE" in rows[0]["verdict"]
+
+class TestUpstreamChanges:
+    """`dsh.upstream` records what happened to a package's origin.
+
+    A deleted or renamed upstream does not make the package worthless -- if the
+    version is mirrored, the bytes are still here and still install. What it
+    does make worthless is the `repo` link at the top of the page, so the page
+    says so at the bottom instead of the index quietly dropping a working
+    package or leaving a reader to discover a 404 for themselves.
+    """
+
+    EVENTS = {"gone", "renamed", "archived", "moved"}
+
+    def _entries(self, body: str):
+        d = _dsh_block(body)
+        m = re.search(r"upstream = \{(.*?)\n        \}", d, re.S)
+        if not m:
+            return []
+        return re.findall(r'date = "([^"]*)", event = "([^"]*)"', m.group(1))
+
+    @pytest.mark.static
+    def test_every_entry_is_dated_and_named(self, pkg):
+        _, body = pkg
+        for date, event in self._entries(body):
+            assert re.fullmatch(r"\d{4}-\d{2}-\d{2}", date), \
+                f"an undated upstream change cannot be read in order: {date!r}"
+            assert event in self.EVENTS, \
+                f"unknown upstream event {event!r}; known: {sorted(self.EVENTS)}"
+
+    @pytest.mark.static
+    def test_every_entry_carries_a_note(self, pkg):
+        """The event word alone is a label. What a reader needs is what it
+        means for them -- whether it still installs, and what they lose."""
+        path, body = pkg
+        d = _dsh_block(body)
+        m = re.search(r"upstream = \{(.*?)\n        \}", d, re.S)
+        if not m:
+            return
+        for entry in re.findall(r"\{(.*?)\}", m.group(1), re.S):
+            assert "note =" in entry, f"{path.stem}: an upstream entry with no note"
+
+    @pytest.mark.static
+    def test_a_gone_upstream_is_only_kept_when_mirrored(self, pkg):
+        """The policy, enforced rather than remembered: an un-mirrored package
+        whose upstream vanished promises bytes nobody can fetch, so it must be
+        removed, not annotated."""
+        path, body = pkg
+        if not any(e == "gone" for _, e in self._entries(body)):
+            return
+        d = _dsh_block(body)
+        latest = _field(d, "latest")
+        mb = re.search(r"mirror = \{(.*?)\n        \}", d, re.S)
+        assert mb and f'["{latest}"]' in mb.group(1), (
+            f"{path.stem}: upstream is gone and {latest} is not mirrored -- "
+            f"this descriptor promises bytes nobody can fetch and must be "
+            f"removed instead")
