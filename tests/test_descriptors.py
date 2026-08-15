@@ -744,18 +744,20 @@ class TestAffected:
         assert affected.affected(["pkgs/z/never-existed.lua"], known)["units"] == []
 
     @pytest.mark.static
-    def test_every_plugin_has_a_bootable_surface(self):
-        """A plugin whose declared profile has no surface mapping cannot be
-        booted alone -- and bootcheck refuses rather than reporting a working
-        package as broken. Catch that here, where the fix is one table entry,
-        not in a boot job three minutes in."""
+    def test_every_plugin_resolves_to_a_surface(self):
+        """`dsh.profile` is a profile NAME, not a surface -- it records where
+        a plugin's own README says to install it, and an author may call that
+        anything. The first scan at ten stars brought in `qqbot`, `multica`,
+        `hello` and `headless`, so a table lookup that failed on an
+        unrecognised name blocked forty working packages over four labels.
+        Every profile now resolves; only the names that genuinely imply a
+        different surface are listed."""
         affected, known = self._known()
         for name, d in known.items():
             if d["kind"] != "plugin":
                 continue
-            assert d["profile"] in affected.SURFACE_FOR_PROFILE, (
-                f"{name} declares profile={d['profile']!r}, which has no entry "
-                f"in SURFACE_FOR_PROFILE")
+            spec = affected.surface_for(d["profile"])
+            assert ("bundle" in spec) ^ ("package" in spec), (name, d["profile"])
 
 class TestDiscoverErrorSemantics:
     """"Not there" and "could not ask" must never be the same answer.
@@ -876,6 +878,15 @@ class TestAffectedCap:
     @pytest.mark.static
     def test_the_ceiling_is_under_githubs_matrix_limit(self):
         assert self._mod().MAX_UNITS < 256
+
+    @pytest.mark.static
+    def test_the_ceiling_clears_a_real_discovery_batch(self):
+        """The cap exists to catch a runaway, not to block routine work. The
+        first scan after the star bar rose to 10 found 41 packages and the
+        ceiling was 40 -- a cap a normal batch trips is mis-calibrated, and
+        the failure it produces teaches the reader to raise it rather than to
+        look at what changed."""
+        assert self._mod().MAX_UNITS >= 60
 
 class TestAffectedOnRealAutomationDiffs:
     """The shapes discover.yml actually produces.
@@ -1191,11 +1202,20 @@ class TestSurfaceResolution:
     @pytest.mark.static
     def test_a_surface_is_either_shipped_or_a_package_here(self):
         affected, _ = self._mods()
-        for profile, spec in affected.SURFACE_FOR_PROFILE.items():
+        specs = dict(affected.SURFACE_FOR_PROFILE)
+        specs["<default>"] = affected.DEFAULT_SURFACE
+        for profile, spec in specs.items():
             assert isinstance(spec, dict), profile
             assert ("bundle" in spec) ^ ("package" in spec), (
                 f"{profile}: a surface either ships inside dsh (bundle) or is "
                 f"a package this index installs (package), never both")
+
+    @pytest.mark.static
+    def test_an_unrecognised_profile_name_still_resolves(self):
+        """A profile name an author invented is not an authoring error."""
+        affected, _ = self._mods()
+        for made_up in ("qqbot", "multica", "hello", "headless", ""):
+            assert affected.surface_for(made_up) == affected.DEFAULT_SURFACE
 
     @pytest.mark.static
     def test_a_surface_package_exists_and_is_carried(self):

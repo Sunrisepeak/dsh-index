@@ -49,11 +49,30 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 # broke the moment upstream renamed dsh-cc-tui to @deepseek-harness-tui/dsh-tui
 # at 0.5.0, because the profile manifest then declared a bundle nothing
 # provided.
+#
+# Keyed on `dsh.profile`, which is NOT a surface. It is "where this plugin's
+# own README tells readers to install it" -- a profile NAME, and a user may
+# call a profile anything. That distinction stayed invisible while the only
+# values in the index were web, tui and cc-tui; the first scan at ten stars
+# brought in `qqbot`, `multica`, `hello` and `headless`, four names their
+# authors picked, and treating an unrecognised one as an authoring error
+# blocked forty working packages over four labels.
+#
+# So only the names that genuinely imply a different surface are listed, and
+# everything else gets the web surface: dsh's general-purpose one, where 103
+# of 111 plugins already go. It is a real answer rather than a guess -- a
+# plugin that needs no UI still loads with one present, and a plugin that
+# needs a different surface fails loudly instead of silently passing.
 SURFACE_FOR_PROFILE = {
-    "web": {"bundle": "@deepseek-ai/dsh-web-app"},
     "tui": {"package": "dsh-cc-tui"},
     "cc-tui": {"package": "dsh-cc-tui"},
 }
+DEFAULT_SURFACE = {"bundle": "@deepseek-ai/dsh-web-app"}
+
+
+def surface_for(profile: str) -> dict:
+    """Which surface a lone plugin boots on. Never fails: see above."""
+    return SURFACE_FOR_PROFILE.get(profile, DEFAULT_SURFACE)
 
 COMPOSITE_KINDS = {"group", "profile"}
 
@@ -63,13 +82,17 @@ COMPOSITE_KINDS = {"group", "profile"}
 # `discover --new` proposed 358 packages in one PR on 2026-08-15 and did
 # exactly that.
 #
-# The number is well under 256 on purpose. Each unit installs and boots for up
-# to 40 seconds, four at a time; forty of them is already a quarter of an hour.
-# A change touching more packages than that is not a change the gate should be
-# stretched to cover in one run -- it is a PR to split, which is what this
-# repo's own PR rules ask for anyway. The escape hatch is the `ci:full` label,
-# which boots the composites instead of every package.
-MAX_UNITS = 40
+# The number is what separates "a legitimate catch-up batch" from "something
+# went wrong", and the first attempt got it wrong in the other direction: 40
+# was a guess, and the very next real batch -- 41 packages, after the star bar
+# rose to 10 -- tripped it for no good reason. 80 keeps 358 out, clears any
+# plausible discovery batch, sits well under GitHub's 256, and costs at worst
+# about forty minutes at four units in parallel.
+#
+# A change touching more than this is a PR to split, which this repo's own PR
+# rules ask for anyway; the `ci:full` label is the other way out, and it boots
+# the composites instead, bounded by the composite count rather than the diff.
+MAX_UNITS = 80
 
 
 class TooManyUnits(RuntimeError):
@@ -177,7 +200,7 @@ def unit(name: str, known: dict) -> dict:
     composite = d["kind"] in COMPOSITE_KINDS
     install = [name]
     if not composite:
-        pkg = (SURFACE_FOR_PROFILE.get(d["profile"]) or {}).get("package")
+        pkg = surface_for(d["profile"]).get("package")
         if pkg and pkg != name:
             install.insert(0, pkg)
     return {"name": name, "kind": d["kind"], "composite": composite,
