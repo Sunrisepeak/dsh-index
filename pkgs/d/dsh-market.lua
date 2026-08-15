@@ -1,0 +1,32 @@
+package = {
+    spec = "1",
+
+    name = "dsh-market",
+    description = "The plugin market inside DeepSeek Harness — browse, search, one-click install · DSH 可视化插件市场",
+    repo = "https://github.com/dsh-market/dsh-market",
+    homepage = "https://github.com/dsh-market/dsh-market",
+    authors = {"dsh-market"},
+
+    status = "dev",
+    categories = {"dsh-plugin"},
+    keywords = {"dsh"},
+
+    dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "web",
+
+        bundle_name = "dshmarket",
+
+        versions = {
+            ["1.2.2"] = { commit = "67a66a4e7cd6c344772ce38846b99f6a79074052" },
+        },
+        latest = "1.2.2",
+
+        needs_build = true,
+
+        -- No `mirror` block yet: mirroring is redistribution, so
+        -- tools/mirror.py adds one only after it has published a
+        -- verified tarball under a licence that permits it.
+    },
+}

@@ -1,0 +1,33 @@
+package = {
+    spec = "1",
+
+    name = "dsh-auto-continue",
+    description = "DSH Web UI plugin: auto-sends 「继续」 to resume requests interrupted by network errors or other non-human causes — error classification, adaptive backoff, templated continue text, browser notifications, all configurable from the settings card",
+    repo = "https://github.com/HsiangNianian/dsh-auto-continue",
+    homepage = "https://github.com/HsiangNianian/dsh-auto-continue",
+    licenses = {"MIT"},
+    authors = {"HsiangNianian"},
+
+    status = "dev",
+    categories = {"dsh-plugin"},
+    keywords = {"dsh"},
+
+    dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "web",
+
+        bundle_name = "dsh-client-auto-continue",
+
+        versions = {
+            ["0.3.2"] = { commit = "6e041c52575af1c69497ef5be9a8a291adc0279f" },
+        },
+        latest = "0.3.2",
+
+        needs_build = false,
+
+        -- No `mirror` block yet: mirroring is redistribution, so
+        -- tools/mirror.py adds one only after it has published a
+        -- verified tarball under a licence that permits it.
+    },
+}
