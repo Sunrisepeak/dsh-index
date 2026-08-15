@@ -63,13 +63,17 @@ COMPOSITE_KINDS = {"group", "profile"}
 # `discover --new` proposed 358 packages in one PR on 2026-08-15 and did
 # exactly that.
 #
-# The number is well under 256 on purpose. Each unit installs and boots for up
-# to 40 seconds, four at a time; forty of them is already a quarter of an hour.
-# A change touching more packages than that is not a change the gate should be
-# stretched to cover in one run -- it is a PR to split, which is what this
-# repo's own PR rules ask for anyway. The escape hatch is the `ci:full` label,
-# which boots the composites instead of every package.
-MAX_UNITS = 40
+# The number is what separates "a legitimate catch-up batch" from "something
+# went wrong", and the first attempt got it wrong in the other direction: 40
+# was a guess, and the very next real batch -- 41 packages, after the star bar
+# rose to 10 -- tripped it for no good reason. 80 keeps 358 out, clears any
+# plausible discovery batch, sits well under GitHub's 256, and costs at worst
+# about forty minutes at four units in parallel.
+#
+# A change touching more than this is a PR to split, which this repo's own PR
+# rules ask for anyway; the `ci:full` label is the other way out, and it boots
+# the composites instead, bounded by the composite count rather than the diff.
+MAX_UNITS = 80
 
 
 class TooManyUnits(RuntimeError):

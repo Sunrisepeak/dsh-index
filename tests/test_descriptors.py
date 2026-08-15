@@ -877,6 +877,15 @@ class TestAffectedCap:
     def test_the_ceiling_is_under_githubs_matrix_limit(self):
         assert self._mod().MAX_UNITS < 256
 
+    @pytest.mark.static
+    def test_the_ceiling_clears_a_real_discovery_batch(self):
+        """The cap exists to catch a runaway, not to block routine work. The
+        first scan after the star bar rose to 10 found 41 packages and the
+        ceiling was 40 -- a cap a normal batch trips is mis-calibrated, and
+        the failure it produces teaches the reader to raise it rather than to
+        look at what changed."""
+        assert self._mod().MAX_UNITS >= 60
+
 class TestAffectedOnRealAutomationDiffs:
     """The shapes discover.yml actually produces.
 
