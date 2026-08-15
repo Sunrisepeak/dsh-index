@@ -1116,6 +1116,17 @@
     "stars": 1,
     "verified": false
   },
+  "oh-dsh-desktop": {
+    "reasons": [
+      {
+        "detail": "package.json declares dsh.bundle.patch = ./dist/cordis.patch.yml; dist/ is a build output and is not in git at 0.1.2 or 0.1.4, there is no prepare script to build it on a git install, @oh-dsh/desktop is unpublished on npm, and no version is mirrored -- so the patch file exists in no artifact this index can fetch. Boot: ENOENT on dist/cordis.patch.yml.",
+        "kind": "unfetchable"
+      }
+    ],
+    "repo": "hust-open-atom-club/oh-dsh-desktop",
+    "stars": 0,
+    "verified": true
+  },
   "omdsh-runtime": {
     "reasons": [
       {
