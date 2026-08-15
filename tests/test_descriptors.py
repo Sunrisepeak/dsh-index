@@ -997,3 +997,58 @@ class TestDiscoveryBar:
         _, body = pkg
         assert "stars" not in body, \
             "a star count is scan-time triage, not a property of the package"
+
+class TestAuditMirrorPolicy:
+    """A vanished upstream is two events, and they need opposite answers.
+
+    Mirrored: this index already holds those exact bytes under a sha256 in
+    xlings-res, `xlings install dsh:<pkg>` keeps working, and nobody
+    downstream notices. Un-mirrored: the descriptor is a pointer at a repo
+    that no longer exists, so it promises bytes nobody can fetch and the only
+    honest fix is removal.
+    """
+
+    def _mod(self):
+        sys.path.insert(0, str(ROOT / "tools"))
+        import discover
+        return discover
+
+    @pytest.mark.static
+    def test_carried_reports_whether_the_pinned_version_is_mirrored(self):
+        d = self._mod()
+        have = d.carried()
+        assert have, "no plugins read"
+        assert all("mirrored" in v for v in have.values())
+        # The flag must track the pinned version, not merely the presence of a
+        # mirror block: a package mirrored at 0.1.0 and bumped to 0.6.0 is not
+        # mirrored at the version it now serves.
+        for name, v in have.items():
+            body = next(p for p in PKGS if p.stem == name).read_text()
+            block = _dsh_block(body)
+            mb = re.search(r"mirror = \{(.*?)\n        \}", block, re.S)
+            want = bool(mb and f'["{v["version"]}"]' in mb.group(1))
+            assert v["mirrored"] is want, name
+
+    @pytest.mark.static
+    def test_a_mirrored_pin_survives_its_upstream(self, monkeypatch):
+        d = self._mod()
+        monkeypatch.setattr(d, "carried", lambda: {
+            "keeper": {"repo": "x/gone", "bundle": "", "version": "0.1.0",
+                       "commit": "a" * 40, "mirrored": True}})
+        monkeypatch.setattr(d, "rate_check", lambda *a, **k: None)
+        monkeypatch.setattr(d, "gh_json", lambda p: None)
+        rows = d.mode_audit()
+        assert rows[0]["mirrored"] is True
+        assert "keep" in rows[0]["verdict"]
+
+    @pytest.mark.static
+    def test_an_unmirrored_pin_is_marked_for_removal(self, monkeypatch):
+        d = self._mod()
+        monkeypatch.setattr(d, "carried", lambda: {
+            "doomed": {"repo": "x/gone", "bundle": "", "version": "0.1.0",
+                       "commit": "a" * 40, "mirrored": False}})
+        monkeypatch.setattr(d, "rate_check", lambda *a, **k: None)
+        monkeypatch.setattr(d, "gh_json", lambda p: None)
+        rows = d.mode_audit()
+        assert rows[0]["mirrored"] is False
+        assert "REMOVE" in rows[0]["verdict"]
