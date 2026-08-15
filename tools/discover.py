@@ -38,11 +38,25 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 PKGS = ROOT / "pkgs"
 
 TOPICS = ["dsh-plugin", "dsh-tool"]
-# Below this the signal is not there yet: a repo with one star is usually its
-# author's own. The index carried 100 such packages once and removing them was
-# the single biggest quality change it has had, so the bar is applied at the
-# door rather than after the fact.
-MIN_STARS = 2
+# The bar for the UNATTENDED SCAN, and for nothing else. A contributor opening
+# a PR for their own package is not filtered by it: nothing in tests/ or the
+# descriptor contract reads a star count, and nothing should. This number is a
+# triage heuristic for a robot with nobody watching it, not a claim about which
+# packages deserve to be in the index -- a human who shows up with a working
+# package has already supplied the signal this is a proxy for.
+#
+# Ten, inclusive -- a repo with exactly ten stars is in. Raised from 2 on
+# 2026-08-15: at 2 the first scan under the repaired pipeline proposed 358
+# packages in a single PR, because the `dsh-plugin` topic had grown to 800
+# repos against the 281 the original survey measured, so a bar calibrated for
+# the old size had stopped triaging anything at all.
+MIN_STARS = 10
+
+
+def enough_stars(count) -> bool:
+    """Ten is in, nine is out. The bar is inclusive, and a function rather
+    than an inline comparison so the boundary is testable at all."""
+    return (count or 0) >= MIN_STARS
 
 
 class GhError(RuntimeError):
@@ -202,7 +216,7 @@ def mode_new(limit: int) -> list:
             seen.add(full)
             if r.get("archived"):
                 continue
-            if (r.get("stargazers_count") or 0) < MIN_STARS:
+            if not enough_stars(r.get("stargazers_count")):
                 continue
             # Pin first, then read AT the pin. Taking the version from one
             # snapshot and the sha from another is how 19 of 169 descriptors
