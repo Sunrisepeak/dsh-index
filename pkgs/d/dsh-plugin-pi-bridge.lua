@@ -20,9 +20,10 @@ package = {
         bundle_name = "dsh-plugin-pi-bridge",
 
         versions = {
+            ["0.1.1"] = { commit = "2bdf91d84274996e82052ffdbb8cf872429678ea" },
             ["0.1.0"] = { commit = "1604aaf6bde58b30bfbf32ec83fe548c01ec79d6" },
         },
-        latest = "0.1.0",
+        latest = "0.1.1",
 
         needs_build = true,
 

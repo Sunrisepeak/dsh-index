@@ -20,9 +20,10 @@ package = {
         bundle_name = "dsh-plugin-opencode-bridge",
 
         versions = {
+            ["0.1.1"] = { commit = "87327a2847092794057721187adb1e980414110b" },
             ["0.1.0"] = { commit = "27ec22d8080ca5bbff3df91acb30dd2bb6b088e3" },
         },
-        latest = "0.1.0",
+        latest = "0.1.1",
 
         needs_build = true,
 

@@ -20,10 +20,11 @@ package = {
         bundle_name = "dsh-vision-proxy",
 
         versions = {
+            ["0.2.3"] = { commit = "679b0efc4719ac80b14ebf9630a6e7be474ef45b" },
             ["0.1.3"] = { commit = "1ce3d215c73d9edc933626b3e3d1190f4df8ce18" },
             ["0.1.0"] = { commit = "bede819d322c327a707126d696cb942095e139a2" },
         },
-        latest = "0.1.3",
+        latest = "0.2.3",
 
         needs_build = false,
 

@@ -20,9 +20,10 @@ package = {
         bundle_name = "@dsh-external/dsh-sentinel",
 
         versions = {
+            ["0.10.0"] = { commit = "f73e8aeb4af38a09c0d9e9d3e1077911b73f14ab" },
             ["0.2.1"] = { commit = "35884673abb10ae3d19f4c0275987502d84bc1f5" },
         },
-        latest = "0.2.1",
+        latest = "0.10.0",
 
         needs_build = false,
 

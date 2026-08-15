@@ -19,9 +19,10 @@ package = {
         bundle_name = "dsh-message-edit",
 
         versions = {
+            ["0.2.1"] = { commit = "e950651786e916feebe5a49c8e4ca46afdca379d" },
             ["0.2.0"] = { commit = "3541ed25a82c0b7d76ccc71d265e029613b639b0" },
         },
-        latest = "0.2.0",
+        latest = "0.2.1",
 
         needs_build = false,
 
