@@ -63,25 +63,52 @@ jobs:
       # rewritten history or a deleted repo; following the new head silently
       # would turn "this index pins exactly these bytes" into a promise that
       # quietly stopped holding. The run fails and a human decides.
-      - name: Every pinned commit must still resolve
+      #
+      # It fails only for an UN-MIRRORED pin. A mirrored version's bytes are
+      # already in xlings-res under a sha256, so a deleted upstream costs
+      # nothing -- `xlings install dsh:<pkg>` still works. Those are reported
+      # and kept; an alarm that fires for packages nobody should act on stops
+      # being read.
+      - name: Every pinned commit must still resolve, or be mirrored
         run: python3 tools/discover.py --audit --json /tmp/gone.json
-      - if: failure()
-        # Guarded: when the audit fails for a reason other than a missing pin
-        # -- a rate limit, a network fault -- this file does not exist, and an
-        # unguarded `cat` would fail the summary step and bury the real error.
+      - name: Say what was found either way
+        if: always()
         run: |
-          if [ -f /tmp/gone.json ]; then
-            {
-              echo "### Pinned commits missing upstream"
-              echo '```json'
-              cat /tmp/gone.json
-              echo '```'
-            } >> "$GITHUB_STEP_SUMMARY"
-          else
-            echo "### The audit could not complete" >> "$GITHUB_STEP_SUMMARY"
-            echo "No result file was written, so this is NOT a report that any pin is gone." \
-              >> "$GITHUB_STEP_SUMMARY"
-          fi
+          [ -f /tmp/gone.json ] || exit 0
+          python3 - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          rows = json.load(open("/tmp/gone.json"))
+          if not rows:
+              print("### Every pinned commit still resolves"); raise SystemExit
+          kept = [r for r in rows if r["mirrored"]]
+          doomed = [r for r in rows if not r["mirrored"]]
+          if doomed:
+              print("### Upstream gone, and NOT mirrored — remove these\n")
+              print("The descriptor points at a repo that no longer exists and "
+                    "this index holds no copy, so it promises bytes nobody can "
+                    "fetch.\n")
+              for r in doomed:
+                  print(f"- `{r['name']}` @ {r['version']} — `{r['repo']}`")
+                  print(f"  ```\n  git rm pkgs/{r['name'][0]}/{r['name']}.lua\n  ```")
+          if kept:
+              print("\n### Upstream gone, but mirrored — kept\n")
+              print("These install from xlings-res at a verified sha256; "
+                    "nothing downstream breaks.\n")
+              for r in kept:
+                  print(f"- `{r['name']}` @ {r['version']} — `{r['repo']}`")
+          PY
+      - if: failure()
+        # Only reached when there is no result file at all, because the step
+        # above already rendered one if it exists. No file means the scan
+        # itself could not complete -- a rate limit, a network fault -- and
+        # saying nothing here would leave a red run looking like a finding.
+        run: |
+          [ -f /tmp/gone.json ] && exit 0
+          {
+            echo "### The audit could not complete"
+            echo "No result file was written, so this is **not** a report that"
+            echo "any pin is gone. See the step log for the HTTP status."
+          } >> "$GITHUB_STEP_SUMMARY"
 
   new:
     name: new plugins

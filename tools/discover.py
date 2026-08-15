@@ -11,8 +11,13 @@ one wants a different PR and a different amount of human attention:
 `--audit` is the one that must never auto-merge. A pinned sha disappearing
 means a force push, a history rewrite, or a deleted repo, and following it
 silently would turn "this index pins exactly these bytes" into a promise it
-stopped keeping without saying so. It reports and exits non-zero; a human
-decides.
+stopped keeping without saying so. It reports; a human decides.
+
+It fails only when the vanished version is NOT mirrored. A mirrored one is
+already here -- the tarball is in xlings-res under a sha256, so `xlings
+install dsh:<pkg>` keeps working and nothing downstream notices. An
+un-mirrored one is a pointer at a repo that no longer exists: it promises
+bytes nobody can fetch, and the only honest fix is to remove the descriptor.
 
 Topics: `dsh-plugin` is the ecosystem's discovery entry point and where every
 package here came from. `dsh-tool` is checked too and is currently empty (0
@@ -38,11 +43,25 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 PKGS = ROOT / "pkgs"
 
 TOPICS = ["dsh-plugin", "dsh-tool"]
-# Below this the signal is not there yet: a repo with one star is usually its
-# author's own. The index carried 100 such packages once and removing them was
-# the single biggest quality change it has had, so the bar is applied at the
-# door rather than after the fact.
-MIN_STARS = 2
+# The bar for the UNATTENDED SCAN, and for nothing else. A contributor opening
+# a PR for their own package is not filtered by it: nothing in tests/ or the
+# descriptor contract reads a star count, and nothing should. This number is a
+# triage heuristic for a robot with nobody watching it, not a claim about which
+# packages deserve to be in the index -- a human who shows up with a working
+# package has already supplied the signal this is a proxy for.
+#
+# Ten, inclusive -- a repo with exactly ten stars is in. Raised from 2 on
+# 2026-08-15: at 2 the first scan under the repaired pipeline proposed 358
+# packages in a single PR, because the `dsh-plugin` topic had grown to 800
+# repos against the 281 the original survey measured, so a bar calibrated for
+# the old size had stopped triaging anything at all.
+MIN_STARS = 10
+
+
+def enough_stars(count) -> bool:
+    """Ten is in, nine is out. The bar is inclusive, and a function rather
+    than an inline comparison so the boundary is testable at all."""
+    return (count or 0) >= MIN_STARS
 
 
 class GhError(RuntimeError):
@@ -160,11 +179,19 @@ def carried() -> dict:
         bundle = re.search(r'bundle_name = "([^"]+)"', block)
         vblock = re.search(rf'\["{re.escape(latest.group(1))}"\]\s*=\s*'
                            r'\{[^}]*commit = "([0-9a-f]{40})"', block)
+        # Whether THIS version's bytes live in xlings-res. That is what decides
+        # whether the package survives its upstream disappearing: a mirrored
+        # tarball is a copy this index already holds and checksummed, so a
+        # deleted repo costs nothing. An un-mirrored one is a pointer, and a
+        # pointer to a deleted repo is an empty promise.
+        mblock = re.search(r'mirror = \{(.*?)\n        \}', block, re.S)
+        mirrored = bool(mblock and f'["{latest.group(1)}"]' in mblock.group(1))
         out[path.stem] = {
             "repo": repo.group(1).rstrip("/"),
             "bundle": bundle.group(1) if bundle else "",
             "version": latest.group(1),
             "commit": vblock.group(1) if vblock else "",
+            "mirrored": mirrored,
         }
     return out
 
@@ -202,7 +229,7 @@ def mode_new(limit: int) -> list:
             seen.add(full)
             if r.get("archived"):
                 continue
-            if (r.get("stargazers_count") or 0) < MIN_STARS:
+            if not enough_stars(r.get("stargazers_count")):
                 continue
             # Pin first, then read AT the pin. Taking the version from one
             # snapshot and the sha from another is how 19 of 169 descriptors
@@ -332,6 +359,20 @@ def mode_bump() -> list:
 
 
 def mode_audit() -> list:
+    """Pins whose upstream is gone, each marked with whether it survives.
+
+    A vanished upstream is not one event, it is two, and they need opposite
+    answers. If this index mirrored the version, it already holds those exact
+    bytes under a sha256 in xlings-res: `xlings install dsh:<pkg>` keeps
+    working, nobody downstream notices, and the descriptor keeps a promise it
+    can still keep. If it did not, the descriptor is a pointer at a repo that
+    no longer exists -- it promises bytes nobody can fetch, and the only
+    honest fix is to remove it.
+
+    So only the un-mirrored half fails the run. Failing on the mirrored half
+    would demand action on packages that are working fine, and an alarm that
+    fires for something nobody should act on stops being read.
+    """
     gone = []
     have = carried()
     rate_check(len(have), "--audit")
@@ -340,7 +381,10 @@ def mode_audit() -> list:
             continue
         if gh_json(f"repos/{cur['repo']}/commits/{cur['commit']}") is None:
             gone.append({"name": name, "repo": cur["repo"],
-                         "commit": cur["commit"], "version": cur["version"]})
+                         "commit": cur["commit"], "version": cur["version"],
+                         "mirrored": cur["mirrored"],
+                         "verdict": "keep (served from the mirror)"
+                                    if cur["mirrored"] else "REMOVE (no mirror)"})
     return gone
 
 
@@ -364,7 +408,7 @@ def main() -> int:
         elif args.bump:
             rows, label = mode_bump(), "version update(s)"
         else:
-            rows, label = mode_audit(), "MISSING pinned commit(s)"
+            rows, label = mode_audit(), "vanished upstream(s) -- see each verdict"
     except GhError as e:
         print(f"\nSCAN DID NOT COMPLETE: {e}", file=sys.stderr)
         print("Nothing was written. This is NOT a report that anything is "
@@ -379,10 +423,28 @@ def main() -> int:
         print("  " + json.dumps(r, ensure_ascii=False))
     print(f"\n{len(rows)} {label}")
 
-    # An audit hit is the one result that must stop the pipeline: it means an
-    # already-published pin no longer exists, and every downstream step here
-    # would otherwise carry on as if the index were intact.
-    return 1 if (args.audit and rows) else 0
+    # An UN-MIRRORED audit hit is the one result that must stop the pipeline:
+    # the descriptor points at a repo that no longer exists and this index
+    # holds no copy, so it promises bytes nobody can fetch. A mirrored one is
+    # reported and does not fail -- those bytes are already here under a
+    # sha256, `xlings install` still works, and demanding action on a package
+    # that is fine is how an alarm stops being read.
+    if args.audit:
+        doomed = [r for r in rows if not r["mirrored"]]
+        for r in rows:
+            if r["mirrored"]:
+                print(f"  kept: {r['name']} upstream is gone, but "
+                      f"{r['version']} is mirrored -- installs from xlings-res",
+                      file=sys.stderr)
+        if doomed:
+            print(f"\n{len(doomed)} descriptor(s) point at a repo that no "
+                  f"longer exists and are NOT mirrored. Remove them:",
+                  file=sys.stderr)
+            for r in doomed:
+                print(f"  git rm pkgs/{r['name'][0]}/{r['name']}.lua"
+                      f"    # {r['repo']} is gone", file=sys.stderr)
+            return 1
+    return 0
 
 
 if __name__ == "__main__":

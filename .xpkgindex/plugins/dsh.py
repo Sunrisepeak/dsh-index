@@ -170,6 +170,11 @@ class DshPlugin(Plugin):
             "patch": str(dsh.get("patch") or "./cordis.patch.yml"),
             "versions": dsh.get("versions") or {},
             "latest": latest,
+            # Notable upstream events. The package stays and so does its
+            # description -- what changed is something a reader has to know
+            # before trusting the repo link, and deleting the package would
+            # throw away bytes this index still serves from its mirror.
+            "upstream": list(dsh.get("upstream") or []),
             "keywords": raw.get("keywords") or [],
             "authors": raw.get("authors") or [],
             "categories": raw.get("categories") or [],
@@ -508,6 +513,20 @@ class DshPlugin(Plugin):
                 kind="kv", title=_t("Credits", "致谢", "致謝"), weight=50,
                 data={"items": [{"key": "authors",
                                  "value": ", ".join(str(a) for a in ext["authors"])}]}))
+
+        # Last on the page, deliberately. This is history a reader consults
+        # after deciding to install, not a warning that changes the decision --
+        # the delivery badge at the top already says whether the bytes are
+        # mirrored, which is what actually survives an upstream disappearing.
+        events = ext.get("upstream") or []
+        if events:
+            blocks.append(Block(
+                kind="kv", weight=70,
+                title=_t("Upstream changes", "重大变动", "重大變動"),
+                data={"items": [
+                    {"key": f"{e.get('date', '')} · {e.get('event', 'note')}",
+                     "value": str(e.get("note") or "")}
+                    for e in events]}))
 
         tags = [str(k) for k in ext.get("keywords") or []]
         if tags:

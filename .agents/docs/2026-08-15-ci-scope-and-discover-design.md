@@ -4,15 +4,29 @@
 > 覆盖：`.github/workflows/ci.yml`（任务 1）、`.github/workflows/discover.yml` + `tools/discover.py`（任务 2）
 > 一句话：**现在的 boot 门装了 PR 没改的包，却唯独不装 PR 改的那个包**；而 discover 三个 job 里有两个每天固定失败在同一行，根因是仓库设置 + 缺 token，不是脚本。
 
-**实施状态**
+**实施状态（全部已合并，2026-08-15）**
 
-| 期 | 内容 | 状态 |
+| 期 | 内容 | PR |
 |---|---|---|
 | P0 | `DISCOVER_TOKEN` | ✅ 已配置并端到端验证（PAT 5000/h、开 PR、PR 触发 CI、contents:write） |
-| P1 | `tools/affected.py` + boot matrix + `boot-gate` + surface 解析 | ✅ #12 已合并 |
-| P2 | discover：checkout 接 token + 固定分支增量 + `--body-file` + concurrency | ⏳ |
-| P3 | `gh_json` 区分 404 与错误 + rate_limit 预检 | ⏳ |
-| P4 | 清理孤儿分支；分支保护改挂 `boot-gate` | ⏳ |
+| P1 | `tools/affected.py` + boot matrix + `boot-gate` + surface 解析 | ✅ #12 |
+| P2 | discover：checkout 接 token + 固定分支增量 + `--body-file` + concurrency | ✅ #14 |
+| P3 | `gh_json` 区分 404/422 与错误 + rate_limit 预检 | ✅ #15 |
+| P4 | 清理孤儿分支；分支保护改挂 `boot-gate` | ⏳ 见 §8 |
+
+**跑起来之后才暴露的问题（都已修）**
+
+设计里没有、只有真跑一遍才会撞上的五个，全部由新门自己发现：
+
+| PR | 问题 | 怎么发现的 |
+|---|---|---|
+| #17 | matrix 无上限 → GitHub 拒绝超过 256 个 job，boot 根本不启动，失败原因不在任何日志里 | 第一次真实 `discover --new` 提出 358 个包 |
+| #19 | `tools/npm.json` / `tools/profiles.json` 被当成基础设施 → **每个 discover PR 都判成 full run**，启动 3 个 composite 而一个变动的包都不启动 | PR #18 显示 `full run (tools/npm.json)` |
+| #20 | `bootcheck` 只会启动**已镜像**的版本，而 discover 产出的描述符按设计一定未镜像 → 门对它最该守的那批 PR 是空的 | PR #18 的 22 个包全部 `no installed tarball` |
+| #21 | `template.lua` 的 `install()` 用包级判断 `if not MIRROR` 配版本级取值 `MIRROR[version].tarball` → **bump 落地到镜像流水线跑完之间，`xlings install` 对每个包都崩** | 同上，`attempt to index a nil value` |
+| #22 | `pnpm store add` 对 git spec 会跑 `prepare` → `xlings install` 对**每个未镜像且 needs_build 的包**直接失败（13 个描述符属于这一类） | PR #18 六个包 `ERR_PNPM_GIT_DEP_PREPARE_NOT_ALLOWED` |
+
+#21 和 #22 是**用户可见的安装 bug**，跟 CI 无关 —— 旧的门只装那两个 composite（成员都 pin 在已镜像版本上），所以从来碰不到这两条路径。
 
 ---
 
@@ -517,3 +531,38 @@ P1/P2/P3 各自独立成 PR（仓库 `pr-workflow` skill 的要求：一个 PR �
 - `bootcheck.py` 单插件 boot 里 `tui` 档要不要单独装 `dsh-cc-tui`，还是并进 `agent-tui-coding` 那一 leg（§2.4 末）
 - discover 的 `--new` 每天扫 281 个仓库的 package.json，是否值得引入 ETag / 上次扫描位置缓存（现在每天全量重扫）
 - `mode_new` 里 `MIN_STARS = 2` 与 mirror 流水线的 5 星门槛不一致，是否需要对齐（不属于本次范围，记一笔）
+
+---
+
+## 8. 落地后待你决定的事
+
+流水线本身已经通了。剩下的都是**内容和策略**决定，不是工程问题。
+
+### 8.1 PR #16：一次 358 个包
+
+第一次真实 `--new` 扫到 **800 个** `dsh-plugin` topic 仓库（设计文档写的 281 已经过时），其中 358 个满足 `dsh.bundle` + ≥2 星 + 非归档。一个 358 文件的 PR 不可 review，而且 `MIN_STARS = 2` 这道门在 topic 涨了 3 倍之后显然不够用了。
+
+选项：抬星标门槛 / 分批收录 / 加人工白名单。**这是产品判断，我没动。**
+
+顺带：其中两个仓库和插件市场设计直接相关 —— `yunhuantian/dsh-plugin-hub`（Web UI 里的图形化插件商店）和 `bobleer/deepseek-harness-plugin-mcp`（让 agent 发现/安装 dsh 插件的 MCP server）。讨论市场方案时应该先看这两个。
+
+### 8.2 PR #18：22 个 bump 里，门拦下了真问题
+
+最终一轮：**25 个单元里 15 个通过**，剩下的分两类：
+
+- **6 个** `needs_build` 未镜像包 → #22 之后报为「未验证」而不是「坏」，响亮跳过
+- **真的坏**：`oh-dsh-desktop` 新版本声明了 `dist/cordis.patch.yml` 却没打包进去；`dsh-cc-tui` 新版本的 bundle 解析不到
+
+**这正是这道门存在的理由** —— 这些 bump 在旧 CI 下会带着全绿合进 main，然后对每个用户炸掉。这批要不要合、坏的那几个要不要剔除，是你的决定。
+
+### 8.3 `dsh-mac-desktop` 的 pin 没了
+
+`--audit` 报出 `bitterSmilezzz/dsh-mac-desktop` 整个仓库 404（已手工确认）。按 workflow 的设计，audit 命中不自动修，交人判断。在处理之前，每晚的 audit job 都会红。
+
+### 8.4 三个孤儿分支
+
+`chore/bump-20260814`、`-v2`、`chore/discover-20260814` —— 旧流程留下的，内容不可信（在有 bug 的流程里生成）。新流程已经用 `chore/discover` / `chore/bump` 重新生成。建议直接删。
+
+### 8.5 分支保护
+
+要把 required check 从 `composites boot` 改挂到 **`boot gate`**。这是 §2.3 说的那件事：matrix job 的名字随内容变化，被 `if` 跳过的 job 报 `skipped` 而不是 `success`。改之前文档 PR 会卡住。

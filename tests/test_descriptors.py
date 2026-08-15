@@ -58,6 +58,21 @@ def _members(body: str) -> list:
                       r'bundle = "([^"]+)", commit = "([^"]*)"', m.group(1))
 
 
+def _bundle_at(body: str, version: str) -> str:
+    """The bundle name for one version.
+
+    Upstream renames its npm package -- dsh-cc-tui shipped as `dsh-cc-tui`
+    through 0.3.3 and became `@deepseek-harness-tui/dsh-tui` at 0.5.0 -- so
+    the manifest name is a property of the VERSION. `bundle_name` describes
+    `latest`; a version that differs says so inline. Same correction the
+    mirror lookup needed: per version, not per package.
+    """
+    d = _dsh_block(body)
+    m = re.search(rf'\["{re.escape(version)}"\]\s*=\s*'
+                  r'\{[^}]*bundle = "([^"]+)"', d)
+    return m.group(1) if m else (_field(d, "bundle_name") or "")
+
+
 @pytest.fixture(scope="module", params=[p for p in PKGS], ids=lambda p: p.stem)
 def pkg(request):
     path = request.param
@@ -273,13 +288,14 @@ class TestComposition:
         an uninstall that passed the wrong one failed partway through with
         ERR_PNPM_CANNOT_REMOVE_MISSING_DEPS, leaving the profile half
         dismantled."""
-        bundle_of = {p.stem: _field(_dsh_block(p.read_text(encoding="utf-8")),
-                                    "bundle_name") for p in PKGS}
+        body_of = {p.stem: p.read_text(encoding="utf-8") for p in PKGS}
         for path, body in self._composites():
-            for name, _v, bundle, _c in _members(body):
-                assert bundle == bundle_of[name], (
-                    f"{path.stem}: member {name!r} recorded as {bundle!r} but "
-                    f"its descriptor says {bundle_of[name]!r}")
+            for name, version, bundle, _c in _members(body):
+                want = _bundle_at(body_of[name], version)
+                assert bundle == want, (
+                    f"{path.stem}: member {name!r}@{version} recorded as "
+                    f"{bundle!r} but its descriptor says {want!r} at that "
+                    f"version")
 
     @pytest.mark.static
     def test_member_pins_match_the_member_descriptor(self):
@@ -967,3 +983,193 @@ class TestBootcheckSpec:
             "install() must not index MIRROR without checking this version"
         assert "MIRROR and MIRROR[pkginfo.version()]" in body, \
             "install() must resolve the mirror entry for the version it installs"
+
+class TestDiscoveryBar:
+    """The star bar gates the robot, never a contributor.
+
+    A human opening a PR for their own package has already supplied the signal
+    a star count is a proxy for. If the bar ever leaked into the descriptor
+    contract, a PR for a brand-new project would become unmergeable for a
+    reason that has nothing to do with whether the package works.
+    """
+
+    @pytest.mark.static
+    def test_the_bar_is_ten_inclusive(self):
+        """Ten stars is in, nine is out."""
+        sys.path.insert(0, str(ROOT / "tools"))
+        import discover
+        assert discover.MIN_STARS == 10, (
+            "the unattended scan proposed 358 packages at MIN_STARS=2 once the "
+            "topic reached 800 repos")
+        assert discover.enough_stars(10), "ten stars must pass"
+        assert not discover.enough_stars(9), "nine must not"
+        assert not discover.enough_stars(None), "an absent count is not a pass"
+
+    @pytest.mark.static
+    def test_stars_are_not_part_of_the_descriptor_contract(self, pkg):
+        """The scan's triage heuristic must not become a schema field: a
+        descriptor that recorded stars would go stale the day it landed, and
+        would invite a check that blocks human PRs."""
+        _, body = pkg
+        assert "stars" not in body, \
+            "a star count is scan-time triage, not a property of the package"
+
+class TestAuditMirrorPolicy:
+    """A vanished upstream is two events, and they need opposite answers.
+
+    Mirrored: this index already holds those exact bytes under a sha256 in
+    xlings-res, `xlings install dsh:<pkg>` keeps working, and nobody
+    downstream notices. Un-mirrored: the descriptor is a pointer at a repo
+    that no longer exists, so it promises bytes nobody can fetch and the only
+    honest fix is removal.
+    """
+
+    def _mod(self):
+        sys.path.insert(0, str(ROOT / "tools"))
+        import discover
+        return discover
+
+    @pytest.mark.static
+    def test_carried_reports_whether_the_pinned_version_is_mirrored(self):
+        d = self._mod()
+        have = d.carried()
+        assert have, "no plugins read"
+        assert all("mirrored" in v for v in have.values())
+        # The flag must track the pinned version, not merely the presence of a
+        # mirror block: a package mirrored at 0.1.0 and bumped to 0.6.0 is not
+        # mirrored at the version it now serves.
+        for name, v in have.items():
+            body = next(p for p in PKGS if p.stem == name).read_text()
+            block = _dsh_block(body)
+            mb = re.search(r"mirror = \{(.*?)\n        \}", block, re.S)
+            want = bool(mb and f'["{v["version"]}"]' in mb.group(1))
+            assert v["mirrored"] is want, name
+
+    @pytest.mark.static
+    def test_a_mirrored_pin_survives_its_upstream(self, monkeypatch):
+        d = self._mod()
+        monkeypatch.setattr(d, "carried", lambda: {
+            "keeper": {"repo": "x/gone", "bundle": "", "version": "0.1.0",
+                       "commit": "a" * 40, "mirrored": True}})
+        monkeypatch.setattr(d, "rate_check", lambda *a, **k: None)
+        monkeypatch.setattr(d, "gh_json", lambda p: None)
+        rows = d.mode_audit()
+        assert rows[0]["mirrored"] is True
+        assert "keep" in rows[0]["verdict"]
+
+    @pytest.mark.static
+    def test_an_unmirrored_pin_is_marked_for_removal(self, monkeypatch):
+        d = self._mod()
+        monkeypatch.setattr(d, "carried", lambda: {
+            "doomed": {"repo": "x/gone", "bundle": "", "version": "0.1.0",
+                       "commit": "a" * 40, "mirrored": False}})
+        monkeypatch.setattr(d, "rate_check", lambda *a, **k: None)
+        monkeypatch.setattr(d, "gh_json", lambda p: None)
+        rows = d.mode_audit()
+        assert rows[0]["mirrored"] is False
+        assert "REMOVE" in rows[0]["verdict"]
+
+class TestUpstreamChanges:
+    """`dsh.upstream` records what happened to a package's origin.
+
+    A deleted or renamed upstream does not make the package worthless -- if the
+    version is mirrored, the bytes are still here and still install. What it
+    does make worthless is the `repo` link at the top of the page, so the page
+    says so at the bottom instead of the index quietly dropping a working
+    package or leaving a reader to discover a 404 for themselves.
+    """
+
+    EVENTS = {"gone", "renamed", "archived", "moved"}
+
+    def _entries(self, body: str):
+        d = _dsh_block(body)
+        m = re.search(r"upstream = \{(.*?)\n        \}", d, re.S)
+        if not m:
+            return []
+        return re.findall(r'date = "([^"]*)", event = "([^"]*)"', m.group(1))
+
+    @pytest.mark.static
+    def test_every_entry_is_dated_and_named(self, pkg):
+        _, body = pkg
+        for date, event in self._entries(body):
+            assert re.fullmatch(r"\d{4}-\d{2}-\d{2}", date), \
+                f"an undated upstream change cannot be read in order: {date!r}"
+            assert event in self.EVENTS, \
+                f"unknown upstream event {event!r}; known: {sorted(self.EVENTS)}"
+
+    @pytest.mark.static
+    def test_every_entry_carries_a_note(self, pkg):
+        """The event word alone is a label. What a reader needs is what it
+        means for them -- whether it still installs, and what they lose."""
+        path, body = pkg
+        d = _dsh_block(body)
+        m = re.search(r"upstream = \{(.*?)\n        \}", d, re.S)
+        if not m:
+            return
+        for entry in re.findall(r"\{(.*?)\}", m.group(1), re.S):
+            assert "note =" in entry, f"{path.stem}: an upstream entry with no note"
+
+    @pytest.mark.static
+    def test_a_gone_upstream_is_only_kept_when_mirrored(self, pkg):
+        """The policy, enforced rather than remembered: an un-mirrored package
+        whose upstream vanished promises bytes nobody can fetch, so it must be
+        removed, not annotated."""
+        path, body = pkg
+        if not any(e == "gone" for _, e in self._entries(body)):
+            return
+        d = _dsh_block(body)
+        latest = _field(d, "latest")
+        mb = re.search(r"mirror = \{(.*?)\n        \}", d, re.S)
+        assert mb and f'["{latest}"]' in mb.group(1), (
+            f"{path.stem}: upstream is gone and {latest} is not mirrored -- "
+            f"this descriptor promises bytes nobody can fetch and must be "
+            f"removed instead")
+
+class TestPerVersionBundleName:
+    """The manifest name belongs to a version, not to a package.
+
+    Upstream renames its npm package. `dsh-cc-tui` shipped under that name
+    through 0.3.3 and became `@deepseek-harness-tui/dsh-tui` at 0.5.0 -- so a
+    composite pinning 0.3.3 must still record `dsh-cc-tui`, because that is
+    what `dsh plugin remove` will look for in the profile manifest, while the
+    package page must show the new name for `latest`.
+
+    Third time this index has had to make the same correction: the mirror
+    lookup in gen_agents, install() in template.lua (#21), and now this.
+    """
+
+    @pytest.mark.static
+    def test_bundle_name_describes_latest(self, pkg):
+        _, body = pkg
+        d = _dsh_block(body)
+        latest = _field(d, "latest")
+        declared = _field(d, "bundle_name")
+        if declared is None:
+            return                       # groups and Agents carry no bundle
+        assert _bundle_at(body, latest) == declared, (
+            "bundle_name must be the name `latest` publishes under; an older "
+            "version that differs declares its own `bundle` inline")
+
+    @pytest.mark.static
+    def test_an_override_only_appears_on_a_declared_version(self, pkg):
+        path, body = pkg
+        d = _dsh_block(body)
+        vblock = re.search(r"versions = \{(.*?)\n        \}", d, re.S)
+        if not vblock:
+            return
+        for ver in re.findall(r'\["([^"]+)"\]\s*=\s*\{[^}]*bundle = "', vblock.group(1)):
+            assert f'["{ver}"]' in vblock.group(1), f"{path.stem}: {ver}"
+
+    @pytest.mark.static
+    def test_the_resolver_prefers_the_version_over_the_default(self):
+        body = '''package = { dsh = {
+            bundle_name = "@new/name",
+            versions = {
+                ["0.3.3"] = { commit = "aa", bundle = "old-name" },
+                ["0.5.0"] = { commit = "bb" },
+            },
+            latest = "0.5.0",
+        }, }'''
+        assert _bundle_at(body, "0.3.3") == "old-name"
+        assert _bundle_at(body, "0.5.0") == "@new/name"
+        assert _bundle_at(body, "9.9.9") == "@new/name"
