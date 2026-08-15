@@ -49,11 +49,30 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 # broke the moment upstream renamed dsh-cc-tui to @deepseek-harness-tui/dsh-tui
 # at 0.5.0, because the profile manifest then declared a bundle nothing
 # provided.
+#
+# Keyed on `dsh.profile`, which is NOT a surface. It is "where this plugin's
+# own README tells readers to install it" -- a profile NAME, and a user may
+# call a profile anything. That distinction stayed invisible while the only
+# values in the index were web, tui and cc-tui; the first scan at ten stars
+# brought in `qqbot`, `multica`, `hello` and `headless`, four names their
+# authors picked, and treating an unrecognised one as an authoring error
+# blocked forty working packages over four labels.
+#
+# So only the names that genuinely imply a different surface are listed, and
+# everything else gets the web surface: dsh's general-purpose one, where 103
+# of 111 plugins already go. It is a real answer rather than a guess -- a
+# plugin that needs no UI still loads with one present, and a plugin that
+# needs a different surface fails loudly instead of silently passing.
 SURFACE_FOR_PROFILE = {
-    "web": {"bundle": "@deepseek-ai/dsh-web-app"},
     "tui": {"package": "dsh-cc-tui"},
     "cc-tui": {"package": "dsh-cc-tui"},
 }
+DEFAULT_SURFACE = {"bundle": "@deepseek-ai/dsh-web-app"}
+
+
+def surface_for(profile: str) -> dict:
+    """Which surface a lone plugin boots on. Never fails: see above."""
+    return SURFACE_FOR_PROFILE.get(profile, DEFAULT_SURFACE)
 
 COMPOSITE_KINDS = {"group", "profile"}
 
@@ -181,7 +200,7 @@ def unit(name: str, known: dict) -> dict:
     composite = d["kind"] in COMPOSITE_KINDS
     install = [name]
     if not composite:
-        pkg = (SURFACE_FOR_PROFILE.get(d["profile"]) or {}).get("package")
+        pkg = surface_for(d["profile"]).get("package")
         if pkg and pkg != name:
             install.insert(0, pkg)
     return {"name": name, "kind": d["kind"], "composite": composite,

@@ -44,7 +44,7 @@ import tempfile
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 sys.path.insert(0, str(ROOT / "tools"))
-from affected import SURFACE_FOR_PROFILE  # noqa: E402
+from affected import surface_for  # noqa: E402
 
 
 def dsh_bin() -> str:
@@ -129,13 +129,7 @@ def standalone(name: str) -> tuple:
     descriptor rather than a constant. `@deepseek-ai/dsh-web-app` needs
     neither: it ships inside dsh and only has to be named in the manifest.
     """
-    prof = profile_of(name)
-    if prof not in SURFACE_FOR_PROFILE:
-        raise SystemExit(
-            f"{name}: profile \"{prof}\" has no surface mapping. Add one to "
-            f"SURFACE_FOR_PROFILE in tools/affected.py -- booting it on a bare "
-            f"dsh-base would report a working package as broken.")
-    spec = SURFACE_FOR_PROFILE[prof]
+    spec = surface_for(profile_of(name))
     members = [(name, latest_of(name))]
     if "bundle" in spec:
         return members, spec["bundle"]
