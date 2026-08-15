@@ -35,5 +35,19 @@ package = {
                 cn      = true,
             },
         },
+
+        -- The package stays because the bytes did. `tools/discover.py --audit`
+        -- found the upstream gone on 2026-08-15; 0.1.0 is mirrored with a
+        -- sha256 and a CN release, so installing it still works and nothing
+        -- downstream broke. Deleting the descriptor would throw away a copy
+        -- this index already holds -- but a reader following `repo` above hits
+        -- a 404, so say why.
+        upstream = {
+            { date = "2026-08-15", event = "gone",
+              note = "上游仓库 bitterSmilezzz/dsh-mac-desktop 已从 GitHub 消失"
+                  .. "（整个仓库 404，非 force push）。0.1.0 已镜像到 xlings-res，"
+                  .. "`xlings install dsh:dsh-mac-desktop` 照常可用；但不会再有新版本，"
+                  .. "上游的 issue、文档与源码都已无法访问。" },
+        },
     },
 }
