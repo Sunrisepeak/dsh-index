@@ -58,6 +58,21 @@ def _members(body: str) -> list:
                       r'bundle = "([^"]+)", commit = "([^"]*)"', m.group(1))
 
 
+def _bundle_at(body: str, version: str) -> str:
+    """The bundle name for one version.
+
+    Upstream renames its npm package -- dsh-cc-tui shipped as `dsh-cc-tui`
+    through 0.3.3 and became `@deepseek-harness-tui/dsh-tui` at 0.5.0 -- so
+    the manifest name is a property of the VERSION. `bundle_name` describes
+    `latest`; a version that differs says so inline. Same correction the
+    mirror lookup needed: per version, not per package.
+    """
+    d = _dsh_block(body)
+    m = re.search(rf'\["{re.escape(version)}"\]\s*=\s*'
+                  r'\{[^}]*bundle = "([^"]+)"', d)
+    return m.group(1) if m else (_field(d, "bundle_name") or "")
+
+
 @pytest.fixture(scope="module", params=[p for p in PKGS], ids=lambda p: p.stem)
 def pkg(request):
     path = request.param
@@ -273,13 +288,14 @@ class TestComposition:
         an uninstall that passed the wrong one failed partway through with
         ERR_PNPM_CANNOT_REMOVE_MISSING_DEPS, leaving the profile half
         dismantled."""
-        bundle_of = {p.stem: _field(_dsh_block(p.read_text(encoding="utf-8")),
-                                    "bundle_name") for p in PKGS}
+        body_of = {p.stem: p.read_text(encoding="utf-8") for p in PKGS}
         for path, body in self._composites():
-            for name, _v, bundle, _c in _members(body):
-                assert bundle == bundle_of[name], (
-                    f"{path.stem}: member {name!r} recorded as {bundle!r} but "
-                    f"its descriptor says {bundle_of[name]!r}")
+            for name, version, bundle, _c in _members(body):
+                want = _bundle_at(body_of[name], version)
+                assert bundle == want, (
+                    f"{path.stem}: member {name!r}@{version} recorded as "
+                    f"{bundle!r} but its descriptor says {want!r} at that "
+                    f"version")
 
     @pytest.mark.static
     def test_member_pins_match_the_member_descriptor(self):
@@ -1108,3 +1124,52 @@ class TestUpstreamChanges:
             f"{path.stem}: upstream is gone and {latest} is not mirrored -- "
             f"this descriptor promises bytes nobody can fetch and must be "
             f"removed instead")
+
+class TestPerVersionBundleName:
+    """The manifest name belongs to a version, not to a package.
+
+    Upstream renames its npm package. `dsh-cc-tui` shipped under that name
+    through 0.3.3 and became `@deepseek-harness-tui/dsh-tui` at 0.5.0 -- so a
+    composite pinning 0.3.3 must still record `dsh-cc-tui`, because that is
+    what `dsh plugin remove` will look for in the profile manifest, while the
+    package page must show the new name for `latest`.
+
+    Third time this index has had to make the same correction: the mirror
+    lookup in gen_agents, install() in template.lua (#21), and now this.
+    """
+
+    @pytest.mark.static
+    def test_bundle_name_describes_latest(self, pkg):
+        _, body = pkg
+        d = _dsh_block(body)
+        latest = _field(d, "latest")
+        declared = _field(d, "bundle_name")
+        if declared is None:
+            return                       # groups and Agents carry no bundle
+        assert _bundle_at(body, latest) == declared, (
+            "bundle_name must be the name `latest` publishes under; an older "
+            "version that differs declares its own `bundle` inline")
+
+    @pytest.mark.static
+    def test_an_override_only_appears_on_a_declared_version(self, pkg):
+        path, body = pkg
+        d = _dsh_block(body)
+        vblock = re.search(r"versions = \{(.*?)\n        \}", d, re.S)
+        if not vblock:
+            return
+        for ver in re.findall(r'\["([^"]+)"\]\s*=\s*\{[^}]*bundle = "', vblock.group(1)):
+            assert f'["{ver}"]' in vblock.group(1), f"{path.stem}: {ver}"
+
+    @pytest.mark.static
+    def test_the_resolver_prefers_the_version_over_the_default(self):
+        body = '''package = { dsh = {
+            bundle_name = "@new/name",
+            versions = {
+                ["0.3.3"] = { commit = "aa", bundle = "old-name" },
+                ["0.5.0"] = { commit = "bb" },
+            },
+            latest = "0.5.0",
+        }, }'''
+        assert _bundle_at(body, "0.3.3") == "old-name"
+        assert _bundle_at(body, "0.5.0") == "@new/name"
+        assert _bundle_at(body, "9.9.9") == "@new/name"

@@ -96,6 +96,16 @@ def read_member(name: str) -> dict:
             f"this index's reproducible unit; run tools/mirror.py first.")
     commit = re.search(rf'\["{re.escape(best)}"\]\s*=\s*'
                        r'\{[^}]*commit = "([0-9a-f]{40})"', body)
+    # And so is the bundle name. Upstream renames its npm package: dsh-cc-tui
+    # shipped as `dsh-cc-tui` through 0.3.3 and became
+    # `@deepseek-harness-tui/dsh-tui` at 0.5.0. A composite must record the
+    # name belonging to the version it PINS, because that is the name
+    # `dsh plugin remove` will look for in the manifest. `bundle_name`
+    # describes `latest` and is the default for any version that does not say
+    # otherwise -- the same per-version-not-per-package correction the mirror
+    # lookup above already needed.
+    per_version = re.search(rf'\["{re.escape(best)}"\]\s*=\s*'
+                            r'\{[^}]*bundle = "([^"]+)"', body)
     return {
         "name": name,
         # The name the profile manifest records, which is what `dsh plugin
@@ -104,7 +114,7 @@ def read_member(name: str) -> dict:
         # manifest -- and an uninstall that passed the descriptor name got
         # ERR_PNPM_CANNOT_REMOVE_MISSING_DEPS halfway through, leaving the
         # profile partly dismantled.
-        "bundle": bundle.group(1),
+        "bundle": per_version.group(1) if per_version else bundle.group(1),
         # Pinned, not floating. Without a version the Agent composes whatever
         # `latest` happens to be that day, so "Agent 0.1.0" would name a
         # different set of bytes each time a member released.
