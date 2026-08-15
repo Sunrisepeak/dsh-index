@@ -44,7 +44,7 @@ import tempfile
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 sys.path.insert(0, str(ROOT / "tools"))
-from affected import SURFACE_FOR_PROFILE, SURFACE_PACKAGE  # noqa: E402
+from affected import SURFACE_FOR_PROFILE  # noqa: E402
 
 
 def dsh_bin() -> str:
@@ -102,13 +102,32 @@ def profile_of(name: str) -> str:
     return m.group(1) if m else ""
 
 
+def bundle_at(name: str, version: str) -> str:
+    """The bundle name this package publishes under AT that version.
+
+    Upstream renames its npm package -- dsh-cc-tui became
+    `@deepseek-harness-tui/dsh-tui` at 0.5.0 -- so `bundle_name` describes
+    `latest` and any older version that differs says so inline. Reading the
+    name instead of hardcoding it is what keeps the surface declaration
+    pointing at a bundle something actually provides.
+    """
+    body = descriptor(name)
+    m = re.search(rf'\["{re.escape(version)}"\]\s*=\s*'
+                  r'\{[^}]*bundle = "([^"]+)"', body)
+    if m:
+        return m.group(1)
+    m = re.search(r'bundle_name = "([^"]+)"', body)
+    return m.group(1) if m else name
+
+
 def standalone(name: str) -> tuple:
     """(members, surface) for booting one plugin the way its README says to.
 
     When the surface is itself a package in this index -- the TUI ones -- it
     goes in as the first member, so the plugin has something to attach to by
-    the time it loads. `@deepseek-ai/dsh-web-app` needs no such entry: it ships
-    inside dsh and only has to be named in the profile manifest.
+    the time it loads, and the surface NAME comes from that package's
+    descriptor rather than a constant. `@deepseek-ai/dsh-web-app` needs
+    neither: it ships inside dsh and only has to be named in the manifest.
     """
     prof = profile_of(name)
     if prof not in SURFACE_FOR_PROFILE:
@@ -116,12 +135,15 @@ def standalone(name: str) -> tuple:
             f"{name}: profile \"{prof}\" has no surface mapping. Add one to "
             f"SURFACE_FOR_PROFILE in tools/affected.py -- booting it on a bare "
             f"dsh-base would report a working package as broken.")
-    surface = SURFACE_FOR_PROFILE[prof]
+    spec = SURFACE_FOR_PROFILE[prof]
     members = [(name, latest_of(name))]
-    pkg = SURFACE_PACKAGE.get(surface)
-    if pkg and pkg != name:
-        members.insert(0, (pkg, latest_of(pkg)))
-    return members, surface
+    if "bundle" in spec:
+        return members, spec["bundle"]
+    pkg = spec["package"]
+    pkg_version = latest_of(pkg)
+    if pkg != name:
+        members.insert(0, (pkg, pkg_version))
+    return members, bundle_at(pkg, pkg_version)
 
 
 def declare_surface(manifest: str, surface: str) -> None:
