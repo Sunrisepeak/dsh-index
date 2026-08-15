@@ -20,7 +20,7 @@ package = {
         bundle_name = "@dsh-external/dsh-ci-co-pilot",
 
         versions = {
-            ["0.1.0"] = { commit = "e86348c52323defad527cdc2ff11203634e0dfd8" },
+            ["0.1.0"] = { commit = "cec65fff3bb17c873637b53f4d5f1f06308946a9" },
         },
         latest = "0.1.0",
 
