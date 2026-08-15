@@ -17,10 +17,10 @@ package = {
         -- Where this plugin's own README tells readers to install it.
         profile = "web",
 
-        bundle_name = "@dsh-external/dsh-ci-co-pilot",
+        bundle_name = "@temotee2103/dsh-ci-co-pilot",
 
         versions = {
-            ["0.1.0"] = { commit = "cec65fff3bb17c873637b53f4d5f1f06308946a9" },
+            ["0.1.0"] = { commit = "98838aadc583f9a8759d2e0a99963c9263bf5030" },
         },
         latest = "0.1.0",
 
