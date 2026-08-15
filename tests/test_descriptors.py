@@ -1173,3 +1173,56 @@ class TestPerVersionBundleName:
         assert _bundle_at(body, "0.3.3") == "old-name"
         assert _bundle_at(body, "0.5.0") == "@new/name"
         assert _bundle_at(body, "9.9.9") == "@new/name"
+
+class TestSurfaceResolution:
+    """The surface a lone plugin boots on is named, and names change.
+
+    `dsh-cc-tui` became `@deepseek-harness-tui/dsh-tui` at 0.5.0. A hardcoded
+    surface string made bootcheck declare a bundle nothing provided, and dsh
+    answered `cannot resolve profile bundle "dsh-cc-tui"` -- the fourth time
+    this index answered a per-VERSION question with a per-PACKAGE constant.
+    """
+
+    def _mods(self):
+        sys.path.insert(0, str(ROOT / "tools"))
+        import affected, bootcheck
+        return affected, bootcheck
+
+    @pytest.mark.static
+    def test_a_surface_is_either_shipped_or_a_package_here(self):
+        affected, _ = self._mods()
+        for profile, spec in affected.SURFACE_FOR_PROFILE.items():
+            assert isinstance(spec, dict), profile
+            assert ("bundle" in spec) ^ ("package" in spec), (
+                f"{profile}: a surface either ships inside dsh (bundle) or is "
+                f"a package this index installs (package), never both")
+
+    @pytest.mark.static
+    def test_a_surface_package_exists_and_is_carried(self):
+        affected, _ = self._mods()
+        names = {p.stem for p in PKGS}
+        for profile, spec in affected.SURFACE_FOR_PROFILE.items():
+            if "package" in spec:
+                assert spec["package"] in names, \
+                    f"{profile} names a surface package this index does not carry"
+
+    @pytest.mark.static
+    def test_the_surface_name_is_read_from_the_descriptor(self):
+        """Not a constant. Whatever the surface package calls itself at the
+        version being installed is what the profile manifest must declare."""
+        affected, bootcheck = self._mods()
+        for profile, spec in affected.SURFACE_FOR_PROFILE.items():
+            if "package" not in spec:
+                continue
+            pkg = spec["package"]
+            body = next(p for p in PKGS if p.stem == pkg).read_text()
+            latest = _field(_dsh_block(body), "latest")
+            assert bootcheck.bundle_at(pkg, latest) == _bundle_at(body, latest)
+
+    @pytest.mark.static
+    def test_bundle_at_falls_back_to_the_default(self):
+        _, bootcheck = self._mods()
+        name = next(p.stem for p in PKGS if _kind(p.read_text()) == "plugin")
+        body = next(p for p in PKGS if p.stem == name).read_text()
+        declared = _field(_dsh_block(body), "bundle_name")
+        assert bootcheck.bundle_at(name, "9.9.9-undeclared") == declared

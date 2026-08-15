@@ -41,13 +41,19 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 # bare dsh-base instead asks a question this index never promised an answer to
 # -- 64 of 70 descriptors say "web", and on bare base they have no UI to attach
 # to. Values here are bundle names, not descriptor names.
+# A surface is named one of two ways, and the difference is whether this index
+# has to install it. `@deepseek-ai/dsh-web-app` ships inside dsh, so the bundle
+# name is a constant and there is nothing to fetch. A TUI surface is a package
+# HERE, so what has to be recorded is the package, and its bundle name is read
+# out of its descriptor at the version being installed -- hardcoding the string
+# broke the moment upstream renamed dsh-cc-tui to @deepseek-harness-tui/dsh-tui
+# at 0.5.0, because the profile manifest then declared a bundle nothing
+# provided.
 SURFACE_FOR_PROFILE = {
-    "web": "@deepseek-ai/dsh-web-app",   # ships inside dsh; nothing to install
-    "tui": "dsh-cc-tui",                 # an index package: must be installed
-    "cc-tui": "dsh-cc-tui",
+    "web": {"bundle": "@deepseek-ai/dsh-web-app"},
+    "tui": {"package": "dsh-cc-tui"},
+    "cc-tui": {"package": "dsh-cc-tui"},
 }
-# Surfaces that are themselves packages in this index, keyed by bundle name.
-SURFACE_PACKAGE = {"dsh-cc-tui": "dsh-cc-tui"}
 
 COMPOSITE_KINDS = {"group", "profile"}
 
@@ -171,8 +177,7 @@ def unit(name: str, known: dict) -> dict:
     composite = d["kind"] in COMPOSITE_KINDS
     install = [name]
     if not composite:
-        surface = SURFACE_FOR_PROFILE.get(d["profile"], "")
-        pkg = SURFACE_PACKAGE.get(surface)
+        pkg = (SURFACE_FOR_PROFILE.get(d["profile"]) or {}).get("package")
         if pkg and pkg != name:
             install.insert(0, pkg)
     return {"name": name, "kind": d["kind"], "composite": composite,
