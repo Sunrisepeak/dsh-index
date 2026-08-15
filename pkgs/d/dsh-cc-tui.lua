@@ -17,12 +17,16 @@ package = {
         -- Where this plugin's own README tells readers to install it.
         profile = "cc-tui",
 
-        bundle_name = "dsh-cc-tui",
+        -- What `latest` publishes under. Upstream renamed the npm package
+        -- at 0.5.0; the two older versions still carry the old name and say
+        -- so inline, because a profile manifest written against 0.3.3 records
+        -- `dsh-cc-tui` and that is what `dsh plugin remove` will look for.
+        bundle_name = "@deepseek-harness-tui/dsh-tui",
 
         versions = {
             ["0.5.0"] = { commit = "7bf8648a40e2c75ebcc4c16b5913a82f83b38fe5" },
-            ["0.3.3"] = { commit = "046da285d6eb1c95bb8468a447f420f6f3c0560c" },
-            ["0.1.6"] = { commit = "8516ffb3aac3ada74760eff9b8c14c65d344b67d" },
+            ["0.3.3"] = { commit = "046da285d6eb1c95bb8468a447f420f6f3c0560c", bundle = "dsh-cc-tui" },
+            ["0.1.6"] = { commit = "8516ffb3aac3ada74760eff9b8c14c65d344b67d", bundle = "dsh-cc-tui" },
         },
         latest = "0.5.0",
 
@@ -45,6 +49,15 @@ package = {
                 sha256  = "b8016904a72e7bf4858a0bb24e6eb952357ecdc7e963a482f33e143ea2312d1b",
                 cn      = true,
             },
+        },
+
+        upstream = {
+            { date = "2026-08-15", event = "renamed",
+              note = "上游在 0.5.0 把 npm 包名从 `dsh-cc-tui` 改为 "
+                  .. "`@deepseek-harness-tui/dsh-tui`（仓库也从 dsh-cc-tui 改名为 DSH-TUI，"
+                  .. "GitHub 会重定向）。索引跟随改名：0.5.0 用新名，0.3.3 与 0.1.6 仍是旧名，"
+                  .. "已装的 profile 不受影响 —— `dsh plugin remove` 匹配的是当初写进 "
+                  .. "manifest 的那个名字。" },
         },
     },
 }
