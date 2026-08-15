@@ -45,11 +45,18 @@ TOPICS = ["dsh-plugin", "dsh-tool"]
 # packages deserve to be in the index -- a human who shows up with a working
 # package has already supplied the signal this is a proxy for.
 #
-# More than 10, raised from 2 on 2026-08-15. At 2 the first scan under the
-# repaired pipeline proposed 358 packages in a single PR: the `dsh-plugin`
-# topic had grown to 800 repos, against the 281 the original survey measured,
-# so a bar calibrated for the old size had stopped triaging anything at all.
-MIN_STARS = 11
+# Ten, inclusive -- a repo with exactly ten stars is in. Raised from 2 on
+# 2026-08-15: at 2 the first scan under the repaired pipeline proposed 358
+# packages in a single PR, because the `dsh-plugin` topic had grown to 800
+# repos against the 281 the original survey measured, so a bar calibrated for
+# the old size had stopped triaging anything at all.
+MIN_STARS = 10
+
+
+def enough_stars(count) -> bool:
+    """Ten is in, nine is out. The bar is inclusive, and a function rather
+    than an inline comparison so the boundary is testable at all."""
+    return (count or 0) >= MIN_STARS
 
 
 class GhError(RuntimeError):
@@ -209,7 +216,7 @@ def mode_new(limit: int) -> list:
             seen.add(full)
             if r.get("archived"):
                 continue
-            if (r.get("stargazers_count") or 0) < MIN_STARS:
+            if not enough_stars(r.get("stargazers_count")):
                 continue
             # Pin first, then read AT the pin. Taking the version from one
             # snapshot and the sha from another is how 19 of 169 descriptors

@@ -978,12 +978,16 @@ class TestDiscoveryBar:
     """
 
     @pytest.mark.static
-    def test_the_bar_is_above_ten(self):
+    def test_the_bar_is_ten_inclusive(self):
+        """Ten stars is in, nine is out."""
         sys.path.insert(0, str(ROOT / "tools"))
         import discover
-        assert discover.MIN_STARS > 10, (
+        assert discover.MIN_STARS == 10, (
             "the unattended scan proposed 358 packages at MIN_STARS=2 once the "
             "topic reached 800 repos")
+        assert discover.enough_stars(10), "ten stars must pass"
+        assert not discover.enough_stars(9), "nine must not"
+        assert not discover.enough_stars(None), "an absent count is not a pass"
 
     @pytest.mark.static
     def test_stars_are_not_part_of_the_descriptor_contract(self, pkg):
