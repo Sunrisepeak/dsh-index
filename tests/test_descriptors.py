@@ -967,3 +967,29 @@ class TestBootcheckSpec:
             "install() must not index MIRROR without checking this version"
         assert "MIRROR and MIRROR[pkginfo.version()]" in body, \
             "install() must resolve the mirror entry for the version it installs"
+
+class TestDiscoveryBar:
+    """The star bar gates the robot, never a contributor.
+
+    A human opening a PR for their own package has already supplied the signal
+    a star count is a proxy for. If the bar ever leaked into the descriptor
+    contract, a PR for a brand-new project would become unmergeable for a
+    reason that has nothing to do with whether the package works.
+    """
+
+    @pytest.mark.static
+    def test_the_bar_is_above_ten(self):
+        sys.path.insert(0, str(ROOT / "tools"))
+        import discover
+        assert discover.MIN_STARS > 10, (
+            "the unattended scan proposed 358 packages at MIN_STARS=2 once the "
+            "topic reached 800 repos")
+
+    @pytest.mark.static
+    def test_stars_are_not_part_of_the_descriptor_contract(self, pkg):
+        """The scan's triage heuristic must not become a schema field: a
+        descriptor that recorded stars would go stale the day it landed, and
+        would invite a check that blocks human PRs."""
+        _, body = pkg
+        assert "stars" not in body, \
+            "a star count is scan-time triage, not a property of the package"
