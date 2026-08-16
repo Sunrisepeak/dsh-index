@@ -20,9 +20,9 @@ package = {
         bundle_name = "@temotee2103/dsh-ci-co-pilot",
 
         versions = {
-            ["0.1.0"] = { commit = "98838aadc583f9a8759d2e0a99963c9263bf5030" },
+            ["0.2.0"] = { commit = "551aada5704074ff545d1deac2c6173fa8526180" },
         },
-        latest = "0.1.0",
+        latest = "0.2.0",
 
         -- Plain ESM JavaScript with no prepare/build script.
         needs_build = false,
