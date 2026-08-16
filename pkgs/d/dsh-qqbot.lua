@@ -20,9 +20,10 @@ package = {
         bundle_name = "@tencent-connect/dsh-qqbot",
 
         versions = {
+            ["0.4.0"] = { commit = "fcb128f277366c77c1df8ec233b6fa91ae2853f7" },
             ["0.1.0"] = { commit = "378540b916e3aa0b06221d449509313daa46813f" },
         },
-        latest = "0.1.0",
+        latest = "0.4.0",
 
         needs_build = false,
 

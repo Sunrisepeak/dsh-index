@@ -19,9 +19,10 @@ package = {
         bundle_name = "dsh-file-explorer",
 
         versions = {
+            ["0.1.3"] = { commit = "9e1f3ea7baa43d737c51ffc68adb5eb95b024c32" },
             ["0.1.1"] = { commit = "8f186671bd7e949b6a76f632fae4fb4522ee6248" },
         },
-        latest = "0.1.1",
+        latest = "0.1.3",
 
         needs_build = false,
 

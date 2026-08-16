@@ -20,9 +20,10 @@ package = {
         bundle_name = "@sanqi-normal/dsh-webui-market-plugin",
 
         versions = {
+            ["0.5.2"] = { commit = "0a09c21bae41318bc2fed51c274b2496b22988d5" },
             ["0.1.2"] = { commit = "c2b6f2988a27daa79e56d02d5a91ed9ab49d796e" },
         },
-        latest = "0.1.2",
+        latest = "0.5.2",
 
         needs_build = false,
 

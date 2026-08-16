@@ -20,9 +20,10 @@ package = {
         bundle_name = "dsh-skin",
 
         versions = {
+            ["0.3.1"] = { commit = "65c79b09d4c5f23e72076ff6b6b6b26c883f935c" },
             ["0.2.0"] = { commit = "13554dfcb170cd0a629c0ed9b6b0cdce0b01e075" },
         },
-        latest = "0.2.0",
+        latest = "0.3.1",
 
         needs_build = false,
 
