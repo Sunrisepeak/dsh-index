@@ -19,7 +19,7 @@ package = {
         bundle_name = "dsh-ballute",
 
         versions = {
-            ["0.1.0"] = { commit = "933e7e8686e958e1c75b922fc5fd609135fcbf3e" },
+            ["0.1.0"] = { commit = "017c2403672d74ceaddb34029b70af032b84e9ad" },
         },
         latest = "0.1.0",
 
