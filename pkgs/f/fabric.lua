@@ -19,9 +19,10 @@ package = {
         bundle_name = "cordis-fabric-bundle",
 
         versions = {
+            ["0.0.3"] = { commit = "68e8d34704fac4a20f94c9d405ae17b089935893" },
             ["0.0.2"] = { commit = "08358f930cd1122268f801cb7b11160338bac2c9" },
         },
-        latest = "0.0.2",
+        latest = "0.0.3",
 
         needs_build = false,
 

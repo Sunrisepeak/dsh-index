@@ -1,4 +1,19 @@
 {
+  "aegis": {
+    "name": "aegis",
+    "pinned_published": false,
+    "versions": [
+      "0.1.0"
+    ]
+  },
+  "anysearch-dsh": {
+    "name": "@anysearch/anysearch-dsh",
+    "pinned_published": true,
+    "versions": [
+      "0.1.0",
+      "0.1.1"
+    ]
+  },
   "dsh-advisor": {
     "name": "dsh-advisor",
     "pinned_published": true,
@@ -10,29 +25,69 @@
       "0.1.3-alpha.1",
       "0.1.3-alpha.2",
       "0.1.3-alpha.3",
-      "0.1.3-alpha.4"
+      "0.1.3-alpha.4",
+      "0.1.3-alpha.5",
+      "0.1.3",
+      "0.1.4"
+    ]
+  },
+  "dsh-auto-continue": {
+    "name": "dsh-client-auto-continue",
+    "pinned_published": true,
+    "versions": [
+      "0.2.0",
+      "0.2.1",
+      "0.2.2",
+      "0.3.0",
+      "0.3.1",
+      "0.3.2",
+      "0.4.0",
+      "0.4.1",
+      "0.4.2",
+      "0.4.3",
+      "0.4.4",
+      "0.5.0",
+      "0.5.1",
+      "0.5.2",
+      "0.5.3",
+      "0.5.4",
+      "0.5.5",
+      "0.5.6",
+      "0.5.7",
+      "0.6.0"
+    ]
+  },
+  "dsh-balance-meter": {
+    "name": "dsh-balance-meter",
+    "pinned_published": true,
+    "versions": [
+      "0.1.0"
+    ]
+  },
+  "dsh-better-sidebar": {
+    "name": "dsh-better-sidebar",
+    "pinned_published": true,
+    "versions": [
+      "0.10.0",
+      "0.10.1",
+      "0.10.2",
+      "0.10.3",
+      "0.11.0",
+      "0.12.0-beta.1",
+      "0.12.1",
+      "0.12.2"
     ]
   },
   "dsh-cc-tui": {
-    "name": "dsh-cc-tui",
-    "pinned_published": false,
+    "name": "@deepseek-harness-tui/dsh-tui",
+    "pinned_published": true,
     "versions": [
-      "0.1.0",
-      "0.1.1",
-      "0.1.2",
-      "0.1.3",
-      "0.1.4",
-      "0.1.5",
-      "0.1.6",
-      "0.1.7",
-      "0.1.8",
-      "0.2.0",
-      "0.2.1",
-      "0.3.3",
-      "0.3.5",
-      "0.4.0",
-      "0.4.1",
-      "0.4.2"
+      "0.5.0",
+      "0.5.1",
+      "0.5.2",
+      "0.5.3",
+      "0.6.0",
+      "0.6.1"
     ]
   },
   "dsh-chat-import": {
@@ -43,7 +98,54 @@
       "0.1.1",
       "0.2.0",
       "0.3.0",
-      "0.3.1"
+      "0.3.1",
+      "0.4.0"
+    ]
+  },
+  "dsh-context": {
+    "name": "dsh-context",
+    "pinned_published": true,
+    "versions": [
+      "0.1.0",
+      "0.2.0",
+      "0.2.1",
+      "0.2.2",
+      "0.2.3",
+      "0.3.0",
+      "0.3.1",
+      "0.4.0",
+      "0.5.0",
+      "0.6.0",
+      "0.6.1",
+      "0.6.2",
+      "0.7.0",
+      "0.7.1",
+      "0.7.2",
+      "0.7.3",
+      "0.8.0",
+      "0.9.0"
+    ]
+  },
+  "dsh-file-explorer": {
+    "name": "dsh-file-explorer",
+    "pinned_published": false,
+    "versions": [
+      "0.1.0",
+      "0.1.1"
+    ]
+  },
+  "dsh-find-plugin": {
+    "name": "dsh-find-plugin",
+    "pinned_published": true,
+    "versions": [
+      "0.1.0",
+      "0.3.0",
+      "0.3.1",
+      "0.3.2",
+      "0.3.3",
+      "0.3.4",
+      "0.3.5",
+      "0.3.6"
     ]
   },
   "dsh-focus-chat": {
@@ -52,7 +154,45 @@
     "versions": [
       "0.1.0",
       "0.1.1",
-      "0.1.2"
+      "0.1.2",
+      "0.1.4"
+    ]
+  },
+  "dsh-lark": {
+    "name": "dsh-lark-channel",
+    "pinned_published": true,
+    "versions": [
+      "0.0.1",
+      "0.0.2",
+      "0.0.3",
+      "0.0.4",
+      "0.0.5",
+      "0.0.6"
+    ]
+  },
+  "dsh-market": {
+    "name": "dshmarket",
+    "pinned_published": true,
+    "versions": [
+      "1.0.0",
+      "1.0.1",
+      "1.0.2",
+      "1.0.3",
+      "1.1.0",
+      "1.2.0",
+      "1.2.1",
+      "1.2.2",
+      "1.2.3",
+      "1.2.4",
+      "1.3.0",
+      "1.3.1",
+      "1.4.0",
+      "1.4.1",
+      "1.5.0",
+      "1.5.1",
+      "1.6.0",
+      "1.7.0",
+      "1.8.0"
     ]
   },
   "dsh-memory": {
@@ -66,7 +206,22 @@
     "name": "dsh-message-edit",
     "pinned_published": true,
     "versions": [
-      "0.2.1"
+      "0.2.1",
+      "0.2.2"
+    ]
+  },
+  "dsh-milestone": {
+    "name": "dsh-milestone",
+    "pinned_published": true,
+    "versions": [
+      "0.1.0",
+      "0.2.0",
+      "0.2.1",
+      "0.3.0",
+      "0.3.1",
+      "0.4.0",
+      "0.5.0",
+      "0.6.0"
     ]
   },
   "dsh-mnemon": {
@@ -76,7 +231,17 @@
       "0.1.0",
       "0.1.1",
       "0.1.2",
-      "0.1.3"
+      "0.1.3",
+      "0.1.4"
+    ]
+  },
+  "dsh-openai-codex-auth": {
+    "name": "dsh-openai-codex-auth",
+    "pinned_published": true,
+    "versions": [
+      "0.2.0",
+      "0.2.1",
+      "0.3.0"
     ]
   },
   "dsh-plugin-better-sidebar-plugin-office": {
@@ -144,7 +309,9 @@
     "name": "@huanlin/dsh-plugin-ya-workspace-sidebar",
     "pinned_published": true,
     "versions": [
-      "0.1.0"
+      "0.1.0",
+      "0.1.1",
+      "0.2.0"
     ]
   },
   "dsh-plugin-yet-another-subagent": {
@@ -155,13 +322,41 @@
       "0.1.2"
     ]
   },
+  "dsh-qqbot": {
+    "name": "@tencent-connect/dsh-qqbot",
+    "pinned_published": true,
+    "versions": [
+      "0.1.0",
+      "0.2.0",
+      "0.3.0",
+      "0.4.0"
+    ]
+  },
+  "dsh-recommend": {
+    "name": "dsh-recommend",
+    "pinned_published": false,
+    "versions": [
+      "0.2.0"
+    ]
+  },
+  "dsh-skin": {
+    "name": "dsh-skin",
+    "pinned_published": false,
+    "versions": [
+      "0.2.0",
+      "0.4.0"
+    ]
+  },
   "dsh-tianshu-tui": {
     "name": "@huiliyi37/dsh-tianshu-tui",
     "pinned_published": true,
     "versions": [
       "0.1.0-rc.6",
       "0.1.1-rc.6",
-      "0.1.2-rc.6"
+      "0.1.2-rc.6",
+      "0.1.2-rc.7",
+      "0.1.2-rc.8",
+      "0.1.2-rc.9"
     ]
   },
   "dsh-tui": {
@@ -210,6 +405,61 @@
       "0.2.1",
       "0.2.2",
       "0.2.3"
+    ]
+  },
+  "dsh-vision-router": {
+    "name": "dsh-vision-router",
+    "pinned_published": true,
+    "versions": [
+      "1.0.0",
+      "1.0.1",
+      "1.1.0",
+      "1.1.1",
+      "1.2.0",
+      "1.2.1",
+      "1.2.2",
+      "1.2.3"
+    ]
+  },
+  "dsh-web-plugin-manager": {
+    "name": "dsh-web-plugin-manager",
+    "pinned_published": true,
+    "versions": [
+      "0.1.0",
+      "0.1.1",
+      "0.1.2",
+      "0.2.0",
+      "0.2.1",
+      "0.2.2",
+      "0.3.0",
+      "0.3.1",
+      "0.3.2",
+      "0.3.3",
+      "0.3.4",
+      "0.3.5",
+      "0.3.6",
+      "0.3.7",
+      "0.3.8",
+      "0.3.9",
+      "0.3.10",
+      "0.3.11",
+      "0.4.0"
+    ]
+  },
+  "dsh-webui-market-plugin": {
+    "name": "@sanqi-normal/dsh-webui-market-plugin",
+    "pinned_published": true,
+    "versions": [
+      "0.1.0",
+      "0.1.1",
+      "0.1.2",
+      "0.2.0",
+      "0.3.0",
+      "0.3.1",
+      "0.4.0",
+      "0.5.0",
+      "0.5.1",
+      "0.5.2"
     ]
   },
   "modlens": {
@@ -269,7 +519,74 @@
       "3.16.3",
       "3.16.4",
       "3.16.5",
-      "3.16.6"
+      "3.16.6",
+      "3.16.7",
+      "3.17.0"
+    ]
+  },
+  "modsearch": {
+    "name": "@liustack/modsearch",
+    "pinned_published": true,
+    "versions": [
+      "0.1.0",
+      "2.0.0",
+      "2.1.0",
+      "2.2.0",
+      "2.3.0",
+      "2.4.0",
+      "2.4.1",
+      "2.4.2",
+      "2.4.3",
+      "2.5.0",
+      "2.5.1",
+      "2.6.0",
+      "3.0.0",
+      "3.0.1",
+      "3.1.0",
+      "3.2.0",
+      "3.2.1",
+      "3.2.2",
+      "3.2.3",
+      "3.2.4",
+      "3.2.5",
+      "3.2.6",
+      "3.2.7",
+      "3.3.0",
+      "4.0.0",
+      "4.1.0",
+      "5.0.0",
+      "5.1.0",
+      "5.2.0",
+      "5.3.0",
+      "5.4.0",
+      "5.4.1",
+      "5.4.2"
+    ]
+  },
+  "project-blueprint": {
+    "name": "project-blueprint",
+    "pinned_published": false,
+    "versions": [
+      "1.0.0",
+      "1.0.2",
+      "1.0.3",
+      "1.0.4",
+      "1.0.5"
+    ]
+  },
+  "sandbase-harness": {
+    "name": "managed-agents",
+    "pinned_published": false,
+    "versions": [
+      "0.0.1"
+    ]
+  },
+  "superpowers-dsh": {
+    "name": "superpowers-dsh",
+    "pinned_published": true,
+    "versions": [
+      "0.1.0",
+      "0.1.1"
     ]
   }
 }

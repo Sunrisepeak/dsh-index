@@ -20,9 +20,10 @@ package = {
         bundle_name = "dsh-recommend",
 
         versions = {
+            ["0.3.0"] = { commit = "873cd53f90e966e7e62bed651e2827c1dcd0b065" },
             ["0.2.0"] = { commit = "89b0f1000d7448373e1fe2131f1c58421fe1c300" },
         },
-        latest = "0.2.0",
+        latest = "0.3.0",
 
         needs_build = false,
 

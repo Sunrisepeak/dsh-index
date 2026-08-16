@@ -20,9 +20,10 @@ package = {
         bundle_name = "gal-view",
 
         versions = {
+            ["0.3.3"] = { commit = "d002fe0e7051c618a2665af3c653f9838cd6aa8a" },
             ["0.3.2"] = { commit = "3b5a6411d01fcf0c92623a20adbf5e94e17a76ae" },
         },
-        latest = "0.3.2",
+        latest = "0.3.3",
 
         needs_build = false,
 
