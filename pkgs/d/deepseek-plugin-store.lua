@@ -20,10 +20,11 @@ package = {
         bundle_name = "deepseek-plugin-store",
 
         versions = {
+            ["0.2.0"] = { commit = "274a4d8d202482da942995ce176998fa636ac3de" },
             ["0.1.1"] = { commit = "c4f438fdb7b2599c86041381ea2e97f9091b5c6d" },
             ["0.1.0"] = { commit = "bb0565016ada8e766cac08fd985a7dae65c4a1c6" },
         },
-        latest = "0.1.1",
+        latest = "0.2.0",
 
         needs_build = false,
 

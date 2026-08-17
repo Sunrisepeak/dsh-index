@@ -20,9 +20,10 @@ package = {
         bundle_name = "@dsh-external/dsh-task-status",
 
         versions = {
+            ["0.3.1"] = { commit = "b4fc6625362498bc230953df5e3a0e37b2104def" },
             ["0.3.0"] = { commit = "4453da02d62289aeb19b046b4d2b5439dd4ce55a" },
         },
-        latest = "0.3.0",
+        latest = "0.3.1",
 
         needs_build = false,
 

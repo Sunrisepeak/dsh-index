@@ -20,9 +20,10 @@ package = {
         bundle_name = "dsh-open-in-vscode",
 
         versions = {
+            ["0.1.6"] = { commit = "8aed144abdc158a332aa73bce42fc217d962f751" },
             ["0.1.5"] = { commit = "149f21aed3d05d2b392206394c4a023e35d694c7" },
         },
-        latest = "0.1.5",
+        latest = "0.1.6",
 
         needs_build = false,
 

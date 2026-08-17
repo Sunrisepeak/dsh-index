@@ -20,9 +20,10 @@ package = {
         bundle_name = "dsh-custom-tool",
 
         versions = {
+            ["0.1.2"] = { commit = "7cb95649dca9b380c9a30af96bdbef87a76a2259" },
             ["0.1.1"] = { commit = "b0392bb332cc7bfad65279e160b4b015c6c6d3ca" },
         },
-        latest = "0.1.1",
+        latest = "0.1.2",
 
         needs_build = false,
 

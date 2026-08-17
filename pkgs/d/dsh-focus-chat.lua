@@ -19,10 +19,11 @@ package = {
         bundle_name = "@dingyi222666/dsh-focus-chat",
 
         versions = {
+            ["0.1.5"] = { commit = "e05d2d095471b49ec45612869eb0c9cfafa429ec" },
             ["0.1.2"] = { commit = "b29b83d5c5df673857f81d5668b7cd1a2a1ad10b" },
             ["0.1.1"] = { commit = "0844db5280cf0b8028fad715fc9e5f1b3b4160f1" },
         },
-        latest = "0.1.2",
+        latest = "0.1.5",
 
         needs_build = true,
 
