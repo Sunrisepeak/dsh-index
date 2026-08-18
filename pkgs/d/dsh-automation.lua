@@ -20,9 +20,10 @@ package = {
         bundle_name = "@dsh-external/dsh-automation",
 
         versions = {
+            ["0.1.6"] = { commit = "f8f43b2873a3f9dd57d86d61eb401770b2bc9ca5" },
             ["0.1.5"] = { commit = "3c0188d7d94ed5b1e8caffeb73d7ac7ab34aabb3" },
         },
-        latest = "0.1.5",
+        latest = "0.1.6",
 
         needs_build = false,
 

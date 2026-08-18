@@ -20,10 +20,11 @@ package = {
         bundle_name = "dsh-user-experience",
 
         versions = {
+            ["0.4.2"] = { commit = "bba21e6a634844b448b34aae4e7c8af1d8bbd9d4" },
             ["0.4.1"] = { commit = "43dccc6df4cddbc72b2085a9d60adf6ed09fd311" },
             ["0.3.1"] = { commit = "c6fd7766234ae341d066f0bcf18cfd57a452ae6c" },
         },
-        latest = "0.4.1",
+        latest = "0.4.2",
 
         needs_build = true,
 

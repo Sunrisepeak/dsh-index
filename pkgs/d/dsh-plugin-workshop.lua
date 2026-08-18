@@ -20,10 +20,11 @@ package = {
         bundle_name = "@dsh-external/dsh-plugin-workshop",
 
         versions = {
+            ["1.6.2"] = { commit = "f53a7e466948a6c5636f2079b2382976a1eea4c8" },
             ["1.6.1"] = { commit = "acc2d75eaa976afab8e1e4ea2176bc9b51b139fa" },
             ["1.5.1"] = { commit = "afb56fd1defbcd76ec1c70cd838fdb446937e5ab" },
         },
-        latest = "1.6.1",
+        latest = "1.6.2",
 
         needs_build = false,
 
