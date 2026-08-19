@@ -20,12 +20,13 @@ package = {
         bundle_name = "dsh-vision-router",
 
         versions = {
+            ["1.6.2"] = { commit = "63f85cb2729e65db9ae68c95eacde9813b93f088" },
             ["1.5.3"] = { commit = "34d850cb554c813fbaf41e2f3842ecae80bb2dbb" },
             ["1.4.4"] = { commit = "331b3bbaa65e80ed98a6c0543e18d7f8ce280f03" },
             ["1.2.3"] = { commit = "ddfa6baf3f70ff9ddb2b5e7ff3a09d5840398d1f" },
             ["1.1.0"] = { commit = "bc815bd078e824e32090a9e8c7503c83e440ad08" },
         },
-        latest = "1.5.3",
+        latest = "1.6.2",
 
         needs_build = false,
 

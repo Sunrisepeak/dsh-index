@@ -20,9 +20,10 @@ package = {
         bundle_name = "@oil-oil/dsh-vision",
 
         versions = {
+            ["0.1.2"] = { commit = "9446a41dc96bd9fc96a7cc3b3a11365e125c9bd7" },
             ["0.1.0"] = { commit = "a12800eeb02eb6dd45f5e2cda6c7db3c16088883" },
         },
-        latest = "0.1.0",
+        latest = "0.1.2",
 
         needs_build = false,
 
