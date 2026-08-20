@@ -20,9 +20,10 @@ package = {
         bundle_name = "dsh-find-plugin",
 
         versions = {
+            ["0.3.7"] = { commit = "e7a27eb01606e6deccdaacccb8e0cfd992c0bcdc" },
             ["0.3.6"] = { commit = "e75dc2e865c3cfbfd336f7b4bb753fec25d373e1" },
         },
-        latest = "0.3.6",
+        latest = "0.3.7",
 
         needs_build = false,
 

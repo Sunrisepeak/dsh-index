@@ -20,10 +20,11 @@ package = {
         bundle_name = "dsh-notification",
 
         versions = {
+            ["0.1.3"] = { commit = "ddec603395a223deb46c75b74274c41849c6a131" },
             ["0.1.2"] = { commit = "2399457a1f96ed86f761f3bc771539d131eb684f" },
             ["0.1.1"] = { commit = "3e33100f51f25f24cece20bfd3d50cfbde0cbca5" },
         },
-        latest = "0.1.2",
+        latest = "0.1.3",
 
         needs_build = false,
 

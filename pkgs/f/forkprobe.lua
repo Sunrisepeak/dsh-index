@@ -20,9 +20,10 @@ package = {
         bundle_name = "forkprobe-dsh",
 
         versions = {
+            ["1.1.0"] = { commit = "707d02b5a03c280237bb6d602bd8f1d09accf13e" },
             ["0.10.0"] = { commit = "defe0b47e0d69c12ce586d4d85bfe4f3ec34edd3" },
         },
-        latest = "0.10.0",
+        latest = "1.1.0",
 
         needs_build = false,
 

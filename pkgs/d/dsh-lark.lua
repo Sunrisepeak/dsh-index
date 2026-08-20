@@ -20,10 +20,11 @@ package = {
         bundle_name = "dsh-lark-channel",
 
         versions = {
+            ["0.0.7"] = { commit = "632807d9abafbb866a5e208a0298eff21c7856d1" },
             ["0.0.6"] = { commit = "56932fa133fe8d8b9df227aa7a4dd8913a6f50d9" },
             ["0.0.4"] = { commit = "a2736bb7c3e566d26548a13bbeeb6095ade605e5" },
         },
-        latest = "0.0.6",
+        latest = "0.0.7",
 
         needs_build = true,
 
