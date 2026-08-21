@@ -20,11 +20,12 @@ package = {
         bundle_name = "dskin",
 
         versions = {
+            ["1.0.16"] = { commit = "792064e6dbb022c5f9ce3529b9cf66efba2863c1" },
             ["1.0.15"] = { commit = "9ec8661b49bdf1a94250dcee9710cec22162a865" },
             ["1.0.14"] = { commit = "acee0ab04c5257cce7f2045c8fe2f62926ee54a6" },
             ["1.0.13"] = { commit = "db96586db61f6e27dcd8769c1f543625f855888f" },
         },
-        latest = "1.0.15",
+        latest = "1.0.16",
 
         needs_build = true,
 

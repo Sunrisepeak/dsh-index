@@ -20,9 +20,10 @@ package = {
         bundle_name = "@dsh-external/dsh-navbar",
 
         versions = {
+            ["0.4.0"] = { commit = "d89ba74f4e0403462a5e4c4feeec84a3e7a1cca2" },
             ["0.3.0"] = { commit = "6e23640bd60c0157043ae5c29a6d80034287b41b" },
         },
-        latest = "0.3.0",
+        latest = "0.4.0",
 
         needs_build = false,
 
