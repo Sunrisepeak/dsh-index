@@ -20,9 +20,10 @@ package = {
         bundle_name = "dsh-context-doctor",
 
         versions = {
+            ["0.5.2"] = { commit = "957d5de09402f882a18e556cae37076ee420b868" },
             ["0.5.0"] = { commit = "4a91502c106f7fed86981421c740566abf309977" },
         },
-        latest = "0.5.0",
+        latest = "0.5.2",
 
         needs_build = false,
 
