@@ -20,9 +20,10 @@ package = {
         bundle_name = "dsh-milestone",
 
         versions = {
+            ["0.6.2"] = { commit = "1d0638fe3041b9d073a49d3dffce79e9b20e2e5b" },
             ["0.6.0"] = { commit = "c238f8c5d4afe153ede8559e5f7e3d1a652b6327" },
         },
-        latest = "0.6.0",
+        latest = "0.6.2",
 
         needs_build = false,
 

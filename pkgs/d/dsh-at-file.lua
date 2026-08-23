@@ -20,6 +20,7 @@ package = {
         bundle_name = "dsh-at-file",
 
         versions = {
+            ["0.6.8"] = { commit = "c37b0ed9e8bf3585bf9f272462dcf01886efe2a3" },
             ["0.6.7"] = { commit = "c57849b27e378cf6b41d082b17c8a8750cee370f" },
             ["0.6.5"] = { commit = "289f19bb83f80a95df49f567eeef42462d4da92f" },
             ["0.6.3"] = { commit = "898369ece56ae6ec41afd8e014f187bb5b723409" },
@@ -27,7 +28,7 @@ package = {
             ["0.6.0"] = { commit = "9c71e52c483ae589c7979b6ffc8b3a2cd5d8efa4" },
             ["0.1.0"] = { commit = "3c8408e8df06ebbd7126d1d7ebcf897ec92a3b86" },
         },
-        latest = "0.6.7",
+        latest = "0.6.8",
 
         needs_build = false,
 

@@ -20,6 +20,7 @@ package = {
         bundle_name = "dsh-context",
 
         versions = {
+            ["0.25.3"] = { commit = "c2fb81eaaac44b4c02cbe5cff123a20796c109ef" },
             ["0.23.0"] = { commit = "641322a351f837a8bff985ead4a46ad22f750c06" },
             ["0.19.2"] = { commit = "85076ae10c8872b2a6c320062379143c8741079d" },
             ["0.17.0"] = { commit = "19731afd862f0281ce5999c9663f70b72f4313fe" },
@@ -29,7 +30,7 @@ package = {
             ["0.9.0"] = { commit = "aca38b24d714106f7256280dc8f9c9ec5b8e4552" },
             ["0.7.3"] = { commit = "3951da0f42d03f431dc9309d01bba2fd4f4f1d75" },
         },
-        latest = "0.23.0",
+        latest = "0.25.3",
 
         needs_build = true,
 
