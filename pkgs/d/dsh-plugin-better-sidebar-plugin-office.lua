@@ -19,9 +19,10 @@ package = {
         bundle_name = "@huanlin/dsh-plugin-better-sidebar-plugin-office",
 
         versions = {
+            ["0.1.2"] = { commit = "fbafdc6f8b1bb55a95fdd66f3f7ad9974b8aea75" },
             ["0.1.0"] = { commit = "04b338d345b4c40607b984c2c757179a17094f16" },
         },
-        latest = "0.1.0",
+        latest = "0.1.2",
 
         needs_build = false,
 
