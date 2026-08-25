@@ -20,11 +20,12 @@ package = {
         bundle_name = "@anysearch/anysearch-dsh",
 
         versions = {
+            ["0.1.4"] = { commit = "426be7cf3cdfba64e66db0f22395ccf28058b419" },
             ["0.1.3"] = { commit = "9d70e259f6223320ca342aa2f044570c16ddadfd" },
             ["0.1.2"] = { commit = "dce7a51c74b80f8fa51e53f510a572ab6dd60f28" },
             ["0.1.1"] = { commit = "2758d49bbe3d84528747845b598f1d415e0145f8" },
         },
-        latest = "0.1.3",
+        latest = "0.1.4",
 
         needs_build = true,
 
