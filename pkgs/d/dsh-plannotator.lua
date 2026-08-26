@@ -20,9 +20,10 @@ package = {
         bundle_name = "@dsh-external/dsh-plannotator",
 
         versions = {
+            ["0.1.4"] = { commit = "053c982f96b77fd750360ee66384bf90d5c1e603" },
             ["0.1.3"] = { commit = "c0fe880107aa09ef595a8b6fdac6d7099e4b46da" },
         },
-        latest = "0.1.3",
+        latest = "0.1.4",
 
         needs_build = false,
 
