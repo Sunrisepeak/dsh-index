@@ -20,6 +20,7 @@ package = {
         bundle_name = "dsh-web-plugin-manager",
 
         versions = {
+            ["0.5.0"] = { commit = "a14b6321720e53c09a04772cb41b5054ea08f77e" },
             ["0.4.7"] = { commit = "633d9fc2abd851a5a811d2ed06921a9711606c6f" },
             ["0.4.6"] = { commit = "13fb7a705fb42ba28930f0700269831a665b12d8" },
             ["0.4.5"] = { commit = "6e144441da3a6b841e7d7feb4504940bda9a1866" },
@@ -27,7 +28,7 @@ package = {
             ["0.4.0"] = { commit = "1162fb2182e5ec61f90614c79dd4900465ffd097" },
             ["0.2.2"] = { commit = "fbef0b5ef7d95aacd4a0006a86674b025529990d" },
         },
-        latest = "0.4.7",
+        latest = "0.5.0",
 
         needs_build = true,
 
