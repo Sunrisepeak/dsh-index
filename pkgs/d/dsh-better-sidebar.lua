@@ -20,6 +20,7 @@ package = {
         bundle_name = "dsh-better-sidebar",
 
         versions = {
+            ["0.17.1"] = { commit = "50e05ecea0f2f4ba07775d47eed1fdb30831eec8" },
             ["0.17.0"] = { commit = "0314fd9b93c5f55eb68f98480d84500d67a75b03" },
             ["0.16.1"] = { commit = "f9153dfc1ce47cf43445c1b351ee3ae47b4ad9f1" },
             ["0.16.0"] = { commit = "4c0da8119b6ca37ce3daf5c102076154a10010de" },
@@ -33,7 +34,7 @@ package = {
             ["0.12.2"] = { commit = "ecebc978009362ae90c64d9f07d3c518d4651dd9" },
             ["0.12.1"] = { commit = "2bace68af8fa092a9a75070231bbf3488ee55a6b" },
         },
-        latest = "0.17.0",
+        latest = "0.17.1",
 
         needs_build = true,
 
