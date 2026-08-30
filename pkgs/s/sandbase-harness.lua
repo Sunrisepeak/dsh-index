@@ -19,13 +19,14 @@ package = {
         bundle_name = "managed-agents",
 
         versions = {
+            ["0.3.8"] = { commit = "eb44f06af1848a8ff32cf20d6d1d56f662f95e57" },
             ["0.3.7"] = { commit = "65ce225d01f56b5584d833af6b1afcc119dfd323" },
             ["0.3.4"] = { commit = "8c4dd669677ec64347c38b621b888988d2e8b3bb" },
             ["0.3.2"] = { commit = "96707965931897d7f5489754700036dac8e4382e" },
             ["0.3.1"] = { commit = "04a915b830763a2eb16bceb95c61c0cde9571e44" },
             ["0.3.0"] = { commit = "5135a9b1f6a999f167600f30ec6e79d51174b895" },
         },
-        latest = "0.3.7",
+        latest = "0.3.8",
 
         needs_build = false,
 
