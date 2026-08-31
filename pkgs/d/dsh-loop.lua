@@ -20,10 +20,11 @@ package = {
         bundle_name = "@dsh-external/dsh-loop",
 
         versions = {
+            ["0.4.0"] = { commit = "488b574c1603320cc078024ea5ee2aea9a3ceff6" },
             ["0.3.1"] = { commit = "7d509f0ffb2bca5769854de3cc4f35d0fc6121d9" },
             ["0.3.0"] = { commit = "e7159369169526e92f75727b35d83029568b3a21" },
         },
-        latest = "0.3.1",
+        latest = "0.4.0",
 
         needs_build = false,
 
