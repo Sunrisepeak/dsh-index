@@ -1032,7 +1032,8 @@ class TestDiscoveryBar:
         while pending:
             value = pending.pop()
             if isinstance(value, dict):
-                assert "stars" not in value, \
+                assert not any(isinstance(key, str) and "stars" in key
+                               for key in value), \
                     "a star count is scan-time triage, not a property of the package"
                 pending.extend(value.values())
             elif isinstance(value, list):
@@ -1055,6 +1056,9 @@ class TestDiscoveryBar:
     @pytest.mark.static
     @pytest.mark.parametrize("fields", [
         'stars = 12,',
+        'stars_count = 12,',
+        'min_stars = 10,',
+        'dsh = { github_stars = 12 },',
         '["stars"] = 12,',
         "['stars'] = false,",
         'dsh = { stars = 12 },',
