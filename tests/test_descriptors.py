@@ -1021,9 +1021,55 @@ class TestDiscoveryBar:
         """The scan's triage heuristic must not become a schema field: a
         descriptor that recorded stars would go stale the day it landed, and
         would invite a check that blocks human PRs."""
-        _, body = pkg
-        assert "stars" not in body, \
-            "a star count is scan-time triage, not a property of the package"
+        from xpkgindex.readers.xpkg_lua import read_file
+
+        path, _ = pkg
+        parsed = read_file(str(path), str(ROOT))
+        assert parsed is not None, f"not a package descriptor: {path}"
+        # Check Lua table keys, not prose, comments, or repository owners such
+        # as starslittle. The index's existing reader handles Lua quoting.
+        pending = [parsed.raw]
+        while pending:
+            value = pending.pop()
+            if isinstance(value, dict):
+                assert not any(isinstance(key, str) and "stars" in key
+                               for key in value), \
+                    "a star count is scan-time triage, not a property of the package"
+                pending.extend(value.values())
+            elif isinstance(value, list):
+                pending.extend(value)
+
+    @pytest.mark.static
+    @pytest.mark.parametrize("fields", [
+        'repo = "https://github.com/starslittle/dsh-queue-plus",',
+        'description = "stars = 12 is not package metadata here",',
+        'description = [[stars = 12]],',
+        '-- stars = 12\n description = "a package",',
+        '--[=[ stars = 12 ]=]\n description = "a package",',
+    ])
+    def test_count_mentions_in_values_and_comments_are_allowed(self, tmp_path, fields):
+        path = tmp_path / "example.lua"
+        body = 'package = { name = "example", ' + fields + ' }'
+        path.write_text(body, encoding="utf-8")
+        self.test_stars_are_not_part_of_the_descriptor_contract((path, body))
+
+    @pytest.mark.static
+    @pytest.mark.parametrize("fields", [
+        'stars = 12,',
+        'stars_count = 12,',
+        'min_stars = 10,',
+        'dsh = { github_stars = 12 },',
+        '["stars"] = 12,',
+        "['stars'] = false,",
+        'dsh = { stars = 12 },',
+        'dsh = { versions = { { ["stars"] = 0 } } },',
+    ])
+    def test_count_fields_are_rejected(self, tmp_path, fields):
+        path = tmp_path / "example.lua"
+        body = 'package = { name = "example", ' + fields + ' }'
+        path.write_text(body, encoding="utf-8")
+        with pytest.raises(AssertionError, match="scan-time triage"):
+            self.test_stars_are_not_part_of_the_descriptor_contract((path, body))
 
 class TestAuditMirrorPolicy:
     """A vanished upstream is two events, and they need opposite answers.
