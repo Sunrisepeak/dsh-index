@@ -22,8 +22,9 @@ package = {
         versions = {
             ["0.1.0"] = { commit = "76fcfafada67c6eaa25c86769271eae19dcc4132" },
             ["0.1.1"] = { commit = "9ab2ced0955b5232b78cf38814d7e725e91c28fd" },
+            ["0.1.2"] = { commit = "f49f4ce9e5c11d1af874015dbe19026c00bfba1c" },
         },
-        latest = "0.1.1",
+        latest = "0.1.2",
 
         needs_build = false,
 
