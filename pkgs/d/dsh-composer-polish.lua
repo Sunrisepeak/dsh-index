@@ -20,10 +20,11 @@ package = {
         bundle_name = "dsh-composer-polish",
 
         versions = {
+            ["0.1.5"] = { commit = "f9802852845974941efee100a1a72e8b2e7e2cb9" },
             ["0.1.4"] = { commit = "4787f0ca103005046c6bdbdfb51edd3f06b52544" },
             ["0.1.3"] = { commit = "ce4daad54dcd174f5fb43a1bb290a29bb1ceec4f" },
         },
-        latest = "0.1.4",
+        latest = "0.1.5",
 
         needs_build = false,
 

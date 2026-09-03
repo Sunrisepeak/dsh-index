@@ -20,13 +20,14 @@ package = {
         bundle_name = "dsh-skill-viewer",
 
         versions = {
+            ["2.0.2"] = { commit = "bfa97a97c05bd7232942ab45ae4a7e58cee768a1" },
             ["2.0.1"] = { commit = "8e772005329de9dc81ffdfd00ae4dbed22a1f73a" },
             ["0.7.0"] = { commit = "55c16e4e4978a5e1cb96203e9ff89b6cf1078b94" },
             ["0.6.3"] = { commit = "564883ec0cf9f896316a604cc4efcbb025fd536a" },
             ["0.3.1"] = { commit = "a1cb4ffeaa09a46fab466b69626808048f554687" },
             ["0.2.6"] = { commit = "81503ac97024f5bd43820dc64b58af1a2eaf54f9" },
         },
-        latest = "2.0.1",
+        latest = "2.0.2",
 
         needs_build = false,
 
