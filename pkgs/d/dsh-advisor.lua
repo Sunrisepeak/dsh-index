@@ -20,6 +20,7 @@ package = {
         bundle_name = "dsh-advisor",
 
         versions = {
+            ["0.3.1"] = { commit = "1eda7b2026864f331dcb934a9861bdb3cbae6a9e" },
             ["0.3.0"] = { commit = "a65c96c3a46ca34fa971911e0b0ed2789fd83f0d" },
             ["0.3.0-alpha.1"] = { commit = "cdab8890966c1e7ab357bc792ba3af85718c3d10" },
             ["0.2.4"] = { commit = "82d04b625b05e7aff2b94586623924577b231e35" },
@@ -31,7 +32,7 @@ package = {
             ["0.1.3-alpha.4"] = { commit = "d1627c2c184cfcb0f4a50924384945358b1ed2b5" },
             ["0.1.0"] = { commit = "56aa668ce375e0bbb7a1705fa8133aa94f55a1e2" },
         },
-        latest = "0.3.0",
+        latest = "0.3.1",
 
         needs_build = true,
 
