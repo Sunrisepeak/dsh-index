@@ -20,9 +20,10 @@ package = {
         bundle_name = "dsh-openai-codex-auth",
 
         versions = {
+            ["0.3.0"] = { commit = "ef983de698ee7d1e83bd1108658a2dd3a00492cb" },
             ["0.2.0"] = { commit = "0beaeb17a8971a3f442297403ae9a90493d70d77" },
         },
-        latest = "0.2.0",
+        latest = "0.3.0",
 
         -- Base rows this bundle replaces. Another bundle patching
         -- any of these in the same profile silently wins or loses,
