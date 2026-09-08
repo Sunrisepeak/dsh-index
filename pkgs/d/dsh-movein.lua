@@ -20,9 +20,10 @@ package = {
         bundle_name = "dsh-movein",
 
         versions = {
+            ["0.13.8"] = { commit = "02c7a1367cfae617044d985214bd44a59d9f0409" },
             ["0.13.6"] = { commit = "2d5437d9c41365696f8014608405b2cdad01179a" },
         },
-        latest = "0.13.6",
+        latest = "0.13.8",
 
         needs_build = true,
 
