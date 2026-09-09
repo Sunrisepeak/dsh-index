@@ -20,9 +20,10 @@ package = {
         bundle_name = "dsh-toy",
 
         versions = {
+            ["0.3.0"] = { commit = "51b582507aa8aad8332e1a5b5a0bc2ae607f4860" },
             ["0.2.0"] = { commit = "adece3467506c9e40e1393baca89f20caff20c2c" },
         },
-        latest = "0.2.0",
+        latest = "0.3.0",
 
         needs_build = false,
 
