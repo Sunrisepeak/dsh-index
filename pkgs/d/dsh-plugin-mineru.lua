@@ -19,12 +19,13 @@ package = {
         bundle_name = "@huanlin/dsh-plugin-mineru",
 
         versions = {
+            ["0.3.1"] = { commit = "4a21ba0774708e5130adef5fe6fe3671efc6445b" },
             ["0.3.0"] = { commit = "c30a184898ff843982accc9b80c61baf0c63774a" },
             ["0.2.4"] = { commit = "67abfedd5e3bd63043bac62222f5fbdc3281dae7" },
             ["0.2.2"] = { commit = "44eb87f008f8ec07a9714ef3a63bdfc7141cd0e9" },
             ["0.2.0"] = { commit = "edfab2bf0b7a1083beeaef90947d1096a31ca84b" },
         },
-        latest = "0.3.0",
+        latest = "0.3.1",
 
         needs_build = true,
 

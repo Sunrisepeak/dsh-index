@@ -19,6 +19,7 @@ package = {
         bundle_name = "@huanlin/dsh-plugin-ya-workspace-sidebar",
 
         versions = {
+            ["0.6.1"] = { commit = "49640017892d22ac0a727a1e63655113ea231eb1" },
             ["0.6.0"] = { commit = "97c8a3bc428e2dac34bf373bf73e67cfd94143f5" },
             ["0.3.3"] = { commit = "e5e97a5629cea614857918428af29ecac5528b88" },
             ["0.3.1"] = { commit = "e820180acd0bee151e990edebcf4cc17c58c271f" },
@@ -26,7 +27,7 @@ package = {
             ["0.2.0"] = { commit = "bc41513c7b2bd3bbd853947437974bdeb42ce19d" },
             ["0.1.0"] = { commit = "afa7bf300f6c71a1a07361bace8941e6db9ba0f8" },
         },
-        latest = "0.6.0",
+        latest = "0.6.1",
 
         needs_build = false,
 
