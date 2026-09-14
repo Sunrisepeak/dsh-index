@@ -20,10 +20,11 @@ package = {
         bundle_name = "project-blueprint",
 
         versions = {
+            ["1.9.0"] = { commit = "8a9a819deca9a07abd8367fd646dde7e99bb813d" },
             ["1.7.1"] = { commit = "f227ce5c61703e041ec56b6e27b2af550d585fb2" },
             ["1.7.0"] = { commit = "7495fc47b69b1ddf3331e305aff7ddb9f2a5d2f9" },
         },
-        latest = "1.7.1",
+        latest = "1.9.0",
 
         needs_build = false,
 
