@@ -20,6 +20,7 @@ package = {
         bundle_name = "@omdsh-dev/dsh-annotation",
 
         versions = {
+            ["1.4.11-preview.1"] = { commit = "ab59484297a0d796ff9f892d9ddb155327931e5b" },
             ["1.4.10"] = { commit = "ed7b65746a006ca2ccb414566a8bad4b81040487" },
             ["1.4.9"] = { commit = "e6e6afd54ad7559131220a52faf2ea7c321b2e3a" },
             ["1.4.8"] = { commit = "5e1a468c2bf16b856001e2e311ff3c5313f7f26d" },
@@ -33,7 +34,7 @@ package = {
             ["1.3.14"] = { commit = "687f13dcf154e8b473b4e3d8652a08fc72c1c806" },
             ["1.3.13"] = { commit = "a37edb01c3dbb0b19249cab3b93138ad529281ed" },
         },
-        latest = "1.4.10",
+        latest = "1.4.11-preview.1",
 
         needs_build = false,
 
