@@ -19,6 +19,7 @@ package = {
         bundle_name = "@huanlin/dsh-plugin-yet-another-subagent",
 
         versions = {
+            ["0.4.3"] = { commit = "ce04bbd761b1cd95e9c1a72cd2f7febe2ef629ee" },
             ["0.4.2"] = { commit = "5984f791c990df5ef735264e58be01ae1b58bb8b" },
             ["0.4.1"] = { commit = "f6a43f5fddece87f5ae1cab3bff5d3d45e6788d0" },
             ["0.4.0"] = { commit = "93248725c2ea90372eae420cbecdc8733ac14748" },
@@ -26,7 +27,7 @@ package = {
             ["0.1.3"] = { commit = "5356af9d0f4d00cb97e7f5b476aa7949797811d5" },
             ["0.1.1"] = { commit = "13cff4dac7487e92ab319de5f7355d2c40799dea" },
         },
-        latest = "0.4.2",
+        latest = "0.4.3",
 
         -- Base rows this bundle replaces. Another bundle patching
         -- any of these in the same profile silently wins or loses,
