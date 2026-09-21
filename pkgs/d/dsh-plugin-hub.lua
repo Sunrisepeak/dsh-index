@@ -20,6 +20,7 @@ package = {
         bundle_name = "@deepseek-ai/dsh-plugin-console",
 
         versions = {
+            ["0.3.54"] = { commit = "d0624cf5dd61f841e79061ba8b33e5c7d8439a8a" },
             ["0.3.53"] = { commit = "f8caac9a81c214cfef66a6b31440d494aa3f45eb" },
             ["0.3.47"] = { commit = "1b7bf2b7ef05e705570301b3dca2ead1e3febe2f" },
             ["0.3.46"] = { commit = "3e1eda76f1779a2b26002bdfacf7836217831dc2" },
@@ -39,7 +40,7 @@ package = {
             ["0.3.13"] = { commit = "3e5c97371a652a604c2e374a12c05c2629433735" },
             ["0.1.0-rc.6"] = { commit = "4f4a5be6e44f2944cba0e168cff2ef1fb0ff4eb8" },
         },
-        latest = "0.3.53",
+        latest = "0.3.54",
 
         needs_build = false,
 
