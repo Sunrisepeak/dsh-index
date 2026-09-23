@@ -20,6 +20,7 @@ package = {
         bundle_name = "@liustack/modsearch",
 
         versions = {
+            ["5.10.4"] = { commit = "52437bf92c35f917274d83288f8780bb87ce98f0" },
             ["5.10.3"] = { commit = "22acb7a08cc7d11dce036ddd3ef68bfe20ef4983" },
             ["5.10.2"] = { commit = "7c164513d6ba824d294bcf43df9485ada3beff19" },
             ["5.10.1"] = { commit = "d5097a7b83d18ff65c1614204c3d9253ad3cf751" },
@@ -32,7 +33,7 @@ package = {
             ["5.4.2"] = { commit = "e1dba224b72651dfe7891990dcaf674098100df2" },
             ["5.4.1"] = { commit = "3f52f34f697b3de06b1315a083440d384e665748" },
         },
-        latest = "5.10.3",
+        latest = "5.10.4",
 
         needs_build = false,
 
