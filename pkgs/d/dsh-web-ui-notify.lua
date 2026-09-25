@@ -20,11 +20,12 @@ package = {
         bundle_name = "@dsh-external/dsh-web-ui-notify",
 
         versions = {
+            ["0.1.6"] = { commit = "143204a532823f29aa6c22fb621d4ca6cc4aa217" },
             ["0.1.4"] = { commit = "83737f2046e01363d610d74f451c8c0fb8b8d57b" },
             ["0.1.3"] = { commit = "865d2f6fc93f2e0d051d53df772646cb831a43ed" },
             ["0.1.2"] = { commit = "bd8eeb5c1a69df190fa10de253948e36e9679c44" },
         },
-        latest = "0.1.4",
+        latest = "0.1.6",
 
         needs_build = false,
 
