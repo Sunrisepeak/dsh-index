@@ -20,6 +20,7 @@ package = {
         bundle_name = "dsh-mnemon",
 
         versions = {
+            ["0.5.15"] = { commit = "6d79c663262f71c4309cd6db5bd70b204abb143d" },
             ["0.5.14"] = { commit = "6dc4e4201585223f7f1da371256da11deee34d6c" },
             ["0.5.13"] = { commit = "84d469ffa838a36fa579295d94029fcac8ac058e" },
             ["0.5.12"] = { commit = "65c0e23ba410993e16c00c8b3adf92d59d853425" },
@@ -49,7 +50,7 @@ package = {
             ["0.1.3"] = { commit = "6d958686b9fce1d9f1e783a03dada530ad20174a" },
             ["0.1.0"] = { commit = "f5d0e48af121b3ba3911540380b8fa1f19679b7f" },
         },
-        latest = "0.5.14",
+        latest = "0.5.15",
 
         needs_build = false,
 
