@@ -19,9 +19,10 @@ package = {
         bundle_name = "sealos",
 
         versions = {
+            ["2.0.0"] = { commit = "a8e45c97b498c460901dcf526a874ee949a9e0ea" },
             ["1.2.5"] = { commit = "f6876f7df876eac3617ddc15f95f43dcb8c33e31" },
         },
-        latest = "1.2.5",
+        latest = "2.0.0",
 
         needs_build = false,
 
