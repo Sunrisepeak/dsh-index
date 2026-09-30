@@ -19,10 +19,11 @@ package = {
         bundle_name = "@dsh-external/dsh-visualize",
 
         versions = {
+            ["0.1.4"] = { commit = "db54992331d98af68390796d0de4b57bc76453ca" },
             ["0.1.3"] = { commit = "d9039f1de5f5015a1597d028c0d799534429d9e6" },
             ["0.1.2"] = { commit = "b80557ec9c4ab12857eca5ebe134beb48c575418" },
         },
-        latest = "0.1.3",
+        latest = "0.1.4",
 
         needs_build = false,
 

@@ -20,6 +20,7 @@ package = {
         bundle_name = "dsh-chat-import",
 
         versions = {
+            ["0.23.0"] = { commit = "bafb8c5407fd824169ba09e3acc3cd6e80f7933d" },
             ["0.22.2"] = { commit = "0e0eecc3fe282ea690b604b7d14804ba7696f600" },
             ["0.22.0"] = { commit = "00fc33d1156e032cf577442fde0d168bd3374750" },
             ["0.19.7"] = { commit = "758d776233e413a7cfb624e4990286bb3a4238b8" },
@@ -52,7 +53,7 @@ package = {
             ["0.2.0"] = { commit = "716295709890944639e0654a7476fe572ddabf50" },
             ["0.1.1"] = { commit = "c6913244337f9ed70e8fea2a83622ac8550ea1ee" },
         },
-        latest = "0.22.2",
+        latest = "0.23.0",
 
         needs_build = false,
 

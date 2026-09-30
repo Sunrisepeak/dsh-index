@@ -20,6 +20,7 @@ package = {
         bundle_name = "@dsh-external/dsh-share",
 
         versions = {
+            ["0.4.4"] = { commit = "3489cf6cb3a14e94001ce532e97edcb571c1e15b" },
             ["0.4.2"] = { commit = "92011e1a54d6db9f5b90e6d031e5fa6f464645ca" },
             ["0.4.1"] = { commit = "d807c18d5ffa3dea670497cf109dd2d383a57242" },
             ["0.4.0"] = { commit = "4cca10110cc3cde7b58febfd2c1ffdbdc66c630d" },
@@ -28,7 +29,7 @@ package = {
             ["0.2.0"] = { commit = "774885642538be104fe865adc1239cce7b318398" },
             ["0.1.0"] = { commit = "f692d83541421fbdf28f97970e7a1a67846ce7fa" },
         },
-        latest = "0.4.2",
+        latest = "0.4.4",
 
         needs_build = false,
 
