@@ -20,6 +20,7 @@ package = {
         bundle_name = "dsh-cost-meter",
 
         versions = {
+            ["1.8.7"] = { commit = "ad0f5b42273139a031a53955c396f8b7665d777a" },
             ["1.8.6"] = { commit = "171cabea6ca518e4b1fa895a0010dc96e3a03748" },
             ["1.8.5"] = { commit = "ae9ae9120346d1947673b219251446905458d2e8" },
             ["1.7.47"] = { commit = "bcf0c38ef35cb7a1d4571a899adbf71c6187a92a" },
@@ -60,7 +61,7 @@ package = {
             ["1.3.1"] = { commit = "7132fa065cb6994bf381d5482962248a08afc75a" },
             ["1.2.0"] = { commit = "2908d2dca74c2978a641d65544bdfff6b54d9eff" },
         },
-        latest = "1.8.6",
+        latest = "1.8.7",
 
         needs_build = false,
 
