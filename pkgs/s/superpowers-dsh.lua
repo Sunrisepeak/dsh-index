@@ -19,9 +19,10 @@ package = {
         bundle_name = "superpowers-dsh",
 
         versions = {
+            ["0.2.0"] = { commit = "10448b549702c0be9445beb454f39f6214a63601" },
             ["0.1.0"] = { commit = "49e2d65db55b4d3ec065ad824efe9b09465c8a26" },
         },
-        latest = "0.1.0",
+        latest = "0.2.0",
 
         needs_build = false,
 

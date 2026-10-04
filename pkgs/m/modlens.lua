@@ -20,6 +20,7 @@ package = {
         bundle_name = "@liustack/modlens",
 
         versions = {
+            ["3.26.6"] = { commit = "1d8b20fc97a33b456e0d500037d4d66febaeb80a" },
             ["3.26.5"] = { commit = "ffeee3e32de1c05315e334be97c9f087242fe2f3" },
             ["3.26.3"] = { commit = "9b67ba437dd12e5bcff8f639d6ddd7baa3498d91" },
             ["3.26.2"] = { commit = "140ebb9f6efb58fc9c7dc1037f81e34082572855" },
@@ -44,7 +45,7 @@ package = {
             ["3.11.0"] = { commit = "5faff399c64fb5979e60c0a52e1e212dbdab1a31" },
             ["3.9.1"] = { commit = "56045a985692ec5663e5757361e6c180648e6f04" },
         },
-        latest = "3.26.5",
+        latest = "3.26.6",
 
         needs_build = false,
 
