@@ -20,6 +20,7 @@ package = {
         bundle_name = "aegis",
 
         versions = {
+            ["2.13.0"] = { commit = "4edbf34cfb9e76d9e6a00d2fb92deb38c3ee2443" },
             ["2.12.2"] = { commit = "490ffb7e91699238c1bf9bc7a4c569a1397b0bd0" },
             ["2.12.1"] = { commit = "4edf34e6441b1b19c9851657747f6a0d9bb0bdd5" },
             ["2.12.0"] = { commit = "aef06c242414fc05bb50589ef41d2309017d4a12" },
@@ -46,7 +47,7 @@ package = {
             ["2.8.1"] = { commit = "c8483d63f5b3826bebf30ec6cf84d76cdab03907" },
             ["2.8.0"] = { commit = "21b27d23598ef492834427e2a1381b744f66b787" },
         },
-        latest = "2.12.2",
+        latest = "2.13.0",
 
         needs_build = false,
 
