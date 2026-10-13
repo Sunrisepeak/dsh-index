@@ -209,7 +209,7 @@
   },
   "dsh-chat-import": {
     "name": "dsh-chat-import",
-    "pinned_published": true,
+    "pinned_published": false,
     "versions": [
       "0.1.0",
       "0.1.1",
@@ -530,7 +530,9 @@
       "1.8.19",
       "1.8.20",
       "1.8.21",
-      "1.8.22"
+      "1.8.22",
+      "1.8.23",
+      "1.8.24"
     ]
   },
   "dsh-file-explorer": {
@@ -758,7 +760,10 @@
       "1.66.14",
       "1.66.15",
       "1.66.16",
-      "1.66.17"
+      "1.66.17",
+      "1.66.18",
+      "1.66.19",
+      "1.66.20"
     ]
   },
   "dsh-memory": {
@@ -901,7 +906,8 @@
       "0.4.2",
       "0.5.0",
       "0.6.0",
-      "0.6.1"
+      "0.6.1",
+      "0.6.2"
     ]
   },
   "dsh-plugin-better-sidebar-plugin-office": {
@@ -1036,6 +1042,14 @@
       "0.4.5",
       "0.5.0",
       "0.5.1"
+    ]
+  },
+  "dsh-prompt-studio": {
+    "name": "dsh-prompt-studio",
+    "pinned_published": false,
+    "versions": [
+      "0.0.0-stage",
+      "0.1.5"
     ]
   },
   "dsh-qqbot": {
