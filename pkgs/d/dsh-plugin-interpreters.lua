@@ -19,6 +19,7 @@ package = {
         bundle_name = "@huanlin/dsh-plugin-interpreters",
 
         versions = {
+            ["0.5.3"] = { commit = "d1f17d729a76441c7593e790cb3a1e29b89c86f9" },
             ["0.5.2"] = { commit = "7716b5aa2a9b7ea216bff5bf847f157bcabd023d" },
             ["0.5.1"] = { commit = "9e71aa1cda022ead6fb0e515f72dd2fd1efa9894" },
             ["0.5.0"] = { commit = "0ff76990fc2c7522a65a148769c69b7470ecca7a" },
@@ -29,7 +30,7 @@ package = {
             ["0.2.1"] = { commit = "5b9c7207249b047be3a8ac1859c160455aed8eaa" },
             ["0.1.0"] = { commit = "c58309173c575f821fb81d3ac8c8809eba467ed5" },
         },
-        latest = "0.5.2",
+        latest = "0.5.3",
 
         needs_build = false,
 

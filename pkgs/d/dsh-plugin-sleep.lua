@@ -19,6 +19,7 @@ package = {
         bundle_name = "@huanlin/dsh-plugin-sleep",
 
         versions = {
+            ["0.2.2"] = { commit = "2c14c0d79cb60d7993698f76cd7c41e5968c304c" },
             ["0.2.1"] = { commit = "eec2156d6fed315da21fe764c0a2c49bf90f4be7" },
             ["0.2.0"] = { commit = "6e9fab87c7efd87d0b96c19d6e8971cb106b4709" },
             ["0.1.6"] = { commit = "9dcf754be87a734aca889317d840c7ec6461f5bc" },
@@ -26,7 +27,7 @@ package = {
             ["0.1.4"] = { commit = "fb10a1388467fbc1cacaa180d828db6ec214310e" },
             ["0.1.0"] = { commit = "daeeaeecd5b3fa46431f6eddb598aec22adfb84c" },
         },
-        latest = "0.2.1",
+        latest = "0.2.2",
 
         needs_build = false,
 

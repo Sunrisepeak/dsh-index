@@ -19,6 +19,7 @@ package = {
         bundle_name = "dsh-agent-teams",
 
         versions = {
+            ["0.1.25"] = { commit = "673549cbe254afbb56a0e26a34008e3d000690be" },
             ["0.1.24-rc.1"] = { commit = "6768de25aede12056a497b0a79ebf6cd8bb1e987" },
             ["0.1.23"] = { commit = "1094b84add6f2fb19edf659367fe2fd5f7f14154" },
             ["0.1.22"] = { commit = "9cba4fe4171f27c019991cafd2a107f87ef3517b" },
@@ -42,7 +43,7 @@ package = {
             ["0.1.2"] = { commit = "00a8329a8fc86322626d47ad3e1a8c0de325cbe7" },
             ["0.1.0"] = { commit = "874654fcaabb1ae16b64503407370c23099f33b9" },
         },
-        latest = "0.1.24-rc.1",
+        latest = "0.1.25",
 
         needs_build = false,
 

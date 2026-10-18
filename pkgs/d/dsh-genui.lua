@@ -20,6 +20,7 @@ package = {
         bundle_name = "@omdsh-dev/dsh-genui",
 
         versions = {
+            ["0.13.0"] = { commit = "3a4e524fdb60611f66138d3ea9cb6dd7f141b9f4" },
             ["0.12.0"] = { commit = "015b909d8d3485e1716376a60adc5e5b59defa40" },
             ["0.11.4"] = { commit = "5d0d63b8f542886db4910f4dd13a875b1e01803c" },
             ["0.11.3"] = { commit = "0cc64c97b426ff5afe54154e74ead31dd8739265" },
@@ -43,7 +44,7 @@ package = {
             ["0.8.3"] = { commit = "0e756efb7671e6b8413dde3d8e199c68fa89cbeb" },
             ["0.8.0"] = { commit = "57b4338222632f8ea81c2665d44e5f9e80b52686" },
         },
-        latest = "0.12.0",
+        latest = "0.13.0",
 
         needs_build = false,
 
