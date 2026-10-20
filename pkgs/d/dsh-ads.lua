@@ -19,11 +19,12 @@ package = {
         bundle_name = "@dsh-external/dsh-ads",
 
         versions = {
+            ["0.1.3"] = { commit = "a5854a37bbe24078878740ae4567e59cc75c29ec" },
             ["0.1.2"] = { commit = "c24ca58a978bd7770f8129c906ad777090b4c0c6" },
             ["0.1.1"] = { commit = "86b1340c9ec3db32cc33a3cebfb8c9aa8a717ee0" },
             ["0.1.0"] = { commit = "35547f7001afd6b853c2010b196365f61eebf8f1" },
         },
-        latest = "0.1.2",
+        latest = "0.1.3",
 
         needs_build = false,
 
