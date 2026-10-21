@@ -20,9 +20,10 @@ package = {
         bundle_name = "@linxin666/freestyle-dsh-theme",
 
         versions = {
+            ["0.7.3"] = { commit = "12db4f059aa2ca3e318297167e170abbb7d7bed4" },
             ["0.1.0"] = { commit = "cd9e9eb53ccbaded4cf6123919e24392daeda0d4" },
         },
-        latest = "0.1.0",
+        latest = "0.7.3",
 
         needs_build = false,
 
