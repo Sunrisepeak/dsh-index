@@ -19,9 +19,10 @@ package = {
         bundle_name = "@multica-ai/dsh-runtime",
 
         versions = {
+            ["0.2.0-private.1"] = { commit = "571d7c036d15f58ee88c89fd80afb0a6c7f0023c" },
             ["0.1.0-private.1"] = { commit = "e29aae228449dfe50e88af60ef4281e38ca44e2a" },
         },
-        latest = "0.1.0-private.1",
+        latest = "0.2.0-private.1",
 
         needs_build = false,
 
