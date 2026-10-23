@@ -19,6 +19,7 @@ package = {
         bundle_name = "dshmarket",
 
         versions = {
+            ["1.69.0"] = { commit = "2477c36e2226b6ed731c88e66adc5a431976dcaa" },
             ["1.66.47"] = { commit = "40d09a688dc7441d4602421745a00719420b4101" },
             ["1.66.45"] = { commit = "eee2281c0837e75b3bc2271bc2766b1ad110e480" },
             ["1.66.44"] = { commit = "29dcbd78290be89d83771e3734b128be110645c5" },
@@ -71,7 +72,7 @@ package = {
             ["1.2.4"] = { commit = "cd2f016076cf9c349114ae796e00c48078d8104c" },
             ["1.2.2"] = { commit = "67a66a4e7cd6c344772ce38846b99f6a79074052" },
         },
-        latest = "1.66.47",
+        latest = "1.69.0",
 
         needs_build = true,
 
