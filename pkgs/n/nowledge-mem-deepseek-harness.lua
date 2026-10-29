@@ -19,13 +19,14 @@ package = {
         bundle_name = "nowledge-mem-deepseek-harness",
 
         versions = {
+            ["0.1.7"] = { commit = "daecb54f6b41143dbf6a3c82836cdaf52aab7c02" },
             ["0.1.6"] = { commit = "44ee5fcc0aa513836cbc1590ff2e137a47535652" },
             ["0.1.5"] = { commit = "17f64d0870727793dbc46fefc0e3d901ec336feb" },
             ["0.1.3"] = { commit = "2ef49f101e4f408ee368423c652430ae954b4a22" },
             ["0.1.2"] = { commit = "b75629b10823aca8cf7cc268868c550542ab2580" },
             ["0.1.0"] = { commit = "97956d33e793c5c3f2ac4847fdbb004993b235e6" },
         },
-        latest = "0.1.6",
+        latest = "0.1.7",
 
         needs_build = false,
 
