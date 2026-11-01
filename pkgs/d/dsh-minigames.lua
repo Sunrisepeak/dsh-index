@@ -20,6 +20,7 @@ package = {
         bundle_name = "@dsh-external/dsh-minigames",
 
         versions = {
+            ["0.10.5"] = { commit = "c6895b750f31745f0d97fd9273ac9a992da78636" },
             ["0.10.1"] = { commit = "92f1f0c691b8d87833f8baf6b96ac9a007209faf" },
             ["0.10.0"] = { commit = "15cb3d9124a20aab82a859d87f261d0527f39463" },
             ["0.9.0"] = { commit = "5e306441a7dcc5b758695e94d5fc8f8c0dc9a11b" },
@@ -58,7 +59,7 @@ package = {
             ["0.3.3"] = { commit = "9284a46a737676b48c58901a66cee31fd9d37a18" },
             ["0.3.2"] = { commit = "a22b3c143839e4ed75e98e64345e41fb02f8d9c0" },
         },
-        latest = "0.10.1",
+        latest = "0.10.5",
 
         needs_build = false,
 
