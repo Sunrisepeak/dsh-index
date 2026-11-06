@@ -24,6 +24,7 @@ package = {
         bundle_name = "@deepseek-harness-tui/dsh-tui",
 
         versions = {
+            ["0.19.0"] = { commit = "224f847d02c2157f43862d2792cf9d7459222f4c" },
             ["0.18.0"] = { commit = "e315820b14b400cd26bf8ee685b7bda22a5493f8" },
             ["0.17.0"] = { commit = "29572774890a4a89ae1fa562dd15a1ae21bb3593" },
             ["0.16.1"] = { commit = "73ff99fbed56563bf154d719effd09f9f9725349" },
@@ -54,7 +55,7 @@ package = {
             ["0.3.3"] = { commit = "046da285d6eb1c95bb8468a447f420f6f3c0560c", bundle = "dsh-cc-tui" },
             ["0.1.6"] = { commit = "8516ffb3aac3ada74760eff9b8c14c65d344b67d", bundle = "dsh-cc-tui" },
         },
-        latest = "0.18.0",
+        latest = "0.19.0",
 
         -- Base rows this bundle replaces. Another bundle patching
         -- any of these in the same profile silently wins or loses,
