@@ -20,6 +20,7 @@ package = {
         bundle_name = "dsh-client-auto-continue",
 
         versions = {
+            ["0.18.0"] = { commit = "92afc6f4b62fe467c48de950e1f0f9a64c058180" },
             ["0.17.4"] = { commit = "2900e7e9e14271fe026fc06e65d78a92732e8958" },
             ["0.17.3"] = { commit = "2239036452037e31bbfa04be3504212c3c7e335b" },
             ["0.17.1"] = { commit = "f8169d6b336d15e0f58f2c15f0955ba796016c0f" },
@@ -52,7 +53,7 @@ package = {
             ["0.4.0"] = { commit = "f59db42f9efd1b243f3a33742a334d93b278bd3d" },
             ["0.3.2"] = { commit = "6e041c52575af1c69497ef5be9a8a291adc0279f" },
         },
-        latest = "0.17.4",
+        latest = "0.18.0",
 
         needs_build = false,
 
