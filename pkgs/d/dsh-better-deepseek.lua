@@ -1,0 +1,32 @@
+package = {
+    spec = "1",
+
+    name = "dsh-better-deepseek",
+    description = "DeepSeek Harness bridge plugin for Better DeepSeek Chrome extension.",
+    repo = "https://github.com/EdgeTypE/dsh-better-deepseek",
+    homepage = "https://github.com/EdgeTypE/dsh-better-deepseek",
+    authors = {"EdgeTypE"},
+
+    status = "dev",
+    categories = {"dsh-plugin"},
+    keywords = {"dsh"},
+
+    dsh = {
+        kind = "plugin",
+        -- Where this plugin's own README tells readers to install it.
+        profile = "web",
+
+        bundle_name = "dsh-better-deepseek",
+
+        versions = {
+            ["0.1.0"] = { commit = "b1043860f5f10fd7ed12664ebe32ca4fd6445aca" },
+        },
+        latest = "0.1.0",
+
+        needs_build = false,
+
+        -- No `mirror` block yet: mirroring is redistribution, so
+        -- tools/mirror.py adds one only after it has published a
+        -- verified tarball under a licence that permits it.
+    },
+}
